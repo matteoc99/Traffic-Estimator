@@ -37,6 +37,47 @@ public class Lane extends StreetComponent{
         street.addLane(this);
     }
 
+    /**
+     * Adds a Vehicle
+     *
+     * @return true if it was successfully added, otherwise false
+     */
+    public boolean addVehicle(Vehicle vehicle) {
+        if(contains(vehicle)) {
+            System.out.println("Vehicle 47");
+            return false;
+        }
+        vehicles.add(vehicle);
+        return true;
+    }
+
+    /**
+     * Removes a Vehicle
+     *
+     * @return true if it was successfully removed, otherwise false
+     */
+    public boolean removeVehicle(Vehicle vehicle) {
+        if(!contains(vehicle)) {
+            System.out.println("Vehicle 61");
+            return false;
+        }
+        vehicles.remove(vehicle);
+        return true;
+    }
+
+    /**
+     * Checks weather the lane contains a Vehicle
+     * @param vehicle the street to check
+     * @return true if the lane contains the Vehicle, otherwise false
+     */
+    public boolean contains(Vehicle vehicle) {
+        for (Vehicle v : vehicles) {
+            if(vehicle.equals(v))
+                return true;
+        }
+        return false;
+    }
+
     public boolean isReverse() {
         return reverse;
     }
@@ -47,5 +88,9 @@ public class Lane extends StreetComponent{
 
     public ArrayList<Lane> getNeighborLanes(){
         return street.getNeighborLanes(this);
+    }
+
+    public Street getParent(){
+        return street;
     }
 }

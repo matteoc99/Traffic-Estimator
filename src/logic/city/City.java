@@ -14,7 +14,13 @@ public class City {
      */
     private ArrayList<StreetIntersection> streetIntersections;
 
-    public Path doDijkstra(StreetIntersection from, StreetIntersection to, Vehicle vehicle) {
+    private String name;
+
+    public City(String name) {
+        this.name = name;
+    }
+
+    public static Path doDijkstra(StreetIntersection from, StreetIntersection to, Vehicle vehicle) {
         return new Path(); // TODO: 15.12.2017
     }
 
@@ -25,7 +31,7 @@ public class City {
      * @param vehicle to knows how well the car knows the city
      * @return A Path
      */
-    public Path doRandomDijkstra(Vehicle vehicle) {
+    public static Path doRandomDijkstra(Vehicle vehicle) {
         return new Path(); // TODO: 15.12.2017
     }
 
@@ -35,21 +41,27 @@ public class City {
      * @return true if it was successfully added, otherwise false
      */
     public boolean addStreetIntersection(StreetIntersection streetIntersection) {
-        if(contains(streetIntersection))
+        if(contains(streetIntersection)) {
+            System.out.println("CITY 45");
             return false;
+        }
         streetIntersections.add(streetIntersection);
+        streetIntersection.addUIS(streetIntersection.getUIS());
         return true;
     }
 
     /**
      * Removes a Street intersection
      *
-     * @return true if it was successfully removes, otherwise false
+     * @return true if it was successfully removed, otherwise false
      */
     public boolean removeStreetIntersection(StreetIntersection streetIntersection) {
-        if(!contains(streetIntersection))
+        if(!contains(streetIntersection)) {
+            System.out.println("CITY 59");
             return false;
+        }
         streetIntersections.remove(streetIntersection);
+        streetIntersection.removeUIS(streetIntersection.getUIS());
         return true;
     }
 
@@ -66,4 +78,11 @@ public class City {
         return false;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 }

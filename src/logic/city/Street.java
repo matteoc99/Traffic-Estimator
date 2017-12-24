@@ -37,7 +37,7 @@ public class Street extends StreetComponent {
     /**
      * Congestions on this street
      */
-    ArrayList<Congestion> congestions;
+    private ArrayList<Congestion> congestions;
 
     public Street(StreetIntersection from, StreetIntersection to, int maxSpeed, int minSpeed, double fame) {
         super(from.getX(), to.getX(), from.getY(), to.getY());
@@ -55,29 +55,6 @@ public class Street extends StreetComponent {
     }
 
 
-    public int getMaxSpeed() {
-        return maxSpeed;
-    }
-
-    public void setMaxSpeed(int maxSpeed) {
-        this.maxSpeed = maxSpeed;
-    }
-
-    public int getMinSpeed() {
-        return minSpeed;
-    }
-
-    public void setMinSpeed(int minSpeed) {
-        this.minSpeed = minSpeed;
-    }
-
-    public double getFame() {
-        return fame;
-    }
-
-    public void setFame(double fame) {
-        this.fame = fame;
-    }
 
     public void moveCars() {
         // TODO: 15.12.2017
@@ -94,8 +71,10 @@ public class Street extends StreetComponent {
      * @return true if it was successfully added, otherwise false
      */
     public boolean addLane(Lane lane) {
-        if (contains(lane))
+        if (contains(lane)) {
+            System.out.println("Street 75");
             return false;
+        }
         if (lane.isReverse())
             reverseDirectionLanes.add(lane);
         else
@@ -106,11 +85,13 @@ public class Street extends StreetComponent {
     /**
      * Removes a lane
      *
-     * @return true if it was successfully removes, otherwise false
+     * @return true if it was successfully removed, otherwise false
      */
     public boolean removeLane(Lane lane) {
-        if (!contains(lane))
+        if (!contains(lane)) {
+            System.out.println("Street 92");
             return false;
+        }
         if (lane.isReverse()) {
             reverseDirectionLanes.remove(lane);
 
@@ -146,8 +127,10 @@ public class Street extends StreetComponent {
      */
     public ArrayList<Lane> getNeighborLanes(Lane lane) {
         ArrayList<Lane> ret = new ArrayList<>();
-        if (!contains(lane))
+        if (!contains(lane)) {
+            System.out.println("Street 131");
             return null;
+        }
         int index = streetDirectionLanes.indexOf(lane);
         if (index < 0) {
             index = reverseDirectionLanes.indexOf(lane);
@@ -166,5 +149,70 @@ public class Street extends StreetComponent {
             }
         }
         return ret;
+    }
+
+    /**
+     * Adds a Congestion
+     *
+     * @return true if it was successfully added, otherwise false
+     */
+    public boolean addCongestion(Congestion congestion) {
+        if(contains(congestion)) {
+            System.out.println("Street 161");
+            return false;
+        }
+        congestions.add(congestion);
+        return true;
+    }
+
+    /**
+     * Removes a Congestion
+     *
+     * @return true if it was successfully removed, otherwise false
+     */
+    public boolean removeCongestion(Congestion congestion) {
+        if(!contains(congestion)) {
+            System.out.println("Street 175");
+            return false;
+        }
+        congestions.remove(congestion);
+        return true;
+    }
+
+    /**
+     * Checks if this city contains a certain Street
+     * @param congestion the street to check
+     * @return true if it contains the street, otherwise false
+     */
+    public boolean contains(Congestion congestion) {
+        for (Congestion c : congestions) {
+            if(congestion.equals(c))
+                return true;
+        }
+        return false;
+    }
+
+    public int getMaxSpeed() {
+        return maxSpeed;
+    }
+
+    public void setMaxSpeed(int maxSpeed) {
+        this.maxSpeed = maxSpeed;
+    }
+
+    public int getMinSpeed() {
+        return minSpeed;
+    }
+
+    public void setMinSpeed(int minSpeed) {
+        this.minSpeed = minSpeed;
+    }
+
+    public double getFame() {
+        return fame;
+    }
+
+    public void setFame(double fame) {
+        this.fame = fame;
     }
 }

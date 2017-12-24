@@ -12,7 +12,7 @@ public class StreetComponent {
     private int xTo;
     private int yFrom;
     private int yTo;
-    private double degrees;
+    private double degrees=-1;
 
     public StreetComponent() {
     }
@@ -51,7 +51,18 @@ public class StreetComponent {
                 );
         // TODO: 15.12.2017 test
     }
-    
+
+    public double getDegrees() {
+        return degrees;
+    }
+
+    /**
+     * refreshes the degrees in case that the x,y changes
+     */
+    public void refreshDegrees() {
+        calcDegrees();
+    }
+
     public int getxTo() {
         return xTo;
     }

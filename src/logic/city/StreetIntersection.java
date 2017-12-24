@@ -1,6 +1,7 @@
 package logic.city;
 
 import logic.PositionableComponent;
+import logic.vehicles.Vehicle;
 
 import java.util.ArrayList;
 
@@ -9,6 +10,8 @@ import java.util.ArrayList;
  * @since 15.12.2017
  */
 public class StreetIntersection extends PositionableComponent {
+
+    private static ArrayList<String> uiss= new ArrayList<>();
     /**
      * Connects Street
      */
@@ -26,6 +29,55 @@ public class StreetIntersection extends PositionableComponent {
     private String UIS;
 
 
+    public StreetIntersection(PositionableComponent positionableComponent, int fame, String UIS) {
+        super(positionableComponent.getX(), positionableComponent.getY(),
+                positionableComponent.getWidth(), positionableComponent.getHeight());
+        this.fame = fame;
+        this.UIS = UIS;
+        if(alreadyExistsUIS(UIS))
+            System.out.println("ERROR:UID ALREADY EXISTS");
+    }
+
+    /**
+     * Adds a Street
+     *
+     * @return true if it was successfully added, otherwise false
+     */
+    public boolean addStreet(Street street) {
+        if(contains(street)) {
+            System.out.println("StreetIntersection 45");
+            return false;
+        }
+        streets.add(street);
+        return true;
+    }
+
+    /**
+     * Removes a Street
+     *
+     * @return true if it was successfully removed, otherwise false
+     */
+    public boolean removeStreet(Street street) {
+        if(!contains(street)) {
+            System.out.println("StreetIntersection 62");
+            return false;
+        }
+        streets.remove(street);
+        return true;
+    }
+
+    /**
+     * Checks if this city contains a certain Street
+     * @param street the street to check
+     * @return true if it contains the street, otherwise false
+     */
+    public boolean contains(Street street) {
+        for (Street s : streets) {
+            if(street.equals(s))
+                return true;
+        }
+        return false;
+    }
     public String getUIS() {
         return UIS;
     }
@@ -43,40 +95,43 @@ public class StreetIntersection extends PositionableComponent {
     }
 
     /**
-     * Adds a Street
-     *
-     * @return true if it was successfully added, otherwise false
+     * Checks if the UIS exists
+     * @param uis the uis to check
+     * @return true if the uis exists, otherwise false
      */
-    public boolean addStreet(Street street) {
-        if(contains(street))
-            return false;
-        streets.add(street);
-        return true;
-    }
-
-    /**
-     * Removes a Street
-     *
-     * @return true if it was successfully removes, otherwise false
-     */
-    public boolean removeStreet(Street street) {
-        if(!contains(street))
-            return false;
-        streets.remove(street);
-        return true;
-    }
-
-    /**
-     * Checks if this city contains a certain Street
-     * @param street the street to check
-     * @return true if it contains the street, otherwise false
-     */
-    public boolean contains(Street street) {
-        for (Street s : streets) {
-            if(street.equals(s))
+    public boolean alreadyExistsUIS(String uis){
+        for (String s: uiss) {
+            if(s.equals(uis))
                 return true;
         }
         return false;
     }
 
+    /**
+     * Adds a UIS
+     *
+     * @return true if it was successfully added, otherwise false
+     */
+    public boolean addUIS(String s) {
+        if(alreadyExistsUIS(s)) {
+            System.out.println("StreetIntersection 117");
+            return false;
+        }
+        uiss.add(s);
+        return true;
+    }
+
+    /**
+     * Removes a UIS
+     *
+     * @return true if it was successfully removed, otherwise false
+     */
+    public boolean removeUIS(String s) {
+        if(!alreadyExistsUIS(s)) {
+            System.out.println("StreetIntersection 131");
+            return false;
+        }
+        uiss.remove(s);
+        return true;
+    }
 }
