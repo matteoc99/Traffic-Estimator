@@ -22,4 +22,5 @@ public class Congestion extends PositionableComponent {
      * time in min needed to clean the Congestion
      */
     int clearanceTime;
+
 }

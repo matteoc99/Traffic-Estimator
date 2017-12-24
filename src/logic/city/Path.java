@@ -16,7 +16,8 @@ public class Path {
     private int progress;
     
     public StreetIntersection getNextGoal(){
-        return streetIntersections.get(progress); // TODO: 15.12.2017  
+        progress++;
+        return streetIntersections.get(progress-1);
     }
     
 }
