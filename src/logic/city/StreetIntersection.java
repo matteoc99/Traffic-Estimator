@@ -32,10 +32,20 @@ public class StreetIntersection extends PositionableComponent {
     public StreetIntersection(PositionableComponent positionableComponent, int fame, String UIS) {
         super(positionableComponent.getX(), positionableComponent.getY(),
                 positionableComponent.getWidth(), positionableComponent.getHeight());
+        streets = new ArrayList<>();
         this.fame = fame;
         this.UIS = UIS;
         if(alreadyExistsUIS(UIS))
-            System.out.println("ERROR:UID ALREADY EXISTS");
+            System.out.println("ERROR:UID ALREADY EXISTS1");
+    }
+
+    public StreetIntersection(int x, int y, int width, int height, int fame, String UIS) {
+        super(x, y, width, height);
+        streets = new ArrayList<>();
+        this.fame = fame;
+        this.UIS = UIS;
+        if(alreadyExistsUIS(UIS))
+            System.out.println("ERROR:UID ALREADY EXISTS2");
     }
 
     /**
@@ -67,31 +77,21 @@ public class StreetIntersection extends PositionableComponent {
     }
 
     /**
-     * Checks if this city contains a certain Street
+     * Checks if this Intersection contains a certain Street
      * @param street the street to check
      * @return true if it contains the street, otherwise false
      */
     public boolean contains(Street street) {
         for (Street s : streets) {
-            if(street.equals(s))
+            if(street.getFrom().equals(s.getFrom())
+                    &&street.getTo().equals(s.getTo())
+                    &&street.getFame()==street.getFame()
+                    &&street.getMaxSpeed()==s.getMaxSpeed()) {
+                System.out.println("Contains 90");
                 return true;
+            }
         }
         return false;
-    }
-    public String getUIS() {
-        return UIS;
-    }
-
-    public void setUIS(String UIS) {
-        this.UIS = UIS;
-    }
-
-    public int getFame() {
-        return fame;
-    }
-
-    public void setFame(int fame) {
-        this.fame = fame;
     }
 
     /**
@@ -133,5 +133,25 @@ public class StreetIntersection extends PositionableComponent {
         }
         uiss.remove(s);
         return true;
+    }
+
+    public String getUIS() {
+        return UIS;
+    }
+
+    public void setUIS(String UIS) {
+        this.UIS = UIS;
+    }
+
+    public int getFame() {
+        return fame;
+    }
+
+    public void setFame(int fame) {
+        this.fame = fame;
+    }
+
+    public ArrayList<Street> getStreets() {
+        return streets;
     }
 }

@@ -32,6 +32,7 @@ public class Lane extends StreetComponent{
 
 
     public Lane(Street street,boolean reverse) {
+        vehicles = new ArrayList<>();
         this.street = street;
         this.reverse=reverse;
         street.addLane(this);
@@ -92,5 +93,9 @@ public class Lane extends StreetComponent{
 
     public Street getParent(){
         return street;
+    }
+
+    public ArrayList<Vehicle> getVehicles() {
+        return vehicles;
     }
 }

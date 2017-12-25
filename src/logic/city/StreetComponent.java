@@ -1,5 +1,7 @@
 package logic.city;
 
+import logic.Utils;
+
 import java.awt.*;
 
 /**
@@ -8,11 +10,11 @@ import java.awt.*;
  */
 public class StreetComponent {
 
-    private int xFrom;
-    private int xTo;
-    private int yFrom;
-    private int yTo;
-    private double degrees=-1;
+    int xFrom;
+    int xTo;
+    int yFrom;
+    int yTo;
+    protected double degrees = -1;
 
     public StreetComponent() {
     }
@@ -28,27 +30,26 @@ public class StreetComponent {
     /**
      * Calculates the degrees from the "From x,y" to the "To x,y"
      */
-    private void calcDegrees() {
-        double angle = (double) Math.toDegrees(Math.atan2(yTo - yFrom, xTo - xFrom));
+    protected void calcDegrees() {
 
-        if(angle < 0){
-            angle += 360;
-        }
-        this.degrees = angle;
+        this.degrees = Utils.calcDegreesBetweenTwoPoint(getxFrom(),getyFrom(),getxTo(),getyTo());
         // TODO: 24.12.2017 Test
     }
 
+
+
     /**
      * Distance formula: sqrt{(x_2 -x_1)^2 + (y_2- y_1)^2}
+     *
      * @return the legth of the line
      */
     public double getLength() {
         return Math.abs(
                 Math.sqrt(
-                        Math.pow(xTo-xFrom,2)+
-                        Math.pow(yTo-yFrom,2)
-                    )
-                );
+                        Math.pow(xTo - xFrom, 2) +
+                                Math.pow(yTo - yFrom, 2)
+                )
+        );
         // TODO: 15.12.2017 test
     }
 

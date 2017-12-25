@@ -6,4 +6,7 @@ package logic.city;
  */
 public class Accident extends Congestion {
 
+    public Accident(Street affectedStreet, int flowAmount, int clearanceTime, int progressInLane) {
+        super(affectedStreet, flowAmount, clearanceTime, progressInLane);
+    }
 }

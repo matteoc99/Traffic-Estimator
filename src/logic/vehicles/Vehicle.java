@@ -5,6 +5,8 @@ import logic.city.City;
 import logic.city.Lane;
 import logic.city.Path;
 
+import java.util.ArrayList;
+
 /**
  * @author Matteo Cosi
  * @since 15.12.2017
@@ -18,11 +20,7 @@ public class Vehicle extends PositionableComponent{
 
     private int weight;
     private int maxSpeed;
-    /**
-     * 0-lane.length
-     * position on lane
-     */
-    private int progressInLane;
+
     /**
      * lane.length
      */
@@ -75,6 +73,10 @@ public class Vehicle extends PositionableComponent{
         lane.removeVehicle(this);
         newLane.addVehicle(this);
         lane=newLane;
+    }
+
+    public ArrayList<Lane> getNeighborLanes(){
+        return lane.getNeighborLanes();
     }
 
     public int getWeight() {

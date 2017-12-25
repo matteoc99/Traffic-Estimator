@@ -10,6 +10,10 @@ public class Path {
 
     ArrayList<StreetIntersection> streetIntersections;
 
+    public Path() {
+        streetIntersections = new ArrayList<>();
+    }
+
     /**
      * progress index on the street intersection
      */

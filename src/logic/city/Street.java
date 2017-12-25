@@ -1,6 +1,11 @@
 package logic.city;
 
+import logic.Utils;
+
+import java.awt.*;
 import java.util.ArrayList;
+
+import static logic.Utils.calcDegreesBetweenTwoPoint;
 
 /**
  * @author Matteo Cosi
@@ -18,6 +23,7 @@ public class Street extends StreetComponent {
 
     /**
      * from where to where the street goes
+     * ONLY From knows this street
      */
     private StreetIntersection from;
     private StreetIntersection to;
@@ -40,14 +46,30 @@ public class Street extends StreetComponent {
     private ArrayList<Congestion> congestions;
 
     public Street(StreetIntersection from, StreetIntersection to, int maxSpeed, int minSpeed, double fame) {
-        super(from.getX(), to.getX(), from.getY(), to.getY());
+        /*TODO dadurch gehen alle straßen in die obere ecke
+            man kann je nach winkel die straßen an den Seiten mittleren anhängen
+        */
+        //Step 1 calc relativ degrees
+        double degrees = calcDegreesBetweenTwoPoint(from.getLocation(),to.getLocation());
+        this.xFrom = from.getX();
+        this.xTo = to.getX();
+        this.yFrom = from.getY();
+        this.yTo = to.getY();
+        calcDegrees();
+
+        System.out.println(degrees);
+
+        reverseDirectionLanes = new ArrayList<>();
+        streetDirectionLanes = new ArrayList<>();
+
         this.from = from;
         this.to = to;
         this.maxSpeed = maxSpeed;
         this.minSpeed = minSpeed;
         this.fame = fame;
         from.addStreet(this);
-        to.addStreet(this);
+        //NOT because only from has to know this street  to.addStreet(this);
+
     }
 
     public Street(StreetIntersection from, StreetIntersection to) {
@@ -192,6 +214,19 @@ public class Street extends StreetComponent {
         return false;
     }
 
+    public Rectangle getBounds() {
+        int smallX=Integer.min(xTo,xFrom);
+        int smallY=Integer.min(yTo,yFrom);
+        int width=Integer.max(xTo,xFrom)-smallX;
+        int height=Integer.max(yTo,yFrom)-smallY;
+        if(width<2)
+            width=1+reverseDirectionLanes.size()*2+streetDirectionLanes.size()*2;
+        if(height<2)
+            height=1+reverseDirectionLanes.size()*2+streetDirectionLanes.size()*2;
+        Rectangle ret = new Rectangle(smallX,smallY,width,height);
+        return ret;
+    }
+
     public int getMaxSpeed() {
         return maxSpeed;
     }
@@ -214,5 +249,23 @@ public class Street extends StreetComponent {
 
     public void setFame(double fame) {
         this.fame = fame;
+    }
+
+
+
+    public ArrayList<Lane> getStreetDirectionLanes() {
+        return streetDirectionLanes;
+    }
+
+    public ArrayList<Lane> getReverseDirectionLanes() {
+        return reverseDirectionLanes;
+    }
+
+    public StreetIntersection getFrom() {
+        return from;
+    }
+
+    public StreetIntersection getTo() {
+        return to;
     }
 }

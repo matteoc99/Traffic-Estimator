@@ -24,14 +24,50 @@ public class PositionableComponent {
         this.height = height;
     }
 
+    public Rectangle getBounds(){
+        return new Rectangle(getX(),getY(),getWidth(),getHeight());
+    }
+
+    public void setBounds(Rectangle rectangle){
+        setX(rectangle.x);
+        setY(rectangle.y);
+        setWidth(rectangle.width);
+        setHeight(rectangle.height);
+    }
+
+
+    public void setBounds(int x, int y, int width, int height){
+        setX(x);
+        setY(y);
+        setWidth(width);
+        setHeight(height);
+    }
+
     public void setSize(Dimension size) {
         setWidth(size.width);
         setHeight(size.height);
+    }
+    public void setSize(int width,int height) {
+        setWidth(width);
+        setHeight(height);
     }
 
     public void setLocation(Point location) {
         setX(location.x);
         setY(location.y);
+    }
+    public void setLocation(int x,int y) {
+        setX(x);
+        setY(y);
+    }
+
+    /**
+     * Moves the object relative to the current point
+     * @param dx move on the x coordinate
+     * @param dy move on the y coordinate
+     */
+    public void translate(int dx,int dy){
+        setLocation(this.x+dx,this.y+dy);
     }
 
     public Dimension getSize() {
