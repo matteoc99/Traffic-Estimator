@@ -8,20 +8,63 @@ import java.util.ArrayList;
  */
 public class Path {
 
-    ArrayList<StreetIntersection> streetIntersections;
-
-    public Path() {
-        streetIntersections = new ArrayList<>();
-    }
+    ArrayList<Node> nodes;
 
     /**
      * progress index on the street intersection
      */
     private int progress;
-    
-    public StreetIntersection getNextGoal(){
-        progress++;
-        return streetIntersections.get(progress-1);
+
+
+    public Path() {
+        progress = 0;
+        nodes = new ArrayList<>();
     }
-    
+
+    public Node getNextGoal() {
+        progress++;
+        return nodes.get(progress - 1);
+    }
+
+    /**
+     * Adds a Street intersection
+     *
+     * @return true if it was successfully added, otherwise false
+     */
+    public boolean addNode(Node node) {
+        if (contains(node)) {
+            System.out.println("Path 45");
+            return false;
+        }
+        nodes.add(node);
+        return true;
+    }
+
+    /**
+     * Removes a Street intersection
+     *
+     * @return true if it was successfully removed, otherwise false
+     */
+    public boolean removeNode(Node node) {
+        if (!contains(node)) {
+            System.out.println("Path 59");
+            return false;
+        }
+        nodes.remove(node);
+        return true;
+    }
+
+    /**
+     * Checks if this city contains a certain Street Intersection
+     *
+     * @param node the intersection to check
+     * @return true if it contains the intersection, otherwise false
+     */
+    public boolean contains(Node node) {
+        for (Node intersection : nodes) {
+            if (node.getId() == intersection.getId())
+                return true;
+        }
+        return false;
+    }
 }

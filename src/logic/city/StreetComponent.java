@@ -31,7 +31,6 @@ public class StreetComponent {
      * Calculates the degrees from the "From x,y" to the "To x,y"
      */
     protected void calcDegrees() {
-
         this.degrees = Utils.calcDegreesBetweenTwoPoint(getxFrom(),getyFrom(),getxTo(),getyTo());
         // TODO: 24.12.2017 Test
     }

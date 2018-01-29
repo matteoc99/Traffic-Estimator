@@ -1,7 +1,5 @@
 package logic.city;
 
-import logic.Utils;
-
 import java.awt.*;
 import java.util.ArrayList;
 
@@ -12,219 +10,122 @@ import static logic.Utils.calcDegreesBetweenTwoPoint;
  * @since 15.12.2017
  */
 public class Street extends StreetComponent {
-    /**
-     * All lanes that have to be drawn
-     * cars on lanes have to be drawn to
-     * <p>
-     * The lane with the smallest index is the one nearest to the center of the street
-     */
-    private ArrayList<Lane> streetDirectionLanes;
-    private ArrayList<Lane> reverseDirectionLanes;
 
-    /**
-     * from where to where the street goes
-     * ONLY From knows this street
-     */
-    private StreetIntersection from;
-    private StreetIntersection to;
 
-    /**
-     * Max and Min speed that is allowed
-     */
+    private String id;
+    private City parent;
+    private Node from;
+    private Node to;
     private int maxSpeed;
-    private int minSpeed;
+    private double prominence;
 
-    /**
-     * how famous this street is 0-1
-     * 1 max => very famous
-     */
-    private double fame;
+    private ArrayList<Lane> forwardLanes; //TODO add remove contains
+    private ArrayList<Lane> backwardLanes;//TODO add remove contains
+    private ArrayList<Congestion> congestions;//TODO add remove contains
 
-    /**
-     * Congestions on this street
-     */
-    private ArrayList<Congestion> congestions;
 
-    public Street(StreetIntersection from, StreetIntersection to, int maxSpeed, int minSpeed, double fame) {
-        /*TODO dadurch gehen alle straßen in die obere ecke
-            man kann je nach winkel die straßen an den Seiten mittleren anhängen
-        */
-        //Step 1 calc relativ degrees
-        double degrees = calcDegreesBetweenTwoPoint(from.getLocation(),to.getLocation());
-        this.xFrom = from.getX();
-        this.xTo = to.getX();
-        this.yFrom = from.getY();
-        this.yTo = to.getY();
-        calcDegrees();
-
-        System.out.println(degrees);
-
-        reverseDirectionLanes = new ArrayList<>();
-        streetDirectionLanes = new ArrayList<>();
-
+    public Street(String id, City parent, Node from, Node to, int maxSpeed, double prominence) {
+        super(from.getX(), to.getX(), from.getY(), to.getY());
+        this.id = id;
+        this.parent = parent;
         this.from = from;
         this.to = to;
         this.maxSpeed = maxSpeed;
-        this.minSpeed = minSpeed;
-        this.fame = fame;
-        from.addStreet(this);
-        //NOT because only from has to know this street  to.addStreet(this);
-
-    }
-
-    public Street(StreetIntersection from, StreetIntersection to) {
-        this(from, to, 80, 50, 1);
+        this.prominence = prominence;
     }
 
 
 
-    public void moveCars() {
-        // TODO: 15.12.2017
-    }
-
-    public void killStreet() {
-        from.addStreet(this);
-        to.addStreet(this);
-    }
-
-    /**
-     * Adds a lane
-     *
-     * @return true if it was successfully added, otherwise false
-     */
-    public boolean addLane(Lane lane) {
-        if (contains(lane)) {
-            System.out.println("Street 75");
-            return false;
+    public void addCongestion(Congestion congestion) {
+        if(!contains(congestion)){
+            congestions.add(congestion);
         }
-        if (lane.isReverse())
-            reverseDirectionLanes.add(lane);
-        else
-            streetDirectionLanes.add(lane);
-        return true;
     }
 
-    /**
-     * Removes a lane
-     *
-     * @return true if it was successfully removed, otherwise false
-     */
-    public boolean removeLane(Lane lane) {
-        if (!contains(lane)) {
-            System.out.println("Street 92");
-            return false;
-        }
-        if (lane.isReverse()) {
-            reverseDirectionLanes.remove(lane);
-
-        } else {
-            streetDirectionLanes.remove(lane);
-        }
-        return true;
-    }
-
-    /**
-     * Checks if this city contains a certain lane
-     *
-     * @param lane the lane to check
-     * @return true if it contains the lane, otherwise false
-     */
-    public boolean contains(Lane lane) {
-        for (Lane l : streetDirectionLanes) {
-            if (lane.equals(l))
-                return true;
-        }
-        for (Lane l : reverseDirectionLanes) {
-            if (lane.equals(l))
-                return true;
-        }
-        return false;
-    }
-
-    /**
-     * gets the neighbors of a lane
-     * @param lane to check
-     * @return zero, one or two neighbors. null->error
-     *
-     */
-    public ArrayList<Lane> getNeighborLanes(Lane lane) {
-        ArrayList<Lane> ret = new ArrayList<>();
-        if (!contains(lane)) {
-            System.out.println("Street 131");
-            return null;
-        }
-        int index = streetDirectionLanes.indexOf(lane);
-        if (index < 0) {
-            index = reverseDirectionLanes.indexOf(lane);
-            if(index-1>=0){
-                ret.add(reverseDirectionLanes.get(index-1));
-            }
-            if(index+1<reverseDirectionLanes.size()){
-                ret.add(reverseDirectionLanes.get(index+1));
-            }
+    public void removeCongestion(Congestion congestion) {
+        if(contains(congestion)){
+            congestions.remove(congestion);
         }else{
-            if(index-1>=0){
-                ret.add(streetDirectionLanes.get(index-1));
-            }
-            if(index+1<streetDirectionLanes.size()){
-                ret.add(streetDirectionLanes.get(index+1));
-            }
+            System.out.println("Nothing to remove 49");
         }
-        return ret;
     }
 
-    /**
-     * Adds a Congestion
-     *
-     * @return true if it was successfully added, otherwise false
-     */
-    public boolean addCongestion(Congestion congestion) {
-        if(contains(congestion)) {
-            System.out.println("Street 161");
-            return false;
-        }
-        congestions.add(congestion);
-        return true;
-    }
-
-    /**
-     * Removes a Congestion
-     *
-     * @return true if it was successfully removed, otherwise false
-     */
-    public boolean removeCongestion(Congestion congestion) {
-        if(!contains(congestion)) {
-            System.out.println("Street 175");
-            return false;
-        }
-        congestions.remove(congestion);
-        return true;
-    }
-
-    /**
-     * Checks if this city contains a certain Street
-     * @param congestion the street to check
-     * @return true if it contains the street, otherwise false
-     */
     public boolean contains(Congestion congestion) {
-        for (Congestion c : congestions) {
-            if(congestion.equals(c))
+        for (Congestion congestion1: congestions) {
+            if (congestion1.equals(congestion)) {
+                System.out.println("CONTAINS Congestion ");
                 return true;
+            }
         }
         return false;
     }
 
-    public Rectangle getBounds() {
-        int smallX=Integer.min(xTo,xFrom);
-        int smallY=Integer.min(yTo,yFrom);
-        int width=Integer.max(xTo,xFrom)-smallX;
-        int height=Integer.max(yTo,yFrom)-smallY;
-        if(width<2)
-            width=1+reverseDirectionLanes.size()*2+streetDirectionLanes.size()*2;
-        if(height<2)
-            height=1+reverseDirectionLanes.size()*2+streetDirectionLanes.size()*2;
-        Rectangle ret = new Rectangle(smallX,smallY,width,height);
-        return ret;
+    public void addLane(Lane lane) {
+        if(!contains(lane)){
+            if(lane.isReverse()){
+                backwardLanes.add(lane);
+            }else {
+                forwardLanes.add(lane);
+            }
+        }
+    }
+
+    public void removeLane(Lane lane) {
+        if(contains(lane)){
+            if(lane.isReverse()){
+                backwardLanes.remove(lane);
+            }else {
+                forwardLanes.remove(lane);
+            }
+        }
+    }
+
+    public boolean contains(Lane lane) {
+        for (Lane lane1 : backwardLanes) {
+            if (lane1.equals(lane)) {
+                System.out.println("CONTAINS LANE 2");
+                return true;
+            }
+        }
+        for (Lane lane1 : forwardLanes) {
+            if (lane1.equals(lane)) {
+                System.out.println("CONTAINS LANE 2");
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public City getParent() {
+        return parent;
+    }
+
+    public void setParent(City parent) {
+        this.parent = parent;
+    }
+
+    public Node getFrom() {
+        return from;
+    }
+
+    public void setFrom(Node from) {
+        this.from = from;
+    }
+
+    public Node getTo() {
+        return to;
+    }
+
+    public void setTo(Node to) {
+        this.to = to;
     }
 
     public int getMaxSpeed() {
@@ -235,37 +136,27 @@ public class Street extends StreetComponent {
         this.maxSpeed = maxSpeed;
     }
 
-    public int getMinSpeed() {
-        return minSpeed;
+    public double getProminence() {
+        return prominence;
     }
 
-    public void setMinSpeed(int minSpeed) {
-        this.minSpeed = minSpeed;
+    public void setProminence(double prominence) {
+        this.prominence = prominence;
     }
 
-    public double getFame() {
-        return fame;
+    public ArrayList<Lane> getForwardLanes() {
+        return forwardLanes;
     }
 
-    public void setFame(double fame) {
-        this.fame = fame;
+    public void setForwardLanes(ArrayList<Lane> forwardLanes) {
+        this.forwardLanes = forwardLanes;
     }
 
-
-
-    public ArrayList<Lane> getStreetDirectionLanes() {
-        return streetDirectionLanes;
+    public ArrayList<Lane> getBackwardLanes() {
+        return backwardLanes;
     }
 
-    public ArrayList<Lane> getReverseDirectionLanes() {
-        return reverseDirectionLanes;
-    }
-
-    public StreetIntersection getFrom() {
-        return from;
-    }
-
-    public StreetIntersection getTo() {
-        return to;
+    public void setBackwardLanes(ArrayList<Lane> backwardLanes) {
+        this.backwardLanes = backwardLanes;
     }
 }

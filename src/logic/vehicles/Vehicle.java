@@ -1,6 +1,5 @@
 package logic.vehicles;
 
-import logic.PositionableComponent;
 import logic.city.City;
 import logic.city.Lane;
 import logic.city.Path;
@@ -11,7 +10,7 @@ import java.util.ArrayList;
  * @author Matteo Cosi
  * @since 15.12.2017
  */
-public class Vehicle extends PositionableComponent{
+public class Vehicle {
 
     /**
      * lane where the car is currently driving
@@ -19,6 +18,9 @@ public class Vehicle extends PositionableComponent{
     private Lane lane;
 
     private int weight;
+    private int width;
+    private int height;
+
     private int maxSpeed;
 
     /**
@@ -47,7 +49,6 @@ public class Vehicle extends PositionableComponent{
         this.streetKnowledge = streetKnowledge;
         this.speeder = speeder;
         lane.addVehicle(this);
-
     }
     public Vehicle(Lane lane, int weight, int maxSpeed, int streetKnowledge, int speeder) {
         this(lane,weight, maxSpeed,null, streetKnowledge, speeder);
@@ -75,8 +76,8 @@ public class Vehicle extends PositionableComponent{
         lane=newLane;
     }
 
-    public ArrayList<Lane> getNeighborLanes(){
-        return lane.getNeighborLanes();
+    public ArrayList<Lane> getNeighbourLanes(){
+        return lane.getNeighbourLanes();
     }
 
     public int getWeight() {
@@ -109,5 +110,37 @@ public class Vehicle extends PositionableComponent{
 
     public void setSpeeder(int speeder) {
         this.speeder = speeder;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public void setWidth(int width) {
+        this.width = width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public void setHeight(int height) {
+        this.height = height;
+    }
+
+    public int getMaxProgress() {
+        return maxProgress;
+    }
+
+    public void setMaxProgress(int maxProgress) {
+        this.maxProgress = maxProgress;
+    }
+
+    public Path getPath() {
+        return path;
+    }
+
+    public void setPath(Path path) {
+        this.path = path;
     }
 }

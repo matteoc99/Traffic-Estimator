@@ -1,6 +1,0 @@
-Steps:
-    1. create City object
-    2. add Street Intersections to the city ojbect
-    3. create streets
-    4. add vehicles(with a path) to street intersections
-    5. start the simuation

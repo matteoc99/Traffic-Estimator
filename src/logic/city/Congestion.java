@@ -1,14 +1,13 @@
 package logic.city;
 
-import logic.PositionableComponent;
-
 import java.util.ArrayList;
 
 /**
  * @author Matteo Cosi
  * @since 15.12.2017
  */
-public class Congestion extends PositionableComponent {
+public class Congestion {
+
     private Street affectedStreet;
     private ArrayList<Lane> affectedLanes;
 
