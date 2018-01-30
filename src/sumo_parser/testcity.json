@@ -1,0 +1,337 @@
+{
+  "nodes": [
+    {
+      "id": "0",
+      "x": 10,
+      "y": 10,
+      "fame":  0.2,
+      "type": "MultiConnection"
+    },
+    {
+      "id": "0C1_0",
+      "x": 15,
+      "y": 15,
+      "fame": 0.5,
+      "type": "Connection"
+    },
+    {
+      "id": "1",
+      "x": 20,
+      "y": 10,
+      "fame": 0.5,
+      "type": "MultiConnection"
+    },
+    {
+      "id": "2",
+      "x": 10,
+      "y": 20,
+      "fame": 0.2,
+      "type": "MultiConnection"
+    },
+    {
+      "id": "3",
+      "x": 20,
+      "y": 20,
+      "fame": 0.25,
+      "type": "MultiConnection"
+    },
+    {
+      "id": "4",
+      "x": 10,
+      "y": 0,
+      "fame": 1,
+      "type": "DeadEnd"
+    },
+    {
+      "id": "5",
+      "x": 20,
+      "y": 0,
+      "fame": 1,
+      "type": "DeadEnd"
+    },
+    {
+      "id": "6",
+      "x": 0,
+      "y": 10,
+      "fame": 1,
+      "type": "DeadEnd"
+    },
+    {
+      "id": "7",
+      "x": 30,
+      "y": 10,
+      "fame": 1,
+      "type": "DeadEnd"
+    },
+    {
+      "id": "8",
+      "x": 0,
+      "y": 20,
+      "fame": 1,
+      "type": "DeadEnd"
+    },
+    {
+      "id": "9",
+      "x": 30,
+      "y": 20,
+      "fame": 1,
+      "type": "DeadEnd"
+    },
+    {
+      "id": "10",
+      "x": 10,
+      "y": 30,
+      "fame": 1,
+      "type": "DeadEnd"
+    },
+    {
+      "id": "11",
+      "x": 20,
+      "y": 30,
+      "fame": 1,
+      "type": "DeadEnd"
+    }
+  ],
+  "streets": [
+    {
+      "id": "0to0C1_0",
+      "from:": "0",
+      "to": "0C1_0",
+      "maxSpeed": 2,
+      "prominence": 1
+    },
+    {
+      "id": "0C1_0to1",
+      "from:": "0C1_0",
+      "to": "1",
+      "maxSpeed": 2,
+      "prominence": 1
+    },
+    {
+      "id": "1to2",
+      "from:": "1",
+      "to": "2",
+      "maxSpeed": 2,
+      "prominence": 1
+    },
+    {
+      "id": "2to3",
+      "from:": "2",
+      "to": "3",
+      "maxSpeed": 2,
+      "prominence": 1
+    },
+    {
+      "id": "3to0",
+      "from:": "3",
+      "to": "0",
+      "maxSpeed": 2,
+      "prominence": 1
+    },
+    {
+      "id": "4to0",
+      "from:": "4",
+      "to": "0",
+      "maxSpeed": 2,
+      "prominence": 1
+    },
+    {
+      "id": "5to1",
+      "from:": "5",
+      "to": "1",
+      "maxSpeed": 2,
+      "prominence": 1
+    },
+    {
+      "id": "6to0",
+      "from:": "6",
+      "to": "0",
+      "maxSpeed": 2,
+      "prominence": 1
+    },
+    {
+      "id": "7to1",
+      "from:": "7",
+      "to": "1",
+      "maxSpeed": 2,
+      "prominence": 1
+    },
+    {
+      "id": "8to3",
+      "from:": "8",
+      "to": "3",
+      "maxSpeed": 2,
+      "prominence": 1
+    },
+    {
+      "id": "9to2",
+      "from:": "9",
+      "to": "2",
+      "maxSpeed": 2,
+      "prominence": 1
+    },
+    {
+      "id": "10to3",
+      "from:": "10",
+      "to": "3",
+      "maxSpeed": 2,
+      "prominence": 1
+    },
+    {
+      "id": "11to2",
+      "from:": "11",
+      "to": "2",
+      "maxSpeed": 2,
+      "prominence": 1
+    }
+  ],
+  "lanes": [
+    {
+      "id": "0to0C1_0_t_0",
+      "parent": "0to0C1_0",
+      "index": 0,
+      "direction": true
+    },
+    {
+      "id": "0C1_0to1_t_0",
+      "parent": "0C1_0to1",
+      "index": 0,
+      "direction": true
+    },
+    {
+      "id": "1to2_t_0",
+      "parent": "1to2",
+      "index": 0,
+      "direction": true
+    },
+    {
+      "id": "1to2_f_0",
+      "parent": "1to2",
+      "index": 0,
+      "direction": false
+    },
+    {
+      "id": "2to3_t_0",
+      "parent": "2to3",
+      "index": 0,
+      "direction": true
+    },
+    {
+      "id": "2to3_f_0",
+      "parent": "2to3",
+      "index": 0,
+      "direction": false
+    },
+    {
+      "id": "3to0_t_0",
+      "parent": "3to0",
+      "index": 0,
+      "direction": true
+    },
+    {
+      "id": "3to0_f_0",
+      "parent": "3to0",
+      "index": 0,
+      "direction": false
+    },
+    {
+      "id": "4to0_t_0",
+      "parent": "4to0",
+      "index": 0,
+      "direction": true
+    },
+    {
+      "id": "4to0_f_0",
+      "parent": "4to0",
+      "index": 0,
+      "direction": false
+    },
+    {
+      "id": "5to1_t_0",
+      "parent": "5to1",
+      "index": 0,
+      "direction": true
+    },
+    {
+      "id": "5to1_f_0",
+      "parent": "5to1",
+      "index": 0,
+      "direction": false
+    },
+    {
+      "id": "6to0_t_0",
+      "parent": "6to0",
+      "index": 0,
+      "direction": true
+    },
+    {
+      "id": "6to0_f_0",
+      "parent": "6to0",
+      "index": 0,
+      "direction": false
+    },
+    {
+      "id": "7to1_t_0",
+      "parent": "7to1",
+      "index": 0,
+      "direction": true
+    },
+    {
+      "id": "7to1_f_0",
+      "parent": "7to1",
+      "index": 0,
+      "direction": false
+    },
+    {
+      "id": "8to3_t_0",
+      "parent": "8to3",
+      "index": 0,
+      "direction": true
+    },
+    {
+      "id": "8to3_f_0",
+      "parent": "8to3",
+      "index": 0,
+      "direction": false
+    },
+    {
+      "id": "9to2_t_0",
+      "parent": "9to2",
+      "index": 0,
+      "direction": true
+    },
+    {
+      "id": "9to2_f_0",
+      "parent": "9to2",
+      "index": 0,
+      "direction": false
+    },
+    {
+      "id": "10to3_t_0",
+      "parent": "10to3",
+      "index": 0,
+      "direction": true
+    },
+    {
+      "id": "10to3_f_0",
+      "parent": "10to3",
+      "index": 0,
+      "direction": false
+    },
+    {
+      "id": "11to2_t_0",
+      "parent": "11to2",
+      "index": 0,
+      "direction": true
+    },
+    {
+      "id": "11to2_f_0",
+      "parent": "11to2",
+      "index": 0,
+      "direction": false
+    }
+  ],
+  "streetlight": [
+
+  ]
+}
