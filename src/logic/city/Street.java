@@ -19,9 +19,9 @@ public class Street extends StreetComponent {
     private int maxSpeed;
     private double prominence;
 
-    private ArrayList<Lane> forwardLanes; //TODO add remove contains
-    private ArrayList<Lane> backwardLanes;//TODO add remove contains
-    private ArrayList<Congestion> congestions;//TODO add remove contains
+    private ArrayList<Lane> forwardLanes;
+    private ArrayList<Lane> backwardLanes;
+    private ArrayList<Congestion> congestions;
 
 
     public Street(String id, City parent, Node from, Node to, int maxSpeed, double prominence) {
@@ -35,23 +35,22 @@ public class Street extends StreetComponent {
     }
 
 
-
     public void addCongestion(Congestion congestion) {
-        if(!contains(congestion)){
+        if (!contains(congestion)) {
             congestions.add(congestion);
         }
     }
 
     public void removeCongestion(Congestion congestion) {
-        if(contains(congestion)){
+        if (contains(congestion)) {
             congestions.remove(congestion);
-        }else{
+        } else {
             System.out.println("Nothing to remove 49");
         }
     }
 
     public boolean contains(Congestion congestion) {
-        for (Congestion congestion1: congestions) {
+        for (Congestion congestion1 : congestions) {
             if (congestion1.equals(congestion)) {
                 System.out.println("CONTAINS Congestion ");
                 return true;
@@ -61,20 +60,20 @@ public class Street extends StreetComponent {
     }
 
     public void addLane(Lane lane) {
-        if(!contains(lane)){
-            if(lane.isReverse()){
+        if (!contains(lane)) {
+            if (lane.isReverse()) {
                 backwardLanes.add(lane);
-            }else {
+            } else {
                 forwardLanes.add(lane);
             }
         }
     }
 
     public void removeLane(Lane lane) {
-        if(contains(lane)){
-            if(lane.isReverse()){
+        if (contains(lane)) {
+            if (lane.isReverse()) {
                 backwardLanes.remove(lane);
-            }else {
+            } else {
                 forwardLanes.remove(lane);
             }
         }
@@ -159,4 +158,49 @@ public class Street extends StreetComponent {
     public void setBackwardLanes(ArrayList<Lane> backwardLanes) {
         this.backwardLanes = backwardLanes;
     }
+
+    public Lane getBackwardLaneByIndex(int index) {
+        Lane lane = null;
+        for (int i = 0; i < backwardLanes.size(); i++) {
+            if(backwardLanes.get(i).getIndex() == index)
+                lane= backwardLanes.get(i);
+        }
+        return lane;
+    }
+    public Lane getForwardLaneByIndex(int index) {
+        Lane lane = null;
+        for (int i = 0; i < forwardLanes.size(); i++) {
+            if(forwardLanes.get(i).getIndex() == index)
+                lane= forwardLanes.get(i);
+        }
+        return lane;
+    }
+
+    public ArrayList<Lane> getNeighbourLanes(Lane lane) {
+        ArrayList<Lane> ret = new ArrayList<>();
+        if (lane.isReverse()) {
+            if (lane.getIndex() > 0) {
+                ret.add(getBackwardLaneByIndex(lane.getIndex() - 1));
+            }
+            if (lane.getIndex() < backwardLanes.size() - 1) {
+                ret.add(getBackwardLaneByIndex(lane.getIndex() + 1));
+            }
+        } else {
+            if (lane.getIndex() > 0) {
+                ret.add(getForwardLaneByIndex(lane.getIndex() - 1));
+            }
+            if (lane.getIndex() < forwardLanes.size() - 1) {
+                ret.add(getForwardLaneByIndex(lane.getIndex() + 1));
+            }
+        }
+        return ret;
+    }
+
+    /**
+     * for dijkstra
+     */
+    public double getGesamtKosten(int autoSpeed){
+        return getLength()/Integer.min(autoSpeed,maxSpeed);
+    }
+
 }

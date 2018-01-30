@@ -14,7 +14,7 @@ public class Lane extends StreetComponent {
     private boolean reverse;
     private int index;
     private ArrayList<Streetlight> streetlights;
-    private ArrayList<Vehicle> vehicles; //TODO add remove contains
+    private ArrayList<Vehicle> vehicles;
 
     public Lane(String id, Street parent, boolean reverse, int index) {
         super(parent.xFrom, parent.xTo, parent.yFrom, parent.yTo);
@@ -25,13 +25,24 @@ public class Lane extends StreetComponent {
     }
 
     public ArrayList<Lane> getNeighbourLanes() {
-        // TODO: 29.01.2018
-        return null;
+        return parent.getNeighbourLanes(this);
     }
 
     public Vehicle getNextVehicle(int position) {
-        // TODO: 29.01.2018
-        return null;
+        int smallest=Integer.MAX_VALUE;
+        int index = -1;
+        int i=0;
+        for (Vehicle vehicle : vehicles) {
+            if(vehicle.getProgressInLane() > position && vehicle.getProgressInLane()<smallest){
+                index=i;
+                smallest=vehicle.getProgressInLane();
+            }
+            i++;
+        }
+        if (index > -1)
+            return vehicles.get(index);
+        else
+            return null;
     }
 
 

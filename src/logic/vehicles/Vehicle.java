@@ -40,6 +40,8 @@ public class Vehicle {
      */
     private int speeder;
 
+    private int progressInLane;
+
 
     public Vehicle(Lane lane, int weight, int maxSpeed, Path path, int streetKnowledge, int speeder) {
         this.lane = lane;
@@ -49,10 +51,11 @@ public class Vehicle {
         this.streetKnowledge = streetKnowledge;
         this.speeder = speeder;
         lane.addVehicle(this);
+        progressInLane=0;
     }
     public Vehicle(Lane lane, int weight, int maxSpeed, int streetKnowledge, int speeder) {
-        this(lane,weight, maxSpeed,null, streetKnowledge, speeder);
-        this.path = City.doRandomDijkstra(this);
+        this(lane,weight, maxSpeed, null, streetKnowledge, speeder);
+        this.path = getParent().getParent().getParent().doRandomPathFinding(this);
     }
     public Vehicle(Lane lane, int maxSpeed, int streetKnowledge, int speeder) {
        this(lane,1500,maxSpeed,streetKnowledge,speeder);
@@ -142,5 +145,13 @@ public class Vehicle {
 
     public void setPath(Path path) {
         this.path = path;
+    }
+
+    public int getProgressInLane() {
+        return progressInLane;
+    }
+
+    public void setProgressInLane(int progressInLane) {
+        this.progressInLane = progressInLane;
     }
 }

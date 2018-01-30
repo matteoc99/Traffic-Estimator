@@ -32,7 +32,6 @@ public class StreetComponent {
      */
     protected void calcDegrees() {
         this.degrees = Utils.calcDegreesBetweenTwoPoint(getxFrom(),getyFrom(),getxTo(),getyTo());
-        // TODO: 24.12.2017 Test
     }
 
 
@@ -49,7 +48,6 @@ public class StreetComponent {
                                 Math.pow(yTo - yFrom, 2)
                 )
         );
-        // TODO: 15.12.2017 test
     }
 
     public double getDegrees() {
