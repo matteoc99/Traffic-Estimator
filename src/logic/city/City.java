@@ -1,8 +1,14 @@
 package logic.city;
 
 import logic.vehicles.Vehicle;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.json.JSONTokener;
 
+import java.awt.*;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -11,6 +17,10 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @since 15.12.2017
  */
 public class City {
+
+    public static void main(String[] args) {
+        createCityFromJson(new File("C:\\Users\\User\\IdeaProjects\\Traffic-Estimator\\src\\sumo_parser\\testcity.json"));
+    }
 
     private ArrayList<Node> nodes;
 
@@ -25,10 +35,70 @@ public class City {
         this.name = name;
     }
 
-    public static City createCityFromJson(File json) {
-        return new City("Bozen"); // TODO: 29.01.2018
+    public static City createCityFromJson(File jsonFile) {
+        City city = new City("Blogland");
+        JSONTokener root;
+        try {
+            root = new JSONTokener(new FileReader(jsonFile));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        }
+        JSONObject topNode = new JSONObject(root);
+
+        JSONArray nodes = topNode.getJSONArray("nodes");
+        for (int i = 0; i < nodes.length(); i++) {
+            // id(String), x(number), y(number), fame(number), type(String)
+            JSONObject nodeEntry = nodes.getJSONObject(i);
+            String id = nodeEntry.getString("id");
+            int x = nodeEntry.getInt("x");
+            int y = nodeEntry.getInt("y");
+            double fame = nodeEntry.getDouble("fame");
+            String type = nodeEntry.getString("type");
+
+            city.addNode(createNodeByClassName(type, city, new Point(x, y), fame, id));
+        }
+
+        JSONArray streets = new JSONArray("streets");
+        for (int i = 0; i < streets.length(); i++) {
+            JSONObject streetEntry = streets.getJSONObject(i);
+            String id = streetEntry.getString("id");
+            String from = streetEntry.getString("from");
+            String to = streetEntry.getString("to");
+            double maxSpeed = streetEntry.getDouble("maxSpeed");
+            double prominence = streetEntry.getDouble("prominence");
+
+            Node fromNode = city.getNodeById(from);
+            Node toNode = city.getNodeById(to);
+
+            Street street = new Street(id, city, fromNode, toNode, maxSpeed, prominence);
+        }
+
+        System.out.println(topNode.toString());
+
+        return city;
     }
 
+    private static Node createNodeByClassName(String className,
+                                              City city,
+                                              Point point,
+                                              double fame,
+                                              String id) {
+        Node ret = null;
+        switch (className) {
+            case "Connection":
+                ret = new Connection(city, point, fame, id);
+                break;
+            case "MultiConnection":
+                ret = new MultiConnection(city, point, fame, id);
+                break;
+            case "DeadEnd":
+                ret = new DeadEnd(city, point, fame, id);
+                break;
+        }
+
+        return ret;
+    }
 
     private Path doDijkstra(Node from, Node to) {
         return new Path(); // TODO: 15.12.2017
@@ -101,6 +171,17 @@ public class City {
     }
 
 
+    public Street getStreetById(String id) {
+        for (int i = 0; i < nodes.size(); i++) {
+            for (int j = 0; j < nodes.get(i).getStreets().size(); j++) {
+                if (nodes.get(i).getStreets().get(j).getId().equals(id)) {
+                    return nodes.get(i).getStreets().get(j);
+                }
+            }
+        }
+        return null;
+    }
+
     public Lane getLaneById(String id) {
         for (int i = 0; i < nodes.size(); i++) {
             for (int j = 0; j < nodes.get(i).getStreets().size(); j++) {
@@ -115,17 +196,6 @@ public class City {
                 for (int k = 0; k <nodes.get(i).getStreets().get(j).getForwardLanes().size(); k++) {
                     if (nodes.get(i).getStreets().get(j).getForwardLanes().get(k).getId().equals(id))
                         return nodes.get(i).getStreets().get(j).getForwardLanes().get(k);
-                }
-            }
-        }
-        return null;
-    }
-
-    public Street getStreetById(String id) {
-        for (int i = 0; i < nodes.size(); i++) {
-            for (int j = 0; j < nodes.get(i).getStreets().size(); j++) {
-                if (nodes.get(i).getStreets().get(j).getId().equals(id)) {
-                    return nodes.get(i).getStreets().get(j);
                 }
             }
         }

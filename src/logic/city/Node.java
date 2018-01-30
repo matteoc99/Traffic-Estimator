@@ -21,6 +21,8 @@ public class Node {
         this.position = position;
         this.fame = fame;
         this.id = id;
+
+        this.streets = new ArrayList<>();
     }
 
     public Street getStreetById(String id){
@@ -94,5 +96,17 @@ public class Node {
 
     public String getId() {
         return id;
+    }
+
+    @Override
+    public String toString() {
+        return "Node(" + this.getClass().toString()+
+                "){" +
+                "parent=" + parent +
+                ", position=" + position +
+                ", fame=" + fame +
+                ", streets=" + streets +
+                ", id='" + id + '\'' +
+                '}';
     }
 }

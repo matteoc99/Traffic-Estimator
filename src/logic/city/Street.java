@@ -16,7 +16,7 @@ public class Street extends StreetComponent {
     private City parent;
     private Node from;
     private Node to;
-    private int maxSpeed;
+    private double maxSpeed;
     private double prominence;
 
     private ArrayList<Lane> forwardLanes;
@@ -24,7 +24,7 @@ public class Street extends StreetComponent {
     private ArrayList<Congestion> congestions;
 
 
-    public Street(String id, City parent, Node from, Node to, int maxSpeed, double prominence) {
+    public Street(String id, City parent, Node from, Node to, double maxSpeed, double prominence) {
         super(from.getX(), to.getX(), from.getY(), to.getY());
         this.id = id;
         this.parent = parent;
@@ -32,6 +32,9 @@ public class Street extends StreetComponent {
         this.to = to;
         this.maxSpeed = maxSpeed;
         this.prominence = prominence;
+
+        from.addStreet(this);
+        to.addStreet(this);
     }
 
 
@@ -140,11 +143,11 @@ public class Street extends StreetComponent {
         this.to = to;
     }
 
-    public int getMaxSpeed() {
+    public double getMaxSpeed() {
         return maxSpeed;
     }
 
-    public void setMaxSpeed(int maxSpeed) {
+    public void setMaxSpeed(double maxSpeed) {
         this.maxSpeed = maxSpeed;
     }
 
@@ -212,8 +215,8 @@ public class Street extends StreetComponent {
     /**
      * for dijkstra
      */
-    public double getGesamtKosten(int autoSpeed){
-        return getLength()/Integer.min(autoSpeed,maxSpeed);
+    public double getGesamtKosten(double autoSpeed){
+        return getLength()/Double.min(autoSpeed,maxSpeed);
     }
 
 }
