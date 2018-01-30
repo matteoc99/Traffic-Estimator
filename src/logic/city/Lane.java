@@ -22,6 +22,7 @@ public class Lane extends StreetComponent {
         this.parent = parent;
         this.reverse = reverse;
         this.index = index;
+        parent.addLane(this);
     }
 
     public ArrayList<Lane> getNeighbourLanes() {

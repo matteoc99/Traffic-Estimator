@@ -21,8 +21,8 @@ public class Node {
         this.position = position;
         this.fame = fame;
         this.id = id;
-
         this.streets = new ArrayList<>();
+        parent.addNode(this);
     }
 
     public Street getStreetById(String id){
