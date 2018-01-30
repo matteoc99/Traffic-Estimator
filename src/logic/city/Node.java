@@ -23,6 +23,14 @@ public class Node {
         this.id = id;
     }
 
+    public Street getStreetById(String id){
+        for (int i = 0; i < streets.size(); i++) {
+            if(streets.get(i).getId().equals(id))
+                return streets.get(i);
+        }
+        return null;
+    }
+
 
     public void addStreet(Street street){
         if(!contains(street)){

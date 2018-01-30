@@ -59,6 +59,19 @@ public class Street extends StreetComponent {
         return false;
     }
 
+
+    public Lane getLaneById(String id){
+        for (int i = 0; i < forwardLanes.size(); i++) {
+            if(forwardLanes.get(i).getId().equals(id))
+                return forwardLanes.get(i);
+        }
+        for (int i = 0; i < backwardLanes.size(); i++) {
+            if(backwardLanes.get(i).getId().equals(id))
+                return backwardLanes.get(i);
+        }
+        return null;
+    }
+
     public void addLane(Lane lane) {
         if (!contains(lane)) {
             if (lane.isReverse()) {

@@ -19,6 +19,7 @@ public class City {
     public City() {
         nodes = new ArrayList<>();
     }
+
     public City(String name) {
         this();
         this.name = name;
@@ -91,6 +92,45 @@ public class City {
         return false;
     }
 
+    public Node getNodeById(String id) {
+        for (int i = 0; i < nodes.size(); i++) {
+            if (nodes.get(i).getId().equals(id))
+                return nodes.get(i);
+        }
+        return null;
+    }
+
+
+    public Lane getLaneById(String id) {
+        for (int i = 0; i < nodes.size(); i++) {
+            for (int j = 0; j < nodes.get(i).getStreets().size(); j++) {
+                for (int k = 0; k <nodes.get(i).getStreets().get(j).getBackwardLanes().size(); k++) {
+                    if (nodes.get(i).getStreets().get(j).getBackwardLanes().get(k).getId().equals(id))
+                        return nodes.get(i).getStreets().get(j).getBackwardLanes().get(k);
+                }
+            }
+        }
+        for (int i = 0; i < nodes.size(); i++) {
+            for (int j = 0; j < nodes.get(i).getStreets().size(); j++) {
+                for (int k = 0; k <nodes.get(i).getStreets().get(j).getForwardLanes().size(); k++) {
+                    if (nodes.get(i).getStreets().get(j).getForwardLanes().get(k).getId().equals(id))
+                        return nodes.get(i).getStreets().get(j).getForwardLanes().get(k);
+                }
+            }
+        }
+        return null;
+    }
+
+    public Street getStreetById(String id) {
+        for (int i = 0; i < nodes.size(); i++) {
+            for (int j = 0; j < nodes.get(i).getStreets().size(); j++) {
+                if (nodes.get(i).getStreets().get(j).getId().equals(id)) {
+                    return nodes.get(i).getStreets().get(j);
+                }
+            }
+        }
+        return null;
+    }
 
     public String getName() {
         return name;
