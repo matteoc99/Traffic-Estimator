@@ -19,6 +19,6 @@ public class DeadEnd extends Node {
         if (getStreets().isEmpty())
             super.addStreet(street);
         else
-            System.out.println("TO MANY ADDED");
+            throw new RuntimeException("TO MANY ADDED");
     }
 }

@@ -37,20 +37,21 @@ public class Node {
     public void addStreet(Street street){
         if(!contains(street)){
             streets.add(street);
+        }else{
+            throw new RuntimeException("ALREADY CONTAINS STREET");
         }
     }
     public void removeStreet(Street street){
         if(contains(street)){
             streets.remove(street);
         }else {
-            System.out.println("NO STREET TO REMOVE");
+            throw new RuntimeException("NO STREET TO REMOVE");
         }
     }
 
     public boolean contains(Street street){
         for (Street street1: streets) {
             if (street.getId().equals(street1.getId())){
-                System.out.println("ALREADY CONTAINS STREET");
                 return true;
             }
         }

@@ -25,6 +25,8 @@ public class StreetlightLogic extends Thread{
     public void addStreetlight(Streetlight streetlight){
         if(!contains(streetlight)){
             streetlights.add(streetlight);
+        }else{
+            throw new RuntimeException("already contains light");
         }
     }
 
@@ -32,14 +34,13 @@ public class StreetlightLogic extends Thread{
         if (contains(streetlight)) {
             streetlights.remove(streetlight);
         }else{
-            System.out.println("NOTHING TO REMOVE LOGIC 30");
+            throw new RuntimeException("NOTHING TO REMOVE LOGIC 30");
         }
     }
 
     public boolean contains(Streetlight streetlight){
         for (Streetlight light:streetlights) {
             if(streetlight.equals(light)){
-                System.out.println("already contains light");
                 return true;
             }
         }

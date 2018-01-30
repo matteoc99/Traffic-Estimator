@@ -4,10 +4,10 @@ import com.sun.deploy.util.ArrayUtil;
 import gui.city.JCity;
 import logic.city.City;
 import logic.city.Street;
-import logic.city.StreetIntersection;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -59,7 +59,8 @@ public class Main extends JFrame {
     }
 
     public static void main(String[] args) {
-        City city = City.fromjson;
+        City city = City.createCityFromJson(
+                new File("C:\\Users\\User\\IdeaProjects\\Traffic-Estimator\\src\\sumo_parser\\testcity.json"));
         new Main(city);
 
     }

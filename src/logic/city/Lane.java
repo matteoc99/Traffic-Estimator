@@ -11,16 +11,16 @@ import java.util.ArrayList;
 public class Lane extends StreetComponent {
     private String id;
     private Street parent;
-    private boolean reverse;
+    private boolean reversed;
     private int index;
     private ArrayList<Streetlight> streetlights;
     private ArrayList<Vehicle> vehicles;
 
-    public Lane(String id, Street parent, boolean reverse, int index) {
+    public Lane(String id, Street parent, boolean reversed, int index) {
         super(parent.xFrom, parent.xTo, parent.yFrom, parent.yTo);
         this.id = id;
         this.parent = parent;
-        this.reverse = reverse;
+        this.reversed = reversed;
         this.index = index;
         parent.addLane(this);
     }
@@ -50,19 +50,21 @@ public class Lane extends StreetComponent {
     public void addStreetlight(Streetlight streetlight) {
         if (!contains(streetlight))
             streetlights.add(streetlight);
+        else
+            throw new RuntimeException("ALREADY CONTAINS STREET LIGHT 44");
+
     }
 
     public void removeStreetlight(Streetlight streetlight) {
         if (contains(streetlight))
             streetlights.remove(streetlight);
         else
-            System.out.println("NO THING TO REMOVE");
+            throw new RuntimeException("NO THING TO REMOVE");
     }
 
     public boolean contains(Streetlight streetlight) {
         for (Streetlight streetlight1 : streetlights) {
             if (streetlight1.equals(streetlight)) {
-                System.out.println("ALREADY CONTAINS STREET LIGHT 44");
                 return true;
             }
         }
@@ -72,19 +74,21 @@ public class Lane extends StreetComponent {
     public void addVehicle(Vehicle vehicle) {
         if (!contains(vehicle))
             vehicles.add(vehicle);
+        else
+            throw new RuntimeException("ALREADY CONTAINS Vehicle 44");
+
     }
 
     public void removeVehicle(Vehicle vehicle) {
         if (contains(vehicle))
             vehicles.remove(vehicle);
         else
-            System.out.println("NO THING TO REMOVE 69");
+            throw new RuntimeException("NO THING TO REMOVE 69");
     }
 
     public boolean contains(Vehicle vehicle) {
         for (Vehicle vehicle1 : vehicles) {
             if (vehicle1.equals(vehicle)) {
-                System.out.println("ALREADY CONTAINS Vehicle 44");
                 return true;
             }
         }
@@ -103,7 +107,7 @@ public class Lane extends StreetComponent {
         return index;
     }
 
-    public boolean isReverse() {
-        return reverse;
+    public boolean isReversed() {
+        return reversed;
     }
 }

@@ -56,10 +56,10 @@ public class City {
             double fame = nodeEntry.getDouble("fame");
             String type = nodeEntry.getString("type");
 
-            city.addNode(createNodeByClassName(type, city, new Point(x, y), fame, id));
+            createNodeByClassName(type, city, new Point(x, y), fame, id);
         }
 
-        JSONArray streets = new JSONArray("streets");
+        JSONArray streets = topNode.getJSONArray("streets");
         for (int i = 0; i < streets.length(); i++) {
             JSONObject streetEntry = streets.getJSONObject(i);
             String id = streetEntry.getString("id");
@@ -71,10 +71,21 @@ public class City {
             Node fromNode = city.getNodeById(from);
             Node toNode = city.getNodeById(to);
 
-            Street street = new Street(id, city, fromNode, toNode, maxSpeed, prominence);
+            new Street(id, city, fromNode, toNode, maxSpeed, prominence);
         }
 
-        System.out.println(topNode.toString());
+        JSONArray lanes = topNode.getJSONArray("lanes");
+        for (int i = 0; i < lanes.length(); i++) {
+            JSONObject laneEntry = lanes.getJSONObject(i);
+            String id = laneEntry.getString("id");
+            String parentStreet = laneEntry.getString("parent");
+            int index = laneEntry.getInt("index");
+            boolean reversed = laneEntry.getBoolean("reversed");
+
+            Street parent = city.getStreetById(parentStreet);
+
+            new Lane(id, parent, reversed, index);
+        }
 
         return city;
     }
@@ -141,6 +152,8 @@ public class City {
     public void addNode(Node node) {
         if (!contains(node)) {
             nodes.add(node);
+        }else{
+            throw new RuntimeException("CITY NODE ALREADY ADDED");
         }
     }
 
@@ -148,14 +161,13 @@ public class City {
         if (contains(node)) {
             nodes.remove(node);
         } else {
-            System.out.println("NO NODE TO REMOVE");
+            throw new RuntimeException("NO NODE TO REMOVE");
         }
     }
 
     public boolean contains(Node node) {
         for (Node node1 : nodes) {
             if (node.getId().equals(node1.getId())) {
-                System.out.println("CITY NODE ALREADY ADDED");
                 return true;
             }
         }

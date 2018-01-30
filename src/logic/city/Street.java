@@ -1,6 +1,5 @@
 package logic.city;
 
-import java.awt.*;
 import java.util.ArrayList;
 
 import static logic.Utils.calcDegreesBetweenTwoPoint;
@@ -33,6 +32,10 @@ public class Street extends StreetComponent {
         this.maxSpeed = maxSpeed;
         this.prominence = prominence;
 
+        forwardLanes = new ArrayList<>();
+        backwardLanes = new ArrayList<>();
+        congestions = new ArrayList<>();
+
         from.addStreet(this);
         to.addStreet(this);
     }
@@ -42,20 +45,22 @@ public class Street extends StreetComponent {
         if (!contains(congestion)) {
             congestions.add(congestion);
         }
+        else
+            throw new RuntimeException("CONTAINS Congestion ");
+
     }
 
     public void removeCongestion(Congestion congestion) {
         if (contains(congestion)) {
             congestions.remove(congestion);
         } else {
-            System.out.println("Nothing to remove 49");
+            throw new RuntimeException("Nothing to remove 49");
         }
     }
 
     public boolean contains(Congestion congestion) {
         for (Congestion congestion1 : congestions) {
             if (congestion1.equals(congestion)) {
-                System.out.println("CONTAINS Congestion ");
                 return true;
             }
         }
@@ -77,34 +82,36 @@ public class Street extends StreetComponent {
 
     public void addLane(Lane lane) {
         if (!contains(lane)) {
-            if (lane.isReverse()) {
+            if (lane.isReversed()) {
                 backwardLanes.add(lane);
             } else {
                 forwardLanes.add(lane);
             }
+        }else{
+            throw new RuntimeException("CONTAINS LANE 2");
         }
     }
 
     public void removeLane(Lane lane) {
         if (contains(lane)) {
-            if (lane.isReverse()) {
+            if (lane.isReversed()) {
                 backwardLanes.remove(lane);
             } else {
                 forwardLanes.remove(lane);
             }
+        }else{
+            throw new RuntimeException("NO REMOVE LANE 2");
         }
     }
 
     public boolean contains(Lane lane) {
         for (Lane lane1 : backwardLanes) {
             if (lane1.equals(lane)) {
-                System.out.println("CONTAINS LANE 2");
                 return true;
             }
         }
         for (Lane lane1 : forwardLanes) {
             if (lane1.equals(lane)) {
-                System.out.println("CONTAINS LANE 2");
                 return true;
             }
         }
@@ -194,7 +201,7 @@ public class Street extends StreetComponent {
 
     public ArrayList<Lane> getNeighbourLanes(Lane lane) {
         ArrayList<Lane> ret = new ArrayList<>();
-        if (lane.isReverse()) {
+        if (lane.isReversed()) {
             if (lane.getIndex() > 0) {
                 ret.add(getBackwardLaneByIndex(lane.getIndex() - 1));
             }

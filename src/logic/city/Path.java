@@ -31,13 +31,12 @@ public class Path {
      *
      * @return true if it was successfully added, otherwise false
      */
-    public boolean addNode(Node node) {
-        if (contains(node)) {
-            System.out.println("Path 45");
-            return false;
+    public void addNode(Node node) {
+        if (!contains(node)) {
+            nodes.add(node);
+        }else{
+            throw new RuntimeException("Path 45");
         }
-        nodes.add(node);
-        return true;
     }
 
     /**
@@ -45,13 +44,12 @@ public class Path {
      *
      * @return true if it was successfully removed, otherwise false
      */
-    public boolean removeNode(Node node) {
-        if (!contains(node)) {
-            System.out.println("Path 59");
-            return false;
+    public void removeNode(Node node) {
+        if (contains(node)) {
+            nodes.remove(node);
+        }else{
+            throw new RuntimeException("Path");
         }
-        nodes.remove(node);
-        return true;
     }
 
     /**
