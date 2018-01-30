@@ -12,7 +12,6 @@ public class Utils {
     }
     public static double calcDegreesBetweenTwoPoint(int fromX,int fromY,int toX,int toY){
         double angle = (double) Math.toDegrees(Math.atan2(toY - fromY, toX- fromX));
-
         if (angle < 0) {
             angle += 360;
         }

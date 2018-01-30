@@ -94,4 +94,21 @@ public class StreetComponent {
     }
 
 
+    public Rectangle getBounds(){
+        calcNewPositionsBasedOnDegrees();
+        return new Rectangle(Integer.min(xTo,xFrom),Integer.min(yTo,yFrom),Integer.max(xTo,xFrom)-Integer.min(xTo,xFrom),Integer.max(yTo,yFrom)-Integer.min(yTo,yFrom));
+    }
+
+    private void calcNewPositionsBasedOnDegrees() {
+        if (getDegrees()>=45&&getDegrees()<135){
+
+        }else if (getDegrees()>=135&&getDegrees()<225){
+
+        }else if (getDegrees()>=225&&getDegrees()<315){
+
+        }else{
+
+        }
+    }
+
 }
