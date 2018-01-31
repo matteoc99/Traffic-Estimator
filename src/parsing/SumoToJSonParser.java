@@ -1,8 +1,7 @@
-package sumo_parser;
+package parsing;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.json.JSONStringer;
 import org.json.JSONTokener;
 
 import java.io.File;
@@ -50,10 +49,20 @@ public class SumoToJSonParser {
 
         JSONObject jsonObject = new JSONObject();
 
+        JSONArray nodes = new JSONArray();
+
         JSONObject nodes_0 = new JSONObject();
         nodes_0.put("id", "0");
         nodes_0.put("x", 2);
-        jsonObject.put("nodes", nodes_0);
+
+        JSONObject nodes_1 = new JSONObject();
+        nodes_1.put("id", "2");
+        nodes_1.put("x", 2);
+
+        nodes.put(nodes_0);
+        nodes.put(nodes_1);
+
+        jsonObject.put("nodes", nodes);
 
         System.out.println(jsonObject.toString());
     }
