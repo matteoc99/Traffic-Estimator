@@ -26,9 +26,6 @@ public final class OsmToJSonParser {
 
         JSONObject jsonRoot = new JSONObject();
 
-        double minLon = 0;
-        double minLat = 0;
-
         // https://www.mkyong.com/java/how-to-read-xml-file-in-java-dom-parser/
         try {
 
@@ -40,27 +37,12 @@ public final class OsmToJSonParser {
             //read this - http://stackoverflow.com/questions/13786607/normalization-in-dom-parsing-with-java-how-does-it-work
             doc.getDocumentElement().normalize();
 
-            NodeList boundsList = doc.getElementsByTagName("bounds");
-            Node boundsNode = boundsList.item(0);
-            if (boundsNode.getNodeType() == Node.ELEMENT_NODE) {
-                Element boundsElement = (Element) boundsNode;
-                minLat = Double.parseDouble(boundsElement.getAttribute("minlat"));
-                minLon = Double.parseDouble(boundsElement.getAttribute("minlon"));
-
-                // no digits and positive numbers only, starting top left
-                minLon += 180;
-                minLon *= 10000000;
-
-                minLat += 90;
-                minLat = 180-minLat;
-                minLat *= 10000000;
-
-            } else
-                throw new RuntimeException("OsmJoJSonParser:Bounds not found");
-
             NodeList nList = doc.getElementsByTagName("node");
 
             JSONArray jNodes = new JSONArray();
+
+            double smallestX = Integer.MAX_VALUE;
+            double smallestY = Integer.MAX_VALUE;
 
             for (int i = 0; i < nList.getLength() && i < 50; i++) {
 
@@ -81,8 +63,11 @@ public final class OsmToJSonParser {
                     y = 180-y;
                     y *= 10000000;
 
-                    jNode.put("x", (int)(x-minLon)); //lon
-                    jNode.put("y", (int)(y-minLat)); //lat
+                    if ((int)x < smallestX) smallestX = (int)x;
+                    if ((int)y < smallestY) smallestY = (int)y;
+
+                    jNode.put("x", (int)(x)); //lon
+                    jNode.put("y", (int)(y)); //lat
 
                     jNode.put("fame", 0.2);
                     jNode.put("type", "MultiConnection");
@@ -91,10 +76,20 @@ public final class OsmToJSonParser {
                 }
             }
 
+            // decrase x/y-Values
+            for (int i = 0; i < jNodes.length(); i++) {
+                JSONObject node = jNodes.getJSONObject(i);
+                int orgX = node.getInt("x");
+                int orgY = node.getInt("y");
+                node.put("x", orgX-smallestX);
+                node.put("y", orgY-smallestY);
+            }
+
             jsonRoot.put("nodes", jNodes);
 
             PrintWriter printWriter = new PrintWriter(json);
-            printWriter.write(jsonRoot.toString());
+            printWriter.print(jsonRoot.toString());
+            printWriter.close();
 
         } catch (Exception e) {
             e.printStackTrace();
