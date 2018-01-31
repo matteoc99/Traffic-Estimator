@@ -7,6 +7,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 
+
 /**
  * @author Matteo Cosi
  * @since 15.12.2017
@@ -30,13 +31,14 @@ public class JNode extends JPanel {
         this.parent = parent;
         setBackground(Color.GREEN);
         setBounds(node.getX(), node.getY(), 1, 1);
+        parent.add(this);
         create();
     }
 
     private void create() {
         for (int i = 0; i < node.getStreets().size(); i++) {
             Street street = node.getStreets().get(i);
-            JStreet jStreet = new JStreet(street);
+            JStreet jStreet = new JStreet(street, (JCity) parent);
             jStreets.add(jStreet);
         }
     }
@@ -66,4 +68,5 @@ public class JNode extends JPanel {
     public void setParent(JPanel parent) {
         this.parent = parent;
     }
+
 }

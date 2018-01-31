@@ -96,7 +96,16 @@ public class StreetComponent {
 
     public Rectangle getBounds(){
         calcNewPositionsBasedOnDegrees();
-        return new Rectangle(Integer.min(xTo,xFrom),Integer.min(yTo,yFrom),Integer.max(xTo,xFrom)-Integer.min(xTo,xFrom),Integer.max(yTo,yFrom)-Integer.min(yTo,yFrom));
+        int x=Integer.min(xTo,xFrom);
+        int y=Integer.min(yTo,yFrom);
+        int width=Integer.max(xTo,xFrom)-Integer.min(xTo,xFrom);
+        int height=Integer.max(yTo,yFrom)-Integer.min(yTo,yFrom);
+        if(height==0)
+            height=1;
+        if(width==0)
+            width=1;
+
+        return new Rectangle(x,y,width,height);
     }
 
     private void calcNewPositionsBasedOnDegrees() {

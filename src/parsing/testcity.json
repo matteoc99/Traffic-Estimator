@@ -23,14 +23,14 @@
     },
     {
       "id": "2",
-      "x": 10,
+      "x": 20,
       "y": 20,
       "fame": 0.2,
       "type": "MultiConnection"
     },
     {
       "id": "3",
-      "x": 20,
+      "x": 10,
       "y": 20,
       "fame": 0.25,
       "type": "MultiConnection"

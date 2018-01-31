@@ -19,7 +19,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class City {
 
     public static void main(String[] args) {
-        createCityFromJson(new File("C:\\Users\\User\\IdeaProjects\\Traffic-Estimator\\src\\parsing\\testcity.json"));
+        createCityFromJson(new File("C:\\Users\\matte\\IdeaProjects\\Traffic-Estimator\\src\\parsing\\testcity.json"));
     }
 
     private ArrayList<Node> nodes;

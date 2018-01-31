@@ -226,4 +226,5 @@ public class Street extends StreetComponent {
         return getLength()/Double.min(autoSpeed,maxSpeed);
     }
 
+
 }

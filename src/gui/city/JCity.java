@@ -37,10 +37,8 @@ public class JCity extends JPanel {
     private void create() {
         for (int i = 0; i < city.getNodes().size(); i++) {
             JNode jNode = new JNode(city.getNodes().get(i),this);
-            jNode.add(jNode);
+            jNodes.add(jNode);
         }
     }
-
-
 
 }
