@@ -59,7 +59,7 @@ public class JCity extends JPanel {
         for (JNode jNode : jNodes) {
             jNode.reposition();
         }
-        ArrayList<JStreet>streets=getJStreets();
+        ArrayList<JStreet> streets = getJStreets();
         for (JStreet street : streets) {
             street.reposition();
         }
