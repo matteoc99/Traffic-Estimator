@@ -7,6 +7,8 @@ import logic.city.Street;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.io.File;
 import java.util.ArrayList;
 
@@ -21,18 +23,72 @@ public class Main extends JFrame {
     private Container c;
 
 
+    public static double zoom = 1;
+    public static int xOffset = 1;
+    public static int yOffset = 1;
+
+
     public Main(City city) {
-        //setup window
         setupWindow();
 
-        //adding components
         c = getContentPane();
         controlPanel = setUpControlPanel();
         jCity = setUpCity(city);
         c.add(controlPanel);
         c.add(jCity);
-        //  city.add(loadingProgress);
+
         repaint();
+
+
+        addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+                boolean doReposition=false;
+                switch (e.getKeyCode()) {
+                    case KeyEvent.VK_PLUS:
+                        zoom+=0.5;
+                        doReposition=true;
+                        break;
+                    case KeyEvent.VK_MINUS:
+                        if(zoom>1) {
+                            if(zoom>0.1)
+                            zoom -= 0.1;
+                            doReposition=true;
+                        }
+                        break;
+                    case KeyEvent.VK_LEFT:
+                        xOffset-=zoom;
+                        doReposition=true;
+                        break;
+                    case KeyEvent.VK_RIGHT:
+                        xOffset+=zoom;
+                        doReposition=true;
+                        break;
+                    case KeyEvent.VK_UP:
+                        yOffset-=zoom;
+                        doReposition=true;
+                        break;
+                    case KeyEvent.VK_DOWN:
+                        yOffset+=zoom;
+                        doReposition=true;
+                        break;
+                }
+                if(doReposition){
+                jCity.reposition();
+                }
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+
+            }
+        });
+
     }
 
     private void setupWindow() {
@@ -60,9 +116,8 @@ public class Main extends JFrame {
 
     public static void main(String[] args) {
         City city = City.createCityFromJson(
-                new File("C:\\Users\\User\\IdeaProjects\\Traffic-Estimator\\src\\parsing\\sumo.json"));
+                new File("C:\\Users\\matte\\IdeaProjects\\Traffic-Estimator\\src\\parsing\\testcity.json"));
         new Main(city);
-
 
     }
 }

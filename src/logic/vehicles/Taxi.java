@@ -8,15 +8,8 @@ import logic.city.Path;
  * @since 15.12.2017
  */
 public class Taxi extends PublicVehicle {
-    public Taxi(Lane lane, int weight, int maxSpeed, Path path, int streetKnowledge, int speeder) {
-        super(lane, weight, maxSpeed, path, streetKnowledge, speeder);
+    public Taxi( int weight, int maxSpeed, Path path, int streetKnowledge, int speeder) {
+        super(weight, maxSpeed, path, streetKnowledge, speeder);
     }
 
-    public Taxi(Lane lane, int weight, int maxSpeed, int streetKnowledge, int speeder) {
-        super(lane, weight, maxSpeed, streetKnowledge, speeder);
-    }
-
-    public Taxi(Lane lane, int maxSpeed, int streetKnowledge, int speeder) {
-        super(lane, maxSpeed, streetKnowledge, speeder);
-    }
-}
+   }

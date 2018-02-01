@@ -7,6 +7,14 @@ import java.awt.*;
  * @since 25.12.2017
  */
 public class Utils {
+    public static double calcDistanceBetweenPoints(Point from, Point to){
+        return Math.abs(
+                Math.sqrt(
+                        Math.pow(to.getX()- from.getX(), 2) +
+                                Math.pow(to.getY()- from.getY(), 2)
+                )
+        );
+    }
     public static double calcDegreesBetweenTwoPoint(Point from, Point to){
         return calcDegreesBetweenTwoPoint(from.x,from.y,to.x,to.y);
     }
@@ -17,4 +25,6 @@ public class Utils {
         }
         return angle;
     }
+
+
 }

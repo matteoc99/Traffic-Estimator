@@ -23,6 +23,7 @@ public class Lane extends StreetComponent {
         this.reversed = reversed;
         this.index = index;
         parent.addLane(this);
+        vehicles= new ArrayList<>();
     }
 
     public ArrayList<Lane> getNeighbourLanes() {
@@ -109,5 +110,30 @@ public class Lane extends StreetComponent {
 
     public boolean isReversed() {
         return reversed;
+    }
+
+    public Node getFromNode(){
+        Node ret;
+        if(isReversed()){
+            ret=parent.getTo();
+        }else {
+            ret=parent.getFrom();
+        }
+        return ret;
+    }
+    public Node getToNode(){
+        Node ret;
+        if(isReversed()){
+            ret=parent.getFrom();
+        }else {
+            ret=parent.getTo();
+        }
+        return ret;
+    }
+
+    public void calcLane() {
+        for (int i = 0; i < vehicles.size(); i++) {
+            vehicles.get(i).move();
+        }
     }
 }

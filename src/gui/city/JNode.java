@@ -7,6 +7,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 
+import static gui.Main.xOffset;
+import static gui.Main.yOffset;
+import static gui.Main.zoom;
+
 
 /**
  * @author Matteo Cosi
@@ -23,6 +27,8 @@ public class JNode extends JPanel {
     private ArrayList<JStreet> jStreets;
 
     private JPanel parent;
+
+
 
     public JNode(Node node, JPanel parent) {
         jStreets = new ArrayList<>();
@@ -69,4 +75,7 @@ public class JNode extends JPanel {
         this.parent = parent;
     }
 
+    public void reposition() {
+        setBounds((int) ((node.getX()+xOffset)*zoom), (int) ((node.getY()+yOffset)*zoom), 1, 1);
+    }
 }

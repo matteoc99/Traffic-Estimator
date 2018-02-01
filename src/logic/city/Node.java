@@ -1,5 +1,8 @@
 package logic.city;
 
+import logic.Utils;
+import logic.vehicles.Vehicle;
+
 import java.awt.*;
 import java.util.ArrayList;
 
@@ -14,6 +17,11 @@ public class Node {
     private double fame;
     private ArrayList<Street> streets;
     private String id;
+    private double distanceCost; // distannce to goal node
+    private double walkedCost; //the cost of the path walked till now
+
+    //for pathfinder
+    private Node previousNode;
 
 
     public Node(City parent, Point position, double fame, String id) {
@@ -99,6 +107,41 @@ public class Node {
         return id;
     }
 
+
+    public void startPathCalculation(Node goal){
+        setDistanceCost(goal);
+        setWalkedCost(Double.MAX_VALUE/2);
+        setPreviousNode(null);
+    }
+
+    public void setDistanceCost(Node goal) {
+        this.distanceCost = Utils.calcDistanceBetweenPoints(getPosition(),goal.getPosition());
+    }
+
+    public void setWalkedCost(double walkedCost) {
+        this.walkedCost = walkedCost;
+    }
+
+    public double getFieldCost() {
+        return walkedCost+distanceCost;
+    }
+
+    public double getDistanceCost() {
+        return distanceCost;
+    }
+
+    public double getWalkedCost() {
+        return walkedCost;
+    }
+
+    public Node getPreviousNode() {
+        return previousNode;
+    }
+
+    public void setPreviousNode(Node previousNode) {
+        this.previousNode = previousNode;
+    }
+
     @Override
     public String toString() {
         return "Node(" + this.getClass().toString()+
@@ -109,5 +152,29 @@ public class Node {
                 ", streets=" + streets +
                 ", id='" + id + '\'' +
                 '}';
+    }
+
+    /**
+     * returns the lane for a new goal
+     */
+    public Lane setOnLaneTo(Node currentGoal) {
+        for (Street street : streets) {
+            for (int j = 0; j < street.getBackwardLanes().size(); j++) {
+                if (street.getBackwardLanes().get(j).getToNode().equals(currentGoal)) {
+                   return  street.getBackwardLanes().get(j);
+                }
+            }
+            for (int j = 0; j < street.getForwardLanes().size(); j++) {
+                if (street.getForwardLanes().get(j).getToNode().equals(currentGoal)) {
+                    return  street.getForwardLanes().get(j);
+                }
+            }
+        }
+        return null;
+    }
+
+    public void request(Vehicle vehicle) {
+        // TODO: 31.01.2018
+
     }
 }

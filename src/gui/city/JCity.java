@@ -36,9 +36,32 @@ public class JCity extends JPanel {
 
     private void create() {
         for (int i = 0; i < city.getNodes().size(); i++) {
-            JNode jNode = new JNode(city.getNodes().get(i),this);
+            JNode jNode = new JNode(city.getNodes().get(i), this);
             jNodes.add(jNode);
         }
     }
 
+    public ArrayList<JStreet> getJStreets() {
+        ArrayList<JStreet> ret = new ArrayList<>();
+        for (JNode jNode : jNodes) {
+            ArrayList<JStreet>streets =jNode.getjStreets();
+            for (JStreet street : streets) {
+                if (!ret.contains(street)) {
+                    ret.add(street);
+                }
+            }
+        }
+        return ret;
+    }
+
+
+    public void reposition() {
+        for (JNode jNode : jNodes) {
+            jNode.reposition();
+        }
+        ArrayList<JStreet>streets=getJStreets();
+        for (JStreet street : streets) {
+            street.reposition();
+        }
+    }
 }

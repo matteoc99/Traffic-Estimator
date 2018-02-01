@@ -227,4 +227,12 @@ public class Street extends StreetComponent {
     }
 
 
+    public void calcStreet() {
+        for (int i = 0; i < backwardLanes.size(); i++) {
+            backwardLanes.get(i).calcLane();
+        }
+        for (int i = 0; i < forwardLanes.size(); i++) {
+            forwardLanes.get(i).calcLane();
+        }
+    }
 }

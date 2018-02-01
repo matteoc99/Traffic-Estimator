@@ -42,12 +42,7 @@ public class StreetComponent {
      * @return the legth of the line
      */
     public double getLength() {
-        return Math.abs(
-                Math.sqrt(
-                        Math.pow(xTo - xFrom, 2) +
-                                Math.pow(yTo - yFrom, 2)
-                )
-        );
+        return Utils.calcDistanceBetweenPoints(new Point(xFrom,yTo),new Point(xTo,yTo));
     }
 
     public double getDegrees() {

@@ -10,7 +10,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author Matteo Cosi
@@ -115,8 +114,69 @@ public class City {
         return new Path(); // TODO: 15.12.2017
     }
 
-    private Path doAStern(Node from, Node to) {
-        return new Path(); // TODO: 15.12.2017
+    public Path doAStern(Node from, Node to, Vehicle vehicle) {
+        Path ret = new Path();
+        ArrayList<Node> open = new ArrayList<>();
+        ArrayList<Node> closed = new ArrayList<>();
+
+        for (Node node : nodes) {
+            node.startPathCalculation(to);
+        }
+
+        from.setWalkedCost(0);
+        open.add(from);
+
+        while (true) {
+            double lowcost = Double.MAX_VALUE;
+            int index = 0;
+            for (int i = 0; i < open.size(); i++) {
+                if (open.get(i).getFieldCost() < lowcost) {
+                    lowcost = open.get(i).getFieldCost();
+                    index = i;
+                }
+            }
+            Node current = open.get(index);
+            open.remove(current);
+            closed.add(current);
+            if (current.equals(to)) {
+                break;
+            }
+            ArrayList<Street> streets = current.getStreets();
+            for (int i = 0; i < streets.size(); i++) {
+                Node neighbour;
+                boolean isReachable = true;
+                if (streets.get(i).getFrom() == current) {
+                    neighbour = streets.get(i).getTo();
+                    if (streets.get(i).getForwardLanes().isEmpty())
+                        isReachable = false;
+                } else {
+                    neighbour = streets.get(i).getFrom();
+                    if (streets.get(i).getBackwardLanes().isEmpty())
+                        isReachable = false;
+                }
+                if(closed.contains(neighbour))
+                    isReachable=false;
+                if (vehicle==null)
+                    vehicle = new Vehicle(50);
+                if (isReachable) {
+                    if (!(open.contains(neighbour)) ||
+                            current.getWalkedCost() + streets.get(i).getGesamtKosten(vehicle.getMaxSpeed()) < neighbour.getWalkedCost()) {
+                        neighbour.setWalkedCost(current.getWalkedCost() + streets.get(i).getGesamtKosten(vehicle.getMaxSpeed()));
+                        neighbour.setPreviousNode(current);
+                        if (!(open.contains(neighbour))) {
+                            open.add(neighbour);
+                        }
+                    }
+                }
+            }
+        }
+
+        Node prevNode = to;
+        while(prevNode!=null){
+            ret.addNode(prevNode);
+            prevNode= prevNode.getPreviousNode();
+        }
+        return ret;
     }
 
     public Path doRandomPathFinding(Vehicle vehicle) {
@@ -126,7 +186,8 @@ public class City {
         while (to.equals(from)) {
             to = getRandomNode();
         }
-        return doAStern(from, to);
+        System.out.println(from.getId()+":::::::"+to.getId());
+        return doAStern(from, to, vehicle);
     }
 
     public Node getRandomNode() {
@@ -152,7 +213,7 @@ public class City {
     public void addNode(Node node) {
         if (!contains(node)) {
             nodes.add(node);
-        }else{
+        } else {
             throw new RuntimeException("CITY NODE ALREADY ADDED");
         }
     }
@@ -193,11 +254,22 @@ public class City {
         }
         return null;
     }
+    public ArrayList<Street> getStreets() {
+        ArrayList<Street>ret= new ArrayList<>();
+        for (int i = 0; i < nodes.size(); i++) {
+            for (int j = 0; j < nodes.get(i).getStreets().size(); j++) {
+                if (!ret.contains(nodes.get(i).getStreets().get(j))) {
+                    ret.add(nodes.get(i).getStreets().get(j));
+                }
+            }
+        }
+        return ret;
+    }
 
     public Lane getLaneById(String id) {
         for (int i = 0; i < nodes.size(); i++) {
             for (int j = 0; j < nodes.get(i).getStreets().size(); j++) {
-                for (int k = 0; k <nodes.get(i).getStreets().get(j).getBackwardLanes().size(); k++) {
+                for (int k = 0; k < nodes.get(i).getStreets().get(j).getBackwardLanes().size(); k++) {
                     if (nodes.get(i).getStreets().get(j).getBackwardLanes().get(k).getId().equals(id))
                         return nodes.get(i).getStreets().get(j).getBackwardLanes().get(k);
                 }
@@ -205,13 +277,21 @@ public class City {
         }
         for (int i = 0; i < nodes.size(); i++) {
             for (int j = 0; j < nodes.get(i).getStreets().size(); j++) {
-                for (int k = 0; k <nodes.get(i).getStreets().get(j).getForwardLanes().size(); k++) {
+                for (int k = 0; k < nodes.get(i).getStreets().get(j).getForwardLanes().size(); k++) {
                     if (nodes.get(i).getStreets().get(j).getForwardLanes().get(k).getId().equals(id))
                         return nodes.get(i).getStreets().get(j).getForwardLanes().get(k);
                 }
             }
         }
         return null;
+    }
+
+
+    public void calcCity(){
+        ArrayList<Street> streets = getStreets();
+        for (int i = 0; i <streets.size(); i++) {
+            streets.get(i).calcStreet();
+        }
     }
 
     public String getName() {

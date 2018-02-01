@@ -17,22 +17,11 @@ public class Bus extends PublicVehicle{
      */
     int length;
 
-    public Bus(Lane lane, int weight, int maxSpeed, Path path, int streetKnowledge, int speeder, int line, int length) {
-        super(lane, weight, maxSpeed, path, streetKnowledge, speeder);
+    public Bus(int weight, int maxSpeed, Path path, int streetKnowledge, int speeder, int line, int length) {
+        super(weight, maxSpeed, path, streetKnowledge, speeder);
         this.line = line;
         this.length = length;
     }
 
-    public Bus(Lane lane, int weight, int maxSpeed, int streetKnowledge, int speeder, int line, int length) {
-        super(lane, weight, maxSpeed, streetKnowledge, speeder);
-        this.line = line;
-        this.length = length;
-    }
-
-    public Bus(Lane lane, int maxSpeed, int streetKnowledge, int speeder, int line, int length) {
-        super(lane, maxSpeed, streetKnowledge, speeder);
-        this.line = line;
-        this.length = length;
-    }
 
 }

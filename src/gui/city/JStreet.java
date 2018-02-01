@@ -6,6 +6,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 
+import static gui.Main.xOffset;
+import static gui.Main.yOffset;
+import static gui.Main.zoom;
+
 
 /**
  * @author Matteo Cosi
@@ -74,4 +78,8 @@ public class JStreet extends JPanel {
     }
 
 
+    public void reposition() {
+        Rectangle bounds = street.getBounds();
+        setBounds((int)((bounds.x+xOffset)*zoom),(int)((bounds.y+yOffset)*zoom),(int)((bounds.width)*zoom),(int)((bounds.height)*zoom)); // bound verdoppelung
+    }
 }

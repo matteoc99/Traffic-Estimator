@@ -2,6 +2,7 @@ package logic.vehicles;
 
 import logic.city.City;
 import logic.city.Lane;
+import logic.city.Node;
 import logic.city.Path;
 
 import java.util.ArrayList;
@@ -22,6 +23,7 @@ public class Vehicle {
     private int height;
 
     private int maxSpeed;
+    private int currentSpeed;
 
     /**
      * lane.length
@@ -40,46 +42,103 @@ public class Vehicle {
      */
     private int speeder;
 
+
     private int progressInLane;
 
+    private Node currentGoal;
+    private Node prevGoal;
 
-    public Vehicle(Lane lane, int weight, int maxSpeed, Path path, int streetKnowledge, int speeder) {
-        this.lane = lane;
+    public static int SICHERHEITS_ABSTAND = 30;
+
+    public Vehicle(int weight, int maxSpeed, Path path, int streetKnowledge, int speeder) {
         this.weight = weight;
         this.maxSpeed = maxSpeed;
         this.path = path;
         this.streetKnowledge = streetKnowledge;
         this.speeder = speeder;
+        progressInLane = 0;
+        currentSpeed = 0;
+        addToPathStart();
+        move();
+    }
+
+    public Vehicle(int maxSpeed) {
+        this.maxSpeed = maxSpeed;
+    }
+
+    private void addToPathStart() {
+        System.out.println(path);
+        prevGoal = path.getGoalAndIncrement();
+        currentGoal = path.getGoalAndIncrement();
+        lane = prevGoal.setOnLaneTo(currentGoal);
         lane.addVehicle(this);
-        progressInLane=0;
     }
-    public Vehicle(Lane lane, int weight, int maxSpeed, int streetKnowledge, int speeder) {
-        this(lane,weight, maxSpeed, null, streetKnowledge, speeder);
-        this.path = getParent().getParent().getParent().doRandomPathFinding(this);
+
+
+    public void move() {
+        System.out.println("MOVE: " + progressInLane);
+        searchNewGoal();
+        if (progressInLane / lane.getLength() >= 100) {
+            currentGoal.request(this);
+            changeLane(null);
+        } else {
+            if (progressInLane / lane.getLength() >= 80) {
+                //TODO change lane allowed
+            }
+            if (lane.getNextVehicle(progressInLane) == null || progressInLane + SICHERHEITS_ABSTAND + currentSpeed < lane.getNextVehicle(progressInLane).getProgressInLane()) {
+                if (currentSpeed < maxSpeed) {
+                    System.out.println("Max:"+maxSpeed);
+                    currentSpeed += 0.8 * (currentSpeed + 3);
+                } else {
+                    currentSpeed--;
+                }
+            } else {
+                while (currentSpeed > 0 || progressInLane + SICHERHEITS_ABSTAND + currentSpeed > lane.getNextVehicle(progressInLane).getProgressInLane()) {
+                    currentSpeed--;
+                }
+            }
+            progressInLane += currentSpeed;
+        }
     }
-    public Vehicle(Lane lane, int maxSpeed, int streetKnowledge, int speeder) {
-       this(lane,1500,maxSpeed,streetKnowledge,speeder);
+
+    private void searchNewGoal() {
+        if (lane == null || !lane.getToNode().equals(currentGoal)) {
+            prevGoal = path.getGoalAndIncrement();
+            currentGoal = path.getGoalAndIncrement();
+            Lane newLane = prevGoal.setOnLaneTo(currentGoal);
+            changeLane(newLane);
+            progressInLane = 0;
+            currentSpeed = 0;
+        }
     }
 
 
     /**
      * @return the current driving lane
      */
-    public Lane getParent(){
+    public Lane getParent() {
         return lane;
     }
 
     /**
      * Change the driving lane
+     *
      * @param newLane the new Lane where the car goes
      */
-    public void changeLane(Lane newLane){
-        lane.removeVehicle(this);
-        newLane.addVehicle(this);
-        lane=newLane;
+    public void changeLane(Lane newLane) {
+        if (this.lane != null)
+            lane.removeVehicle(this);
+        if (newLane != null)
+            newLane.addVehicle(this);
+        lane = newLane;
+        move();
     }
 
-    public ArrayList<Lane> getNeighbourLanes(){
+    public void setLane(Lane lane) {
+        this.lane = lane;
+    }
+
+    public ArrayList<Lane> getNeighbourLanes() {
         return lane.getNeighbourLanes();
     }
 

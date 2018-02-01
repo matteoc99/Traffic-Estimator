@@ -16,15 +16,8 @@ public class PublicVehicle extends Vehicle {
      */
     int priorty;
 
-    public PublicVehicle(Lane lane, int weight, int maxSpeed, Path path, int streetKnowledge, int speeder) {
-        super(lane, weight, maxSpeed, path, streetKnowledge, speeder);
+    public PublicVehicle(int weight, int maxSpeed, Path path, int streetKnowledge, int speeder) {
+        super( weight, maxSpeed, path, streetKnowledge, speeder);
     }
 
-    public PublicVehicle(Lane lane, int weight, int maxSpeed, int streetKnowledge, int speeder) {
-        super(lane, weight, maxSpeed, streetKnowledge, speeder);
-    }
-
-    public PublicVehicle(Lane lane, int maxSpeed, int streetKnowledge, int speeder) {
-        super(lane, maxSpeed, streetKnowledge, speeder);
-    }
-}
+   }

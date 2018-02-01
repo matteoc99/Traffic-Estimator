@@ -21,9 +21,16 @@ public class Path {
         nodes = new ArrayList<>();
     }
 
-    public Node getNextGoal() {
+    public Node getGoal() {
+        return nodes.get(progress);
+    }
+
+    public Node getGoalAndIncrement() {
+        if (progress >= nodes.size())
+            return null;
+        Node ret = nodes.get(progress);
         progress++;
-        return nodes.get(progress - 1);
+        return ret;
     }
 
     /**
@@ -33,8 +40,8 @@ public class Path {
      */
     public void addNode(Node node) {
         if (!contains(node)) {
-            nodes.add(node);
-        }else{
+            nodes.add(0, node);
+        } else {
             throw new RuntimeException("Path 45");
         }
     }
@@ -47,7 +54,7 @@ public class Path {
     public void removeNode(Node node) {
         if (contains(node)) {
             nodes.remove(node);
-        }else{
+        } else {
             throw new RuntimeException("Path");
         }
     }
@@ -64,5 +71,14 @@ public class Path {
                 return true;
         }
         return false;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder ret = new StringBuilder();
+        for (Node node : nodes) {
+            ret.append(node.getId()).append("-->\n");
+        }
+        return ret.toString();
     }
 }
