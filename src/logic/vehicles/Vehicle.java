@@ -48,6 +48,8 @@ public class Vehicle {
     private Node currentGoal;
     private Node prevGoal;
 
+    private boolean isDead= false;
+
     public static int SICHERHEITS_ABSTAND = 30;
 
     public Vehicle(int weight, int maxSpeed, Path path, int streetKnowledge, int speeder) {
@@ -77,39 +79,49 @@ public class Vehicle {
 
     public void move() {
         System.out.println("MOVE: " + progressInLane);
+        System.out.println("CURRENT:"+currentGoal.getId());
         searchNewGoal();
-        if (progressInLane / lane.getLength() >= 100) {
-            currentGoal.request(this);
-            changeLane(null);
-        } else {
-            if (progressInLane / lane.getLength() >= 80) {
-                //TODO change lane allowed
-            }
-            if (lane.getNextVehicle(progressInLane) == null || progressInLane + SICHERHEITS_ABSTAND + currentSpeed < lane.getNextVehicle(progressInLane).getProgressInLane()) {
-                if (currentSpeed < maxSpeed) {
-                    System.out.println("Max:"+maxSpeed);
-                    currentSpeed += 0.8 * (currentSpeed + 3);
-                } else {
-                    currentSpeed--;
-                }
+        if(!isDead) {
+            if (progressInLane / lane.getLength() >= 0.95) {
+                currentGoal.request(this);
+                changeLane(null);
             } else {
-                while (currentSpeed > 0 || progressInLane + SICHERHEITS_ABSTAND + currentSpeed > lane.getNextVehicle(progressInLane).getProgressInLane()) {
-                    currentSpeed--;
+                if (progressInLane / lane.getLength() >= 80) {
+                    //TODO change lane allowed
                 }
+                if (lane.getNextVehicle(progressInLane) == null || progressInLane + SICHERHEITS_ABSTAND + currentSpeed < lane.getNextVehicle(progressInLane).getProgressInLane()) {
+                    if (currentSpeed < maxSpeed) {
+                        currentSpeed ++;
+                    } else {
+                        currentSpeed--;
+                    }
+                } else {
+                    while (currentSpeed > 0 || progressInLane + SICHERHEITS_ABSTAND + currentSpeed > lane.getNextVehicle(progressInLane).getProgressInLane()) {
+                        currentSpeed--;
+                    }
+                }
+                progressInLane += currentSpeed;
             }
-            progressInLane += currentSpeed;
         }
     }
 
     private void searchNewGoal() {
         if (lane == null || !lane.getToNode().equals(currentGoal)) {
-            prevGoal = path.getGoalAndIncrement();
-            currentGoal = path.getGoalAndIncrement();
-            Lane newLane = prevGoal.setOnLaneTo(currentGoal);
-            changeLane(newLane);
-            progressInLane = 0;
-            currentSpeed = 0;
+            prevGoal = path.getGoal();
+            if (prevGoal == null || prevGoal.equals(path.getTo()))
+                die();
+            else {
+                currentGoal = path.getGoalAndIncrement();
+                Lane newLane = prevGoal.setOnLaneTo(currentGoal);
+                changeLane(newLane);
+                progressInLane = 0;
+                currentSpeed = 0;
+            }
         }
+    }
+
+    private void die() {
+        isDead=true;
     }
 
 

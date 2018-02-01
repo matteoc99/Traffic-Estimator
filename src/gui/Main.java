@@ -24,8 +24,8 @@ public class Main extends JFrame {
 
 
     public static double zoom = 1;
-    public static int xOffset = 1;
-    public static int yOffset = 1;
+    public static int xOffset = 0;
+    public static int yOffset = 0;
 
 
     public Main(City city) {
@@ -55,26 +55,25 @@ public class Main extends JFrame {
                         doReposition=true;
                         break;
                     case KeyEvent.VK_MINUS:
-                        if(zoom>1) {
-                            if(zoom>0.1)
+                        if(zoom>0.1) {
                             zoom -= 0.1;
                             doReposition=true;
                         }
                         break;
                     case KeyEvent.VK_LEFT:
-                        xOffset-=zoom;
+                        xOffset-=10;
                         doReposition=true;
                         break;
                     case KeyEvent.VK_RIGHT:
-                        xOffset+=zoom;
+                        xOffset+=10;
                         doReposition=true;
                         break;
                     case KeyEvent.VK_UP:
-                        yOffset-=zoom;
+                        yOffset-=10;
                         doReposition=true;
                         break;
                     case KeyEvent.VK_DOWN:
-                        yOffset+=zoom;
+                        yOffset+=10;
                         doReposition=true;
                         break;
                 }
@@ -102,21 +101,21 @@ public class Main extends JFrame {
 
     private JCity setUpCity(City city) {
         JCity ret = new JCity(city);
-        ret.setBackground(Color.BLUE);
+        ret.setBackground(new Color(123, 200, 126));
         ret.setBounds(0, 0, 980, 720);
         return ret;
     }
 
     private ControlPanel setUpControlPanel() {
         ControlPanel ret = new ControlPanel();
-        ret.setBackground(Color.RED);
+        ret.setBackground(new Color(86, 90, 200));
         ret.setBounds(980, 0, 300, 720);
         return ret;
     }
 
     public static void main(String[] args) {
         City city = City.createCityFromJson(
-                new File(System.getProperty("user.dir")+"\\src\\parsing\\testcity.json"));
+                new File("C:\\Users\\matte\\IdeaProjects\\Traffic-Estimator\\src\\parsing\\sumo.json"));
         new Main(city);
 
     }

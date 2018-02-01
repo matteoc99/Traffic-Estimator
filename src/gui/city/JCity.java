@@ -1,5 +1,6 @@
 package gui.city;
 
+import logic.Utils;
 import logic.city.City;
 
 import javax.swing.*;
@@ -9,7 +10,7 @@ import java.util.ArrayList;
  * @author Matteo Cosi
  * @since 15.12.2017
  */
-public class JCity extends JPanel {
+public class JCity extends JPanel{
 
     /**
      * reference
@@ -58,10 +59,18 @@ public class JCity extends JPanel {
     public void reposition() {
         for (JNode jNode : jNodes) {
             jNode.reposition();
+            jNode.repaint();
         }
         ArrayList<JStreet> streets = getJStreets();
         for (JStreet street : streets) {
             street.reposition();
+            street.repaint();
         }
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                repaint();
+            }
+        });
     }
 }

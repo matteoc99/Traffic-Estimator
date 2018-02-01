@@ -8,16 +8,16 @@ import java.util.ArrayList;
  * @author Matteo Cosi
  * @since 15.12.2017
  */
-public class Lane extends StreetComponent {
+public class Lane{
     private String id;
     private Street parent;
     private boolean reversed;
     private int index;
     private ArrayList<Streetlight> streetlights;
     private ArrayList<Vehicle> vehicles;
+    private double length=-1;
 
     public Lane(String id, Street parent, boolean reversed, int index) {
-        super(parent.xFrom, parent.xTo, parent.yFrom, parent.yTo);
         this.id = id;
         this.parent = parent;
         this.reversed = reversed;
@@ -129,6 +129,17 @@ public class Lane extends StreetComponent {
             ret=parent.getTo();
         }
         return ret;
+    }
+
+
+    public double getLength() {
+        if(length==-1)
+            length= parent.getLength();
+        return length;
+    }
+
+    public void setLength(double length) {
+        this.length = length;
     }
 
     public void calcLane() {

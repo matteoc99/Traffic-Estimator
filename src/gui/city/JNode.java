@@ -39,6 +39,7 @@ public class JNode extends JPanel {
         setBounds(node.getX(), node.getY(), 1, 1);
         parent.add(this);
         create();
+        System.out.println(getLocation());
     }
 
     private void create() {

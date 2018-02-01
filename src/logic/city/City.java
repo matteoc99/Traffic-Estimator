@@ -18,7 +18,7 @@ import java.util.ArrayList;
 public class City {
 
     public static void main(String[] args) {
-        createCityFromJson(new File(System.getProperty("user.dir")+"\\src\\parsing\\sumo.json"));
+        createCityFromJson(new File("C:\\Users\\matte\\IdeaProjects\\Traffic-Estimator\\src\\parsing\\sumo.json"));
     }
 
     private ArrayList<Node> nodes;
@@ -126,7 +126,7 @@ public class City {
         from.setWalkedCost(0);
         open.add(from);
 
-        while (true) {
+        while (!open.isEmpty()) {
             double lowcost = Double.MAX_VALUE;
             int index = 0;
             for (int i = 0; i < open.size(); i++) {
@@ -186,7 +186,7 @@ public class City {
         while (to.equals(from)) {
             to = getRandomNode();
         }
-        System.out.println(from.getId()+":::::::"+to.getId());
+        System.out.println(from.getId()+"/"+to.getId());
         return doAStern(from, to, vehicle);
     }
 

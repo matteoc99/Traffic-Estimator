@@ -22,6 +22,8 @@ public class Path {
     }
 
     public Node getGoal() {
+        if(progress>=nodes.size())
+            return null;
         return nodes.get(progress);
     }
 
@@ -31,6 +33,13 @@ public class Path {
         Node ret = nodes.get(progress);
         progress++;
         return ret;
+    }
+
+    public Node getFrom(){
+        return nodes.get(0);
+    }
+    public Node getTo(){
+        return nodes.get(nodes.size()-1);
     }
 
     /**

@@ -2,6 +2,7 @@ package tests;
 
 import logic.city.City;
 import logic.city.Node;
+import logic.city.Path;
 import logic.vehicles.Vehicle;
 
 import java.awt.*;
@@ -15,11 +16,11 @@ public class Tester {
     public static void main(String[] args) {
         City city = City.createCityFromJson(new java.io.File("C:\\Users\\matte\\IdeaProjects\\Traffic-Estimator\\src\\parsing\\testcity.json"));
 
-        assert city != null;
+        Vehicle test = new Vehicle(1000, 50, city.doRandomPathFinding(null), 1, 1);
 
-        Vehicle test = new Vehicle(1000,50,city.doRandomPathFinding(null),1,1);
-        while (true){
+        while (true) {
             city.calcCity();
+
         }
     }
 }
