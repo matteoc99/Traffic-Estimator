@@ -115,7 +115,7 @@ public class Main extends JFrame {
 
     public static void main(String[] args) {
         City city = City.createCityFromJson(
-                new File("C:\\Users\\matte\\IdeaProjects\\Traffic-Estimator\\src\\parsing\\sumo.json"));
+                new File(System.getProperty("user.dir")+"\\src\\parsing\\sumo.json"));
         new Main(city);
 
     }

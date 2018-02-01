@@ -18,7 +18,7 @@ import java.util.ArrayList;
 public class City {
 
     public static void main(String[] args) {
-        createCityFromJson(new File("C:\\Users\\matte\\IdeaProjects\\Traffic-Estimator\\src\\parsing\\sumo.json"));
+        createCityFromJson(new File(System.getProperty("user.dir")+"\\src\\parsing\\sumo.json"));
     }
 
     private ArrayList<Node> nodes;
