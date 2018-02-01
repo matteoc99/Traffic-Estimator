@@ -7,6 +7,11 @@ import java.awt.*;
  * @since 29.01.2018
  */
 public class Connection extends Node {
+
+    public Connection(Node node) {
+        this(node.getParent(), node.getPosition(), node.getFame(), node.getId());
+    }
+
     public Connection(City parent, Point position, double fame, String id) {
         super(parent, position, fame, id);
     }

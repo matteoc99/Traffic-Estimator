@@ -60,8 +60,9 @@ public class Main extends JFrame {
 
     public static void main(String[] args) {
         City city = City.createCityFromJson(
-                new File("C:\\Users\\matte\\IdeaProjects\\Traffic-Estimator\\src\\sumo_parser\\testcity.json"));
+                new File("C:\\Users\\User\\IdeaProjects\\Traffic-Estimator\\src\\parsing\\sumo.json"));
         new Main(city);
+
 
     }
 }

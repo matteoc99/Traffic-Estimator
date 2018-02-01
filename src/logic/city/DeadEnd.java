@@ -9,6 +9,9 @@ import java.util.ArrayList;
  */
 public class DeadEnd extends Node {
 
+    public DeadEnd(Node node) {
+        this(node.getParent(), node.getPosition(), node.getFame(), node.getId());
+    }
 
     public DeadEnd(City parent, Point position, double fame, String id) {
         super(parent, position, fame, id);

@@ -2,38 +2,108 @@ package parsing;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.json.JSONTokener;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
+import java.io.PrintWriter;
+import java.util.ArrayList;
 
 public class SumoToJSonParser {
 
+    private static JSONObject jsonRoot;
+
+    private static ArrayList<Type> types = new ArrayList<>();
+
     public static void main(String[] args) {
-        write("");
-        //parse(null, "C:\\Users\\User\\Desktop\\Parser\\Pattern.json");
+        parse(new File("C:\\Users\\User\\IdeaProjects\\Traffic-Estimator\\src\\parsing\\map.net.xml"),
+                "C:\\Users\\User\\IdeaProjects\\Traffic-Estimator\\src\\parsing\\sumo.json");
     }
 
-    private static void parse(File xmlFile, String JSonPath) {
-        JSONTokener jsonTokener;
+    private static void parse(File fXmlFile, String jsonPath) {
+        File json = new File(jsonPath);
+
+        jsonRoot = new JSONObject();
+
+        // https://www.mkyong.com/java/how-to-read-xml-file-in-java-dom-parser/
         try {
-            jsonTokener = new JSONTokener(new FileReader(JSonPath));
-            JSONObject jsonObject = new JSONObject(jsonTokener);
-            JSONArray nodes = ((JSONArray) jsonObject.get("nodes"));
-            JSONObject nodeEntry0 = nodes.getJSONObject(0);
-            String type = nodeEntry0.getString("type");
 
-            System.out.println(type);
-            System.out.println(nodeEntry0.toString());
-            System.out.println(nodes.toString());
+            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+            Document doc = dBuilder.parse(fXmlFile);
 
+            //optional, but recommended
+            //read this - http://stackoverflow.com/questions/13786607/normalization-in-dom-parsing-with-java-how-does-it-work
+            doc.getDocumentElement().normalize();
 
-            //nodeEntry0.put("type", "Put");
-            //nodeEntry0.append("type", "Append");
-            //nodeEntry0.accumulate("type", "Accumulate");
+            NodeList typeList = doc.getElementsByTagName("type");
 
-        } catch (FileNotFoundException e) {
+            for (int i = 0; i < typeList.getLength(); i++) {
+                Node type = typeList.item(i);
+
+                Element eElement = (Element) type;
+
+                types.add(new Type()
+                        .setId(eElement.getAttribute("id"))
+                        .setNumLanes(Integer.parseInt(eElement.getAttribute("numLanes")))
+                        .setPriority(Integer.parseInt(eElement.getAttribute("priority")))
+                        .setSpeed(Double.parseDouble(eElement.getAttribute("speed"))));
+            }
+
+            NodeList junctionList = doc.getElementsByTagName("junction");
+
+            JSONArray jNodes = new JSONArray();
+
+            for (int i = 0; i < junctionList.getLength(); i++) {
+                Node junction = junctionList.item(i);
+
+                Element eElement = (Element) junction;
+
+                JSONObject jNode = new JSONObject();
+                jNode.put("id", eElement.getAttribute("id"));
+                jNode.put("x", (int)(Double.parseDouble(eElement.getAttribute("x"))*100));
+                jNode.put("y", (int)(Double.parseDouble(eElement.getAttribute("y"))*100));
+                jNode.put("fame", 0.2);
+                jNode.put("type", "MultiConnection");
+
+                jNodes.put(jNode);
+            }
+
+            NodeList edgeList = doc.getElementsByTagName("edge");
+
+            JSONArray jStreets = new JSONArray();
+
+            for (int i = 0; i < edgeList.getLength(); i++) {
+                Node edge = edgeList.item(i);
+
+                Element eElement = (Element) edge;
+
+                if (eElement.hasAttribute("function") &&
+                        eElement.getAttribute("function").equals("internal"))
+                    continue;
+
+                JSONObject jStreet = new JSONObject();
+                jStreet.put("id", eElement.getAttribute("id"));
+                jStreet.put("from", eElement.getAttribute("from"));
+                jStreet.put("to", eElement.getAttribute("to"));
+                Type type = getTypeByString(eElement.getAttribute("type"));
+                jStreet.put("maxSpeed", type.getSpeed());
+                jStreet.put("prominence", 1);
+
+                jStreets.put(jStreet);
+            }
+
+            jsonRoot.put("nodes", jNodes);
+            jsonRoot.put("streets", jStreets);
+
+            PrintWriter printWriter = new PrintWriter(json);
+            printWriter.print(jsonRoot.toString());
+            printWriter.close();
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -65,5 +135,67 @@ public class SumoToJSonParser {
         jsonObject.put("nodes", nodes);
 
         System.out.println(jsonObject.toString());
+    }
+
+    public static Type getTypeByString(String sType) {
+        for (Type type : types) {
+            if (type.getId().equals(sType))
+                return type;
+        }
+
+        throw new RuntimeException("Unknown Type:"+sType);
+    }
+
+    private static class Type {
+        private String id;
+        private int priority;
+        private int numLanes;
+        private double speed;
+        private boolean oneway;
+
+        public String getId() {
+            return id;
+        }
+
+        public Type setId(String id) {
+            this.id = id;
+            return this;
+        }
+
+        public int getPriority() {
+            return priority;
+        }
+
+        public Type setPriority(int priority) {
+            this.priority = priority;
+            return this;
+        }
+
+        public int getNumLanes() {
+            return numLanes;
+        }
+
+        public Type setNumLanes(int numLanes) {
+            this.numLanes = numLanes;
+            return this;
+        }
+
+        public double getSpeed() {
+            return speed;
+        }
+
+        public Type setSpeed(double speed) {
+            this.speed = speed;
+            return this;
+        }
+
+        public boolean isOneway() {
+            return oneway;
+        }
+
+        public Type setOneway(boolean oneway) {
+            this.oneway = oneway;
+            return this;
+        }
     }
 }

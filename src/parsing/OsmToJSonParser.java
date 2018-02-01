@@ -15,6 +15,8 @@ import java.io.PrintWriter;
 
 public final class OsmToJSonParser {
 
+    private static JSONObject jsonRoot;
+
     public static void main(String[] args) {
         parse("C:\\Users\\User\\IdeaProjects\\Traffic-Estimator\\src\\parsing\\map.osm",
                 "C:\\Users\\User\\IdeaProjects\\Traffic-Estimator\\src\\parsing\\lana.json");
@@ -24,7 +26,7 @@ public final class OsmToJSonParser {
         File fXmlFile = new File(osmFilePath);
         File json = new File(jsonFilePath);
 
-        JSONObject jsonRoot = new JSONObject();
+        jsonRoot = new JSONObject();
 
         // https://www.mkyong.com/java/how-to-read-xml-file-in-java-dom-parser/
         try {
@@ -37,16 +39,18 @@ public final class OsmToJSonParser {
             //read this - http://stackoverflow.com/questions/13786607/normalization-in-dom-parsing-with-java-how-does-it-work
             doc.getDocumentElement().normalize();
 
-            NodeList nList = doc.getElementsByTagName("node");
+            // nodes
+
+            NodeList nNodeList = doc.getElementsByTagName("node");
 
             JSONArray jNodes = new JSONArray();
 
             double smallestX = Integer.MAX_VALUE;
             double smallestY = Integer.MAX_VALUE;
 
-            for (int i = 0; i < nList.getLength() && i < 50; i++) {
+            for (int i = 0; i < nNodeList.getLength() && i < 50; i++) {
 
-                Node nNode = nList.item(i);
+                Node nNode = nNodeList.item(i);
 
                 if (nNode.getNodeType() == Node.ELEMENT_NODE) {
 
@@ -76,7 +80,7 @@ public final class OsmToJSonParser {
                 }
             }
 
-            // decrase x/y-Values
+            // decrease x/y-Values
             for (int i = 0; i < jNodes.length(); i++) {
                 JSONObject node = jNodes.getJSONObject(i);
                 int orgX = node.getInt("x");
@@ -85,7 +89,28 @@ public final class OsmToJSonParser {
                 node.put("y", orgY-smallestY);
             }
 
+            // ways
+
+            NodeList nWayList = doc.getElementsByTagName("way");
+
+            JSONArray jStreets = new JSONArray();
+
+            for (int i = 0; i < nWayList.getLength(); i++) {
+                Node nWay = nWayList.item(i);
+
+                if (nWay.getNodeType() == Node.ELEMENT_NODE) {
+
+                    Element eElement = (Element) nWay;
+                    JSONObject jStreet = new JSONObject();
+
+
+                }
+            }
+
+
+
             jsonRoot.put("nodes", jNodes);
+            jsonRoot.put("streets", jStreets);
 
             PrintWriter printWriter = new PrintWriter(json);
             printWriter.print(jsonRoot.toString());
@@ -94,6 +119,18 @@ public final class OsmToJSonParser {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private JSONObject getNodeById(String id) {
+        JSONArray nodes = jsonRoot.getJSONArray("nodes");
+
+        for (int i = 0; i < nodes.length(); i++) {
+            JSONObject node = nodes.getJSONObject(i);
+            if (id.equals(node.getString("id")))
+                return node;
+        }
+
+        return null;
     }
 
     private OsmToJSonParser() {}
