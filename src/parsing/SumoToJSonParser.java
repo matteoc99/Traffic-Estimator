@@ -244,6 +244,7 @@ public class SumoToJSonParser {
                 case "railway.tram":
                     return false;
                 default:
+                    System.out.println("unknown:"+id);
                     return true;
             }
         }

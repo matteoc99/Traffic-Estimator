@@ -48,7 +48,7 @@ public final class OsmToJSonParser {
             double smallestX = Integer.MAX_VALUE;
             double smallestY = Integer.MAX_VALUE;
 
-            for (int i = 0; i < nNodeList.getLength() && i < 50; i++) {
+            for (int i = 0; i < nNodeList.getLength(); i++) {
 
                 Node nNode = nNodeList.item(i);
 
@@ -89,28 +89,79 @@ public final class OsmToJSonParser {
                 node.put("y", orgY-smallestY);
             }
 
+            jsonRoot.put("nodes", jNodes);
+
             // ways
 
             NodeList nWayList = doc.getElementsByTagName("way");
 
             JSONArray jStreets = new JSONArray();
+            JSONArray jLanes = new JSONArray();
 
             for (int i = 0; i < nWayList.getLength(); i++) {
                 Node nWay = nWayList.item(i);
 
                 if (nWay.getNodeType() == Node.ELEMENT_NODE) {
 
-                    Element eElement = (Element) nWay;
-                    JSONObject jStreet = new JSONObject();
+                    Element eWayElement = (Element) nWay;
 
+                    NodeList ndsList = eWayElement.getElementsByTagName("nd");
 
+                    JSONObject lastNode = null;
+
+                    for (int j = 0; j < ndsList.getLength(); j++) {
+                        Node nNds = ndsList.item(j);
+
+                        if (nNds.getNodeType() == Node.ELEMENT_NODE) {
+                            Element eNdsElement = (Element) nNds;
+
+                            String nodeRef = eNdsElement.getAttribute("ref");
+                            JSONObject jNode = getNodeById(nodeRef);
+
+                            if (lastNode == null)
+                                lastNode  = jNode;
+                            else {
+                                JSONObject jStreet = new JSONObject();
+
+                                String jStreetID = eWayElement.getAttribute("id")+"_"+j;
+
+                                jStreet.put("id", jStreetID);
+                                jStreet.put("from", lastNode.getString("id"));
+                                jStreet.put("to", jNode.getString("id"));
+                                jStreet.put("maxSpeed", 1);
+                                jStreet.put("prominence", 1);
+
+                                lastNode = jNode;
+
+                                jStreets.put(jStreet);
+
+                                // TODO: 02.02.2018 always 2 lanes on street
+                                JSONObject jLane = new JSONObject();
+                                JSONObject jLaneR = new JSONObject();
+
+                                jLane.put("id", jStreetID+"_f_0");
+                                jLane.put("parent", jStreetID);
+                                jLane.put("index", 0);
+                                jLane.put("reversed", false);
+
+                                jLaneR.put("id", jStreetID+"_t_0");
+                                jLaneR.put("parent", jStreetID);
+                                jLaneR.put("index", 0);
+                                jLaneR.put("reversed", true);
+
+                                jLanes.put(jLane);
+                                jLanes.put(jLaneR);
+                            }
+                        }
+                    }
                 }
             }
 
-
-
-            jsonRoot.put("nodes", jNodes);
             jsonRoot.put("streets", jStreets);
+
+
+            jsonRoot.put("lanes", jLanes);
+            jsonRoot.put("streetlight", new JSONArray());
 
             PrintWriter printWriter = new PrintWriter(json);
             printWriter.print(jsonRoot.toString());
@@ -121,7 +172,7 @@ public final class OsmToJSonParser {
         }
     }
 
-    private JSONObject getNodeById(String id) {
+    private static JSONObject getNodeById(String id) {
         JSONArray nodes = jsonRoot.getJSONArray("nodes");
 
         for (int i = 0; i < nodes.length(); i++) {
@@ -130,7 +181,7 @@ public final class OsmToJSonParser {
                 return node;
         }
 
-        return null;
+        throw new RuntimeException("NodeNotFound:"+id);
     }
 
     private OsmToJSonParser() {}
