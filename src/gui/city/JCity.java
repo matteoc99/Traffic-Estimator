@@ -10,7 +10,7 @@ import java.util.ArrayList;
  * @author Matteo Cosi
  * @since 15.12.2017
  */
-public class JCity extends JPanel{
+public class JCity extends JPanel {
 
     /**
      * reference
@@ -45,7 +45,7 @@ public class JCity extends JPanel{
     public ArrayList<JStreet> getJStreets() {
         ArrayList<JStreet> ret = new ArrayList<>();
         for (JNode jNode : jNodes) {
-            ArrayList<JStreet>streets =jNode.getjStreets();
+            ArrayList<JStreet> streets = jNode.getjStreets();
             for (JStreet street : streets) {
                 if (!ret.contains(street)) {
                     ret.add(street);
@@ -66,11 +66,7 @@ public class JCity extends JPanel{
             street.reposition();
             street.repaint();
         }
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                repaint();
-            }
-        });
+
+        repaint();
     }
 }

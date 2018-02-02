@@ -8,12 +8,14 @@ import java.awt.*;
  */
 public class Utils {
     public static double calcDistanceBetweenPoints(Point from, Point to){
-        return Math.abs(
+        double ret = Math.abs(
                 Math.sqrt(
                         Math.pow(to.getX()- from.getX(), 2) +
                                 Math.pow(to.getY()- from.getY(), 2)
                 )
         );
+
+        return ret;
     }
     public static double calcDegreesBetweenTwoPoint(Point from, Point to){
         return calcDegreesBetweenTwoPoint(from.x,from.y,to.x,to.y);

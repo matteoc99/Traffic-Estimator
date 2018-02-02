@@ -129,6 +129,7 @@ public class City {
         while (!open.isEmpty()) {
             double lowcost = Double.MAX_VALUE;
             int index = 0;
+            //get lowest cost
             for (int i = 0; i < open.size(); i++) {
                 if (open.get(i).getFieldCost() < lowcost) {
                     lowcost = open.get(i).getFieldCost();
@@ -142,17 +143,23 @@ public class City {
                 break;
             }
             ArrayList<Street> streets = current.getStreets();
+            if (streets.isEmpty())
+                System.out.println("NO STREETS");
             for (int i = 0; i < streets.size(); i++) {
                 Node neighbour;
                 boolean isReachable = true;
                 if (streets.get(i).getFrom() == current) {
                     neighbour = streets.get(i).getTo();
-                    if (streets.get(i).getForwardLanes().isEmpty())
+                    if (streets.get(i).getForwardLanes().isEmpty()) {
                         isReachable = false;
+                        System.out.println("NO lanes for "+streets.get(i).getId());
+                    }
                 } else {
                     neighbour = streets.get(i).getFrom();
-                    if (streets.get(i).getBackwardLanes().isEmpty())
+                    if (streets.get(i).getBackwardLanes().isEmpty()) {
+                        System.out.println("NO lanes for "+streets.get(i).getId());
                         isReachable = false;
+                    }
                 }
                 if(closed.contains(neighbour))
                     isReachable=false;

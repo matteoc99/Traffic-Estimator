@@ -14,13 +14,12 @@ import java.util.ArrayList;
  */
 public class Tester {
     public static void main(String[] args) {
-        City city = City.createCityFromJson(new java.io.File("C:\\Users\\matte\\IdeaProjects\\Traffic-Estimator\\src\\parsing\\testcity.json"));
+        City city = City.createCityFromJson(new java.io.File("C:\\Users\\matte\\IdeaProjects\\Traffic-Estimator\\src\\parsing\\lana.json"));
 
         Vehicle test = new Vehicle(1000, 50, city.doRandomPathFinding(null), 1, 1);
 
         while (true) {
             city.calcCity();
-
         }
     }
 }

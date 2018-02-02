@@ -80,11 +80,14 @@ public class Vehicle {
     public void move() {
         System.out.println("MOVE: " + progressInLane);
         System.out.println("CURRENT:"+currentGoal.getId());
+        System.out.println("Prev:"+prevGoal.getId());
         searchNewGoal();
         if(!isDead) {
             if (progressInLane / lane.getLength() >= 0.95) {
+                System.out.println("changeLane()"+progressInLane+"::"+lane.getLength());
                 currentGoal.request(this);
                 changeLane(null);
+                progressInLane=0;
             } else {
                 if (progressInLane / lane.getLength() >= 80) {
                     //TODO change lane allowed
@@ -107,7 +110,7 @@ public class Vehicle {
 
     private void searchNewGoal() {
         if (lane == null || !lane.getToNode().equals(currentGoal)) {
-            prevGoal = path.getGoal();
+            prevGoal = path.getGoalAndIncrement();
             if (prevGoal == null || prevGoal.equals(path.getTo()))
                 die();
             else {
