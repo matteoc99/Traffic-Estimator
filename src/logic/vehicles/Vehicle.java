@@ -5,6 +5,7 @@ import logic.city.Lane;
 import logic.city.Node;
 import logic.city.Path;
 
+import java.awt.*;
 import java.util.ArrayList;
 
 /**
@@ -147,6 +148,14 @@ public class Vehicle {
             newLane.addVehicle(this);
         lane = newLane;
         move();
+    }
+
+    public Point getPointOnLane(){
+        Point ret = new Point();
+        double x=progressInLane*Math.cos(lane.getParent().getDegrees());
+        double y=progressInLane*Math.sin(lane.getParent().getDegrees());
+        ret.setLocation(x,y);
+        return ret;
     }
 
     public void setLane(Lane lane) {

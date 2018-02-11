@@ -2,20 +2,22 @@ package logic.city;
 
 import logic.vehicles.Vehicle;
 
+import java.awt.*;
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 
 /**
  * @author Matteo Cosi
  * @since 15.12.2017
  */
-public class Lane{
+public class Lane {
     private String id;
     private Street parent;
     private boolean reversed;
     private int index;
     private ArrayList<Streetlight> streetlights;
     private ArrayList<Vehicle> vehicles;
-    private double length=-1;
+    private double length = -1;
 
     public Lane(String id, Street parent, boolean reversed, int index) {
         this.id = id;
@@ -23,7 +25,7 @@ public class Lane{
         this.reversed = reversed;
         this.index = index;
         parent.addLane(this);
-        vehicles= new ArrayList<>();
+        vehicles = new ArrayList<>();
     }
 
     public ArrayList<Lane> getNeighbourLanes() {
@@ -31,13 +33,13 @@ public class Lane{
     }
 
     public Vehicle getNextVehicle(int position) {
-        int smallest=Integer.MAX_VALUE;
+        int smallest = Integer.MAX_VALUE;
         int index = -1;
-        int i=0;
+        int i = 0;
         for (Vehicle vehicle : vehicles) {
-            if(vehicle.getProgressInLane() > position && vehicle.getProgressInLane()<smallest){
-                index=i;
-                smallest=vehicle.getProgressInLane();
+            if (vehicle.getProgressInLane() > position && vehicle.getProgressInLane() < smallest) {
+                index = i;
+                smallest = vehicle.getProgressInLane();
             }
             i++;
         }
@@ -112,29 +114,30 @@ public class Lane{
         return reversed;
     }
 
-    public Node getFromNode(){
+    public Node getFromNode() {
         Node ret;
-        if(isReversed()){
-            ret=parent.getTo();
-        }else {
-            ret=parent.getFrom();
+        if (isReversed()) {
+            ret = parent.getTo();
+        } else {
+            ret = parent.getFrom();
         }
         return ret;
     }
-    public Node getToNode(){
+
+    public Node getToNode() {
         Node ret;
-        if(isReversed()){
-            ret=parent.getFrom();
-        }else {
-            ret=parent.getTo();
+        if (isReversed()) {
+            ret = parent.getFrom();
+        } else {
+            ret = parent.getTo();
         }
         return ret;
     }
 
 
     public double getLength() {
-        if(length==-1)
-            length= parent.getLength();
+        if (length == -1)
+            length = parent.getLength();
         return length;
     }
 
@@ -142,9 +145,20 @@ public class Lane{
         this.length = length;
     }
 
-    public void calcLane() {
-        for (int i = 0; i < vehicles.size(); i++) {
-            vehicles.get(i).move();
+    public ArrayList<Vehicle> getVehicles() {
+        return vehicles;
+    }
+
+
+    void calcLane() {
+        try {
+
+            for (Vehicle vehicle : vehicles) {
+                vehicle.move();
+            }
+        } catch (ConcurrentModificationException exception) {
+
         }
     }
+
 }

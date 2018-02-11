@@ -1,10 +1,15 @@
 package gui.city;
 
 import logic.Utils;
-import logic.city.City;
+import logic.city.*;
+import logic.vehicles.Vehicle;
 
 import javax.swing.*;
+import java.awt.*;
 import java.util.ArrayList;
+
+import static gui.Main.prevZoom;
+import static gui.Main.zoom;
 
 /**
  * @author Matteo Cosi
@@ -15,16 +20,18 @@ public class JCity extends JPanel {
     /**
      * reference
      */
-    City city;
-
-    private ArrayList<JNode> jNodes;
+    private City city;
+    ArrayList<Street> streets;
+    ArrayList<Node> nodes;
 
 
     public JCity(City city) {
-        jNodes = new ArrayList<>();
-        setLayout(null);
         this.city = city;
-        create();
+        streets = city.getStreets();
+        nodes = city.getNodes();
+
+        setLayout(null);
+        setBounds(city.getBounds());
     }
 
     public City getCity() {
@@ -35,38 +42,46 @@ public class JCity extends JPanel {
         this.city = city;
     }
 
-    private void create() {
-        for (int i = 0; i < city.getNodes().size(); i++) {
-            JNode jNode = new JNode(city.getNodes().get(i), this);
-            jNodes.add(jNode);
-        }
-    }
+    @Override
+    protected void paintComponent(Graphics g) {
 
-    public ArrayList<JStreet> getJStreets() {
-        ArrayList<JStreet> ret = new ArrayList<>();
-        for (JNode jNode : jNodes) {
-            ArrayList<JStreet> streets = jNode.getjStreets();
-            for (JStreet street : streets) {
-                if (!ret.contains(street)) {
-                    ret.add(street);
+        //drawNodes
+      /*  for (Node node : nodes) {
+            g.setColor(Color.BLUE);
+            g.drawOval(node.getX(),node.getY(),8,8);
+        }*/
+
+        Graphics2D g2 = (Graphics2D) g;
+        RenderingHints rh = new RenderingHints(
+                RenderingHints.KEY_TEXT_ANTIALIASING,
+                RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+        g2.setRenderingHints(rh);
+
+        //drawStreets
+        for (Street street : streets) {
+            g2.setColor(Color.BLACK);
+            g2.drawLine((int) (street.getxFrom() * zoom), (int) (street.getyFrom() * zoom), (int) (street.getxTo() * zoom), (int) (street.getyTo() * zoom));
+            g2.setColor(Color.RED);
+            //drawcars
+            for (Lane lane : street.getForwardLanes()) {
+                for (Vehicle vehicle : lane.getVehicles()) {
+                    g.drawOval(lane.getFromNode().getX() + vehicle.getPointOnLane().x,
+                            lane.getFromNode().getY() + vehicle.getPointOnLane().y,
+                            1, 1);
+
+                }
+            }
+            //drawcars
+            for (Lane lane : street.getBackwardLanes()) {
+                for (Vehicle vehicle : lane.getVehicles()) {
+                    g.drawOval((int) ((lane.getFromNode().getX() + vehicle.getPointOnLane().x)*zoom),
+                            (int) ((lane.getFromNode().getY() + vehicle.getPointOnLane().y)*zoom),
+                            1, 1);
+
                 }
             }
         }
-        return ret;
-    }
-
-
-    public void reposition() {
-        for (JNode jNode : jNodes) {
-            jNode.reposition();
-            jNode.repaint();
-        }
-        ArrayList<JStreet> streets = getJStreets();
-        for (JStreet street : streets) {
-            street.reposition();
-            street.repaint();
-        }
-
-        repaint();
+        setSize((int) (city.getBounds().width * zoom), (int) (city.getBounds().height * zoom));
+        System.out.println(getLocation());
     }
 }

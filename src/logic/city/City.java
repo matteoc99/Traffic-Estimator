@@ -152,12 +152,10 @@ public class City {
                     neighbour = streets.get(i).getTo();
                     if (streets.get(i).getForwardLanes().isEmpty()) {
                         isReachable = false;
-                        System.out.println("NO lanes for "+streets.get(i).getId());
                     }
                 } else {
                     neighbour = streets.get(i).getFrom();
                     if (streets.get(i).getBackwardLanes().isEmpty()) {
-                        System.out.println("NO lanes for "+streets.get(i).getId());
                         isReachable = false;
                     }
                 }
@@ -186,7 +184,7 @@ public class City {
         return ret;
     }
 
-    public Path doRandomPathFinding(Vehicle vehicle) {
+    public Path getRandomPath() {
         //get two random nodes based on fame
         Node from = getRandomNode();
         Node to = getRandomNode();
@@ -194,7 +192,7 @@ public class City {
             to = getRandomNode();
         }
         System.out.println(from.getId()+"/"+to.getId());
-        return doAStern(from, to, vehicle);
+        return doAStern(from, to, null);
     }
 
     public Node getRandomNode() {
@@ -311,5 +309,27 @@ public class City {
 
     public ArrayList<Node> getNodes() {
         return nodes;
+    }
+
+
+    public Rectangle getBounds() {
+        return new Rectangle(0,0,getMaxWidth(),getMaxHeight());
+    }
+    private int getMaxHeight() {
+        int ret=0;
+        for (Node node : nodes) {
+            if (node.getX() > ret)
+                ret =node.getX();
+        }
+        return ret;
+    }
+
+    private int getMaxWidth() {
+        int ret=0;
+        for (Node node : nodes) {
+            if (node.getY() > ret)
+                ret =node.getY();
+        }
+        return ret;
     }
 }
