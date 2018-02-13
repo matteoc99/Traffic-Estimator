@@ -90,4 +90,11 @@ public class Path {
         }
         return ret.toString();
     }
+
+    public boolean isValid() {
+        if(nodes.size()>=3){
+            return true;
+        }
+        return false;
+    }
 }

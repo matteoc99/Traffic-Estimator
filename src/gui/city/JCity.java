@@ -65,20 +65,22 @@ public class JCity extends JPanel {
             //drawcars
             for (Lane lane : street.getForwardLanes()) {
                 for (Vehicle vehicle : lane.getVehicles()) {
-                    g.drawOval((int) ((vehicle.getPointOnLane().x)*zoom)-2,
-                            (int) ((vehicle.getPointOnLane().y)*zoom)-2,
-                            4+(int)(zoom), 4+(int)(zoom));
+                    g.fillOval((int) ((vehicle.getPointOnLane().x)*zoom)-10,
+                            (int) ((vehicle.getPointOnLane().y)*zoom)-10,
+                            20+(int)(zoom), 20+(int)(zoom));
                 }
             }
             //drawcars
             for (Lane lane : street.getBackwardLanes()) {
                 for (Vehicle vehicle : lane.getVehicles()) {
-                    g.drawOval((int) ((vehicle.getPointOnLane().x)*zoom)-2,
-                            (int) ((vehicle.getPointOnLane().y)*zoom)-2,
-                            4+(int)(zoom), 4+(int)(zoom));
+                    g.fillOval((int) ((vehicle.getPointOnLane().x)*zoom)-10,
+                            (int) ((vehicle.getPointOnLane().y)*zoom)-10,
+                            20+(int)(zoom), 20+(int)(zoom));
+
                 }
             }
         }
+
         setSize((int) (city.getBounds().width * zoom), (int) (city.getBounds().height * zoom));
     }
 }

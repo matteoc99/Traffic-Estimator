@@ -4,6 +4,7 @@ import com.sun.deploy.util.ArrayUtil;
 import com.sun.org.apache.regexp.internal.RE;
 import gui.city.JCity;
 import logic.city.City;
+import logic.city.Node;
 import logic.city.Street;
 import logic.vehicles.Vehicle;
 
@@ -120,13 +121,26 @@ public class Main extends JFrame {
 
     public static void main(String[] args) {
         City city = City.createCityFromJson(
-                new File(System.getProperty("user.dir") + "\\src\\parsing\\testcity.json"));
+                new File(System.getProperty("user.dir") + "\\src\\parsing\\sumo.json"));
+
+
+
+
+        System.out.println("Size:"+ city.getNodes().size());
+        int couter=0;
+        for (Node node : city.getNodes()) {
+            if(node.getStreets().isEmpty()){
+                couter++;
+            }
+        }
+        System.out.println("Empty:"+couter);
+
+
+
+
+
         Main main=new Main(city);
 
-        for (int i = 0; i < 50; i++) {
-            Vehicle c = new Vehicle(1000, 50, city.getRandomPath(), 1, 1);
-
-        }
         while (true) {
             try {
                 Thread.sleep(400);
@@ -134,6 +148,9 @@ public class Main extends JFrame {
                 e.printStackTrace();
             }
             main.calcCity();
+            if (city.getVehicles().size()<50){
+                Vehicle c = new Vehicle(1000, 50, city.getRandomPath(), 1, 1);
+            }
         }
 
     }

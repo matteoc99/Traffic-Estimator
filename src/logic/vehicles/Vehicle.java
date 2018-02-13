@@ -73,7 +73,8 @@ public class Vehicle {
 
 
     public void move() {
-        if (progressInLane / lane.getLength() > 0.95) {
+
+        if (progressInLane / lane.getLength() > 0.90) {
             //change lane or die if path end is reached
             prevGoal = currentGoal;
             currentGoal = path.getGoalAndIncrement();
@@ -88,7 +89,7 @@ public class Vehicle {
                     currentSpeed = 5;
             }
         } else {
-            if (progressInLane / lane.getLength() > 0.85) {
+            if (progressInLane / lane.getLength() > 0.80) {
                 //goto better lane for dir change
             }
             //move
@@ -252,5 +253,9 @@ public class Vehicle {
 
     public void incrementProgrssInLane(int inc) {
         progressInLane += inc;
+    }
+
+    public Lane getLane() {
+        return lane;
     }
 }

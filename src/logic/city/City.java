@@ -192,7 +192,12 @@ public class City {
             to = getRandomNode();
         }
         System.out.println(from.getId()+"/"+to.getId());
-        return doAStern(from, to, null);
+        Path path = doAStern(from, to, null);
+        while (!path.isValid()){
+            System.out.println("PATH NOT VALID");
+            path = doAStern(from, to, null);
+        }
+        return path;
     }
 
     public Node getRandomNode() {
@@ -291,6 +296,24 @@ public class City {
         return null;
     }
 
+    public ArrayList<Vehicle> getVehicles() {
+        ArrayList<Vehicle>ret = new ArrayList<>();
+        for (Node node : nodes) {
+            for (Street street: node.getStreets()) {
+                for (Lane lane: street.getBackwardLanes()) {
+                    ret.addAll(lane.getVehicles());
+                }
+            }
+        }
+        for (Node node : nodes) {
+            for (Street street: node.getStreets()) {
+                for (Lane lane: street.getForwardLanes()) {
+                    ret.addAll(lane.getVehicles());
+                }
+            }
+        }
+        return ret;
+    }
 
     public void calcCity(){
         ArrayList<Street> streets = getStreets();
