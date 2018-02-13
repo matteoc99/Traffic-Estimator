@@ -123,13 +123,13 @@ public class Main extends JFrame {
                 new File(System.getProperty("user.dir") + "\\src\\parsing\\testcity.json"));
         Main main=new Main(city);
 
-        for (int i = 0; i < 1; i++) {
+        for (int i = 0; i < 50; i++) {
             Vehicle c = new Vehicle(1000, 50, city.getRandomPath(), 1, 1);
 
         }
         while (true) {
             try {
-                Thread.sleep(1000);
+                Thread.sleep(400);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

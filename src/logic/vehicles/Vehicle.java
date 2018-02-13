@@ -58,7 +58,7 @@ public class Vehicle {
         this.streetKnowledge = streetKnowledge;
         this.speeder = speeder;
         progressInLane = 0;
-        currentSpeed = 1;
+        currentSpeed = 2;
 
         prevGoal = path.getGoalAndIncrement();
         currentGoal = path.getGoalAndIncrement();
@@ -73,20 +73,19 @@ public class Vehicle {
 
 
     public void move() {
-        System.out.println(progressInLane+ " on lane:"+lane);
         if (progressInLane / lane.getLength() > 0.95) {
             //change lane or die if path end is reached
-            prevGoal=currentGoal;
-            currentGoal= path.getGoalAndIncrement();
-            if(currentGoal==null)
+            prevGoal = currentGoal;
+            currentGoal = path.getGoalAndIncrement();
+            if (currentGoal == null)
                 lane.removeVehicle(this);
-            else{
+            else {
                 Lane lane = prevGoal.setOnLaneTo(currentGoal);
                 changeLane(lane);
-                progressInLane=0;
-                currentSpeed/=4;
-                if(currentSpeed<5)
-                    currentSpeed=5;
+                progressInLane = 0;
+                currentSpeed /= 4;
+                if (currentSpeed < 5)
+                    currentSpeed = 5;
             }
         } else {
             if (progressInLane / lane.getLength() > 0.85) {
@@ -98,28 +97,31 @@ public class Vehicle {
                 //check car distance
                 if (progressInLane + SICHERHEITS_ABSTAND + currentSpeed < lane.getNextVehicle(progressInLane).progressInLane) {
                     //move
-                    if(currentSpeed<maxSpeed){
-                        currentSpeed+=1+Math.log(currentSpeed);
-                    }else{
+                    if (currentSpeed < maxSpeed) {
+                        if (currentSpeed > 1)
+                            currentSpeed += 1 + Math.log(currentSpeed);
+                        else
+                            currentSpeed++;
+                    } else {
                         currentSpeed--;
                     }
-                    progressInLane+=currentSpeed/10; //TODO trimm
-                }else{
+                    incrementProgrssInLane(currentSpeed / 5); //TODO trimm
+                } else {
                     //slow down
-                    while (progressInLane + SICHERHEITS_ABSTAND + currentSpeed > lane.getNextVehicle(progressInLane).progressInLane){
-                        currentSpeed-=5;
+                    while (progressInLane + SICHERHEITS_ABSTAND + currentSpeed > lane.getNextVehicle(progressInLane).progressInLane) {
+                        currentSpeed -= 5;
                     }
-                    progressInLane+=currentSpeed/10; //TODO trimm
+                    incrementProgrssInLane(currentSpeed / 5); //TODO trimm
                 }
             } else {
                 //just move
-                if(currentSpeed<maxSpeed){
-                    currentSpeed+=1+Math.log(currentSpeed);
-                }else{
+                if (currentSpeed < maxSpeed) {
+                    currentSpeed += 1 + Math.log(currentSpeed);
+                } else {
                     currentSpeed--;
                 }
-                progressInLane+=currentSpeed/10; //TODO trimm
-                if(progressInLane>lane.getLength())
+                incrementProgrssInLane(currentSpeed / 5); //TODO trimm
+                if (progressInLane > lane.getLength())
                     progressInLane = (int) lane.getLength();
             }
         }
@@ -148,10 +150,10 @@ public class Vehicle {
 
     public Point getPointOnLane() {
         Point ret = new Point();
-        int deltax = lane.getFromNode().getX()-lane.getToNode().getX();
-        int deltay= lane.getFromNode().getY()-lane.getToNode().getY();
-        double x = lane.getFromNode().getX() - deltax*(progressInLane/lane.getLength());
-        double y = lane.getFromNode().getY() - deltay*(progressInLane/lane.getLength());
+        int deltax = lane.getFromNode().getX() - lane.getToNode().getX();
+        int deltay = lane.getFromNode().getY() - lane.getToNode().getY();
+        double x = lane.getFromNode().getX() - deltax * (progressInLane / lane.getLength());
+        double y = lane.getFromNode().getY() - deltay * (progressInLane / lane.getLength());
         ret.setLocation(x, y);
         return ret;
     }
@@ -234,5 +236,9 @@ public class Vehicle {
 
     public void setProgressInLane(int progressInLane) {
         this.progressInLane = progressInLane;
+    }
+
+    public void incrementProgrssInLane(int inc) {
+        progressInLane += inc;
     }
 }
