@@ -149,6 +149,7 @@ public class Vehicle {
     }
 
     public Point getPointOnLane() {
+        /*
         Point ret = new Point();
         int deltax = lane.getFromNode().getX() - lane.getToNode().getX();
         int deltay = lane.getFromNode().getY() - lane.getToNode().getY();
@@ -156,6 +157,17 @@ public class Vehicle {
         double y = lane.getFromNode().getY() - deltay * (progressInLane / lane.getLength());
         ret.setLocation(x, y);
         return ret;
+        */
+
+        // TODO: 13.02.2018 vllt currentPointOnLane nennen, so klingts a wian als wars parameter obhängig
+        int fromX = lane.getFromNode().getX();
+        int fromY = lane.getFromNode().getY();
+        int toX = lane.getToNode().getX();
+        int toY = lane.getToNode().getY();
+        int x = (toX - fromX) * progressInLane + fromX;
+        int y = (toY - fromY) * progressInLane + fromY;
+
+        return new Point(x, y);
     }
 
     public void setLane(Lane lane) {
