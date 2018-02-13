@@ -43,15 +43,13 @@ public class Vehicle {
      */
     private int speeder;
 
-
     private int progressInLane;
 
     private Node currentGoal;
     private Node prevGoal;
 
-    private boolean isDead= false;
 
-    public static int SICHERHEITS_ABSTAND = 30;
+    public static int SICHERHEITS_ABSTAND = 30; //TODO variabel je nach raser?
 
     public Vehicle(int weight, int maxSpeed, Path path, int streetKnowledge, int speeder) {
         this.weight = weight;
@@ -60,72 +58,71 @@ public class Vehicle {
         this.streetKnowledge = streetKnowledge;
         this.speeder = speeder;
         progressInLane = 0;
-        currentSpeed = 0;
-        addToPathStart();
-        move();
+        currentSpeed = 1;
+
+        prevGoal = path.getGoalAndIncrement();
+        currentGoal = path.getGoalAndIncrement();
+        Lane lane = prevGoal.setOnLaneTo(currentGoal);
+        changeLane(lane);
     }
+
 
     public Vehicle(int maxSpeed) {
         this.maxSpeed = maxSpeed;
     }
 
-    private void addToPathStart() {
-        System.out.println(path);
-        prevGoal = path.getGoalAndIncrement();
-        currentGoal = path.getGoalAndIncrement();
-        lane = prevGoal.setOnLaneTo(currentGoal);
-        lane.addVehicle(this);
-    }
-
 
     public void move() {
-        System.out.println("MOVE: " + progressInLane);
-        System.out.println("CURRENT:"+currentGoal.getId());
-        System.out.println("Prev:"+prevGoal.getId());
-        searchNewGoal();
-        if(!isDead) {
-            if (progressInLane / lane.getLength() >= 0.95) {
-                System.out.println("changeLane()"+progressInLane+"::"+lane.getLength());
-                currentGoal.request(this);
-                changeLane(null);
+        System.out.println(progressInLane+ " on lane:"+lane);
+        if (progressInLane / lane.getLength() > 0.95) {
+            //change lane or die if path end is reached
+            prevGoal=currentGoal;
+            currentGoal= path.getGoalAndIncrement();
+            if(currentGoal==null)
+                lane.removeVehicle(this);
+            else{
+                Lane lane = prevGoal.setOnLaneTo(currentGoal);
+                changeLane(lane);
                 progressInLane=0;
+                currentSpeed/=4;
+                if(currentSpeed<5)
+                    currentSpeed=5;
+            }
+        } else {
+            if (progressInLane / lane.getLength() > 0.85) {
+                //goto better lane for dir change
+            }
+            //move
+            //if car in front
+            if (lane.getNextVehicle(progressInLane) != null) {
+                //check car distance
+                if (progressInLane + SICHERHEITS_ABSTAND + currentSpeed < lane.getNextVehicle(progressInLane).progressInLane) {
+                    //move
+                    if(currentSpeed<maxSpeed){
+                        currentSpeed+=1+Math.log(currentSpeed);
+                    }else{
+                        currentSpeed--;
+                    }
+                    progressInLane+=currentSpeed/10; //TODO trimm
+                }else{
+                    //slow down
+                    while (progressInLane + SICHERHEITS_ABSTAND + currentSpeed > lane.getNextVehicle(progressInLane).progressInLane){
+                        currentSpeed-=5;
+                    }
+                    progressInLane+=currentSpeed/10; //TODO trimm
+                }
             } else {
-                if (progressInLane / lane.getLength() >= 80) {
-                    //TODO change lane allowed
+                //just move
+                if(currentSpeed<maxSpeed){
+                    currentSpeed+=1+Math.log(currentSpeed);
+                }else{
+                    currentSpeed--;
                 }
-                if (lane.getNextVehicle(progressInLane) == null || progressInLane + SICHERHEITS_ABSTAND + currentSpeed < lane.getNextVehicle(progressInLane).getProgressInLane()) {
-                    if (currentSpeed < maxSpeed) {
-                        currentSpeed ++;
-                    } else {
-                        currentSpeed--;
-                    }
-                } else {
-                    while (currentSpeed > 0 || progressInLane + SICHERHEITS_ABSTAND + currentSpeed > lane.getNextVehicle(progressInLane).getProgressInLane()) {
-                        currentSpeed--;
-                    }
-                }
-                progressInLane += currentSpeed;
+                progressInLane+=currentSpeed/10; //TODO trimm
+                if(progressInLane>lane.getLength())
+                    progressInLane = (int) lane.getLength();
             }
         }
-    }
-
-    private void searchNewGoal() {
-        if (lane == null || !lane.getToNode().equals(currentGoal)) {
-            prevGoal = path.getGoalAndIncrement();
-            if (prevGoal == null || prevGoal.equals(path.getTo()))
-                die();
-            else {
-                currentGoal = path.getGoalAndIncrement();
-                Lane newLane = prevGoal.setOnLaneTo(currentGoal);
-                changeLane(newLane);
-                progressInLane = 0;
-                currentSpeed = 0;
-            }
-        }
-    }
-
-    private void die() {
-        isDead=true;
     }
 
 
@@ -147,14 +144,15 @@ public class Vehicle {
         if (newLane != null)
             newLane.addVehicle(this);
         lane = newLane;
-        move();
     }
 
-    public Point getPointOnLane(){
+    public Point getPointOnLane() {
         Point ret = new Point();
-        double x=progressInLane*Math.cos(lane.getParent().getDegrees());
-        double y=progressInLane*Math.sin(lane.getParent().getDegrees());
-        ret.setLocation(x,y);
+        int deltax = lane.getFromNode().getX()-lane.getToNode().getX();
+        int deltay= lane.getFromNode().getY()-lane.getToNode().getY();
+        double x = lane.getFromNode().getX() - deltax*(progressInLane/lane.getLength());
+        double y = lane.getFromNode().getY() - deltay*(progressInLane/lane.getLength());
+        ret.setLocation(x, y);
         return ret;
     }
 

@@ -152,7 +152,6 @@ public class Lane {
 
     void calcLane() {
         try {
-
             for (Vehicle vehicle : vehicles) {
                 vehicle.move();
             }
@@ -161,4 +160,11 @@ public class Lane {
         }
     }
 
+    @Override
+    public String toString() {
+        return "Lane{" +
+                "id='" + id + '\'' +
+                ", parent=" + parent +
+                '}';
+    }
 }

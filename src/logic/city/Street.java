@@ -236,4 +236,11 @@ public class Street extends StreetComponent {
             forwardLanes.get(i).calcLane();
         }
     }
+
+    @Override
+    public String toString() {
+        return "Street{" +
+                "id='" + id + '\'' +
+                '}';
+    }
 }

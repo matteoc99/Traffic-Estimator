@@ -123,8 +123,8 @@ public class Main extends JFrame {
                 new File(System.getProperty("user.dir") + "\\src\\parsing\\testcity.json"));
         Main main=new Main(city);
 
-        for (int i = 0; i < 10; i++) {
-            Vehicle c = new Vehicle(10000, 50, city.getRandomPath(), 1, 1);
+        for (int i = 0; i < 1; i++) {
+            Vehicle c = new Vehicle(1000, 50, city.getRandomPath(), 1, 1);
 
         }
         while (true) {
@@ -134,7 +134,6 @@ public class Main extends JFrame {
                 e.printStackTrace();
             }
             main.calcCity();
-
         }
 
     }
