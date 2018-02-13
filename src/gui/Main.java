@@ -136,9 +136,6 @@ public class Main extends JFrame {
         System.out.println("Empty:"+couter);
 
 
-
-
-
         Main main=new Main(city);
 
         while (true) {
@@ -148,8 +145,8 @@ public class Main extends JFrame {
                 e.printStackTrace();
             }
             main.calcCity();
-            if (city.getVehicles().size()<50){
-                Vehicle c = new Vehicle(1000, 50, city.getRandomPath(), 1, 1);
+            if (city.getVehicles().size()<5){
+                Vehicle c = new Vehicle(1000, 50, city.getRandomPath(0), 1, 1);
             }
         }
 

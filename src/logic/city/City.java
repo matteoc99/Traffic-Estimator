@@ -184,7 +184,10 @@ public class City {
         return ret;
     }
 
-    public Path getRandomPath() {
+    public Path getRandomPath(int breaking) {
+        if(breaking>30) {
+            return null;
+        }
         //get two random nodes based on fame
         Node from = getRandomNode();
         Node to = getRandomNode();
@@ -193,9 +196,9 @@ public class City {
         }
         System.out.println(from.getId()+"/"+to.getId());
         Path path = doAStern(from, to, null);
-        while (!path.isValid()){
+        if (!path.isValid()){
             System.out.println("PATH NOT VALID");
-            path = doAStern(from, to, null);
+            path = getRandomPath(breaking+1);
         }
         return path;
     }

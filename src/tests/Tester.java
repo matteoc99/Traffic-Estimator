@@ -16,7 +16,7 @@ public class Tester {
     public static void main(String[] args) {
         City city = City.createCityFromJson(new java.io.File("C:\\Users\\matte\\IdeaProjects\\Traffic-Estimator\\src\\parsing\\lana.json"));
 
-        Vehicle test = new Vehicle(1000, 50, city.getRandomPath(), 1, 1);
+        Vehicle test = new Vehicle(1000, 50, city.getRandomPath(0), 1, 1);
 
         while (true) {
             city.calcCity();
