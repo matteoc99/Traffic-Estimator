@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * @author Matteo Cosi
@@ -85,6 +86,9 @@ public class City {
 
             new Lane(id, parent, reversed, index);
         }
+
+        // delete lonely nodes
+        city.nodes.removeIf(node -> node.getStreets().isEmpty());
 
         return city;
     }
