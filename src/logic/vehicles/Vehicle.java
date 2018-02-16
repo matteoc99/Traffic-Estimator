@@ -50,7 +50,7 @@ public class Vehicle {
     private Node prevGoal;
 
 
-    public static int SICHERHEITS_ABSTAND = 30; //TODO variabel je nach raser?
+    public int safetyDistance = 30; //TODO variabel je nach raser?
 
     public Vehicle(int weight, int maxSpeed, Path path, int streetKnowledge, int speeder, City city) {
         this.weight = weight;
@@ -110,7 +110,7 @@ public class Vehicle {
             //if car in front
             if (lane.getNextVehicle(progressInLane) != null) {
                 //check car distance
-                if (progressInLane + SICHERHEITS_ABSTAND + currentSpeed < lane.getNextVehicle(progressInLane).progressInLane) {
+                if (progressInLane + safetyDistance + currentSpeed < lane.getNextVehicle(progressInLane).progressInLane) {
                     //move
                     if (currentSpeed < maxSpeed) {
                         if (currentSpeed > 1)
@@ -126,7 +126,7 @@ public class Vehicle {
                     //slow down
                     int c = 0;
                     int nextVehiclesProgress = lane.getNextVehicle(progressInLane).progressInLane;
-                    while (progressInLane + SICHERHEITS_ABSTAND + currentSpeed > nextVehiclesProgress) {
+                    while (progressInLane + safetyDistance + currentSpeed > nextVehiclesProgress) {
                         currentSpeed -= 5;
                         c++;
                         if (currentSpeed<0){

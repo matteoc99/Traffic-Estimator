@@ -2,7 +2,9 @@ package logic.city;
 
 import logic.vehicles.Vehicle;
 
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 /**
  * @author Matteo Cosi
@@ -163,5 +165,40 @@ public class Lane {
                 "id='" + id + '\'' +
                 ", parent=" + parent +
                 '}';
+    }
+
+    /**
+     * calculates the amount of traffic from 0-1
+     * @return traffic
+     */
+    public double getTraffic(){
+        int spaceNeeded=0;
+        for (Vehicle vehicle : getVehicles()) {
+            spaceNeeded+=vehicle.safetyDistance;
+        }
+        return (spaceNeeded/getLength());
+    }
+
+    public Color getColorByTraffic() {
+        double traffic = getTraffic();
+        System.out.println(traffic);
+        Color color = null;
+        if(traffic<0.1){
+            color= new Color(0,255,0);
+        }else if(traffic<0.4){
+            color= new Color(160,255, 20);
+        }else if(traffic<0.6){
+            color= new Color(250,255, 19);
+        }else if(traffic<0.8){
+            color= new Color(255, 228, 17);
+        }else if(traffic<0.9){
+            color= new Color(255, 143, 18);
+        }else if(traffic<1.1){
+            color= new Color(255, 67, 17);
+        }else if(traffic<1.8){
+            color= new Color(255, 14, 17);
+        }else
+            color= new Color(71, 0,0);
+        return color;
     }
 }
