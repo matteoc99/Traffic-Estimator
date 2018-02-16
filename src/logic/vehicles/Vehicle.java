@@ -124,12 +124,9 @@ public class Vehicle {
                     while (progressInLane + SICHERHEITS_ABSTAND + currentSpeed > nextVehiclesProgress) {
                         currentSpeed -= 5;
                         c++;
-                        if (c > 1000) {
-                            System.out.println(progressInLane);
-                            System.out.println(SICHERHEITS_ABSTAND);
-                            System.out.println(currentSpeed);
-                            System.out.println(nextVehiclesProgress);
-                            throw new RuntimeException("Vehicle_EndlessLoop");
+                        if (currentSpeed<0){
+                            currentSpeed=0;
+                            break;
                         }
                     }
                     incrementProgrssInLane(currentSpeed / 5); //TODO trimm

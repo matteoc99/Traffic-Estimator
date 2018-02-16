@@ -128,10 +128,9 @@ public class Main extends JFrame {
 
 
         Main main = new Main(city);
-
         while (true) {
             try {
-                Thread.sleep(100);
+                Thread.sleep(10);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -140,6 +139,7 @@ public class Main extends JFrame {
             if (city.getVehicles().size() < 20) {
                 Vehicle vehicle = new Vehicle(1000, 60, PathUtils.getRandomPath(city), 1, 1, city);
             }
+
 
         }
 
