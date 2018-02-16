@@ -46,8 +46,9 @@ public class Path {
     }
 
     public String getGoalAndIncrement() {
-        if (progress >= ids.size())
+        if (progress >= ids.size()) {
             return null;
+        }
         String ret = ids.get(progress);
         progress++;
         return ret;
@@ -118,9 +119,9 @@ public class Path {
 
         ret.append(ATTR_NODE).append(":");
         for (int i = 0; i < ids.size(); i++) {
-            if(i==ids.size()-1){
+            if (i == ids.size() - 1) {
                 ret.append(ids.get(i));
-            }else{
+            } else {
                 ret.append(ids.get(i)).append(NODE_DELIMITER);
             }
         }
@@ -156,9 +157,10 @@ public class Path {
                 nodes = "";
             } else {
                 ret.addNodeId(nodes.substring(0, endindex));
-                nodes = nodes.substring(endindex+NODE_DELIMITER.length());
+                nodes = nodes.substring(endindex + NODE_DELIMITER.length());
             }
         }
+        ret.resetProgress();
         return ret;
     }
 
@@ -166,10 +168,19 @@ public class Path {
         int index = props.indexOf(attr)
                 + attr.length()
                 + ":".length();
-        return props.substring(index, props.indexOf(";",index));
+        return props.substring(index, props.indexOf(";", index));
     }
 
     private static String extactProps(String pth) {
         return pth.substring(pth.indexOf(OPEN_PROPS) + 1, pth.indexOf(CLOSE_PROPS));
     }
+
+    public ArrayList<String> getIds() {
+        return ids;
+    }
+
+    public void resetProgress() {
+        progress=0;
+    }
+
 }

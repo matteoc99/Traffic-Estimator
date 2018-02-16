@@ -7,7 +7,7 @@ package utils;
 public class Stopwatch {
 
     private long startTime;
-    public static boolean dbg = true;
+    public static boolean dbg = false;
 
     public Stopwatch() {
         startTime =  System.nanoTime();

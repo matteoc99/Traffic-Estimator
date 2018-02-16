@@ -254,9 +254,9 @@ public class City {
     }
 
     public Node getNodeById(String id) {
-        for (int i = 0; i < nodes.size(); i++) {
-            if (nodes.get(i).getId().equals(id))
-                return nodes.get(i);
+        for (Node node : nodes) {
+            if (node.getId().equals(id))
+                return node;
         }
         return null;
     }

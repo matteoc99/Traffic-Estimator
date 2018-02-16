@@ -130,15 +130,16 @@ public class Main extends JFrame {
         Main main = new Main(city);
         while (true) {
             try {
-                Thread.sleep(10);
+                Thread.sleep(100);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
             main.calcCity();
 
-            if (city.getVehicles().size() < 20) {
+
+            if (city.getVehicles().size() < 30) {
                 Vehicle vehicle = new Vehicle(1000, 60, PathUtils.getRandomPath(city), 1, 1, city);
-            }
+                }
 
 
         }
@@ -147,6 +148,7 @@ public class Main extends JFrame {
 
     private void calcCity() {
         Stopwatch timer = new Stopwatch().start();
+
         city.calcCity();
         timer.printAndReset("Main_BDG_ME: 1: ");
         repaint();

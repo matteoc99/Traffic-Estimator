@@ -62,14 +62,19 @@ public class Vehicle {
         currentSpeed = 2;
 
         if (path != null && path.isValid()) {
+            path.resetProgress();
             prevGoal = city.getNodeById(path.getGoalAndIncrement());
             currentGoal = city.getNodeById(path.getGoalAndIncrement());
 
             if (currentGoal != null && prevGoal != null) {
                 Lane lane = prevGoal.setOnLaneTo(currentGoal);
                 changeLane(lane);
+            }else {
+                System.out.println("BAD PATH");
+
             }
-        }
+        }else
+            System.out.println("DIE2");
     }
 
 
