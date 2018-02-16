@@ -167,7 +167,7 @@
       "id": "9to2",
       "from": "9",
       "to": "2",
-      "maxSpeed": 2,
+       "maxSpeed": 2,
       "prominence": 1
     },
     {
