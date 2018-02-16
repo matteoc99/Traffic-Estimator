@@ -1,5 +1,6 @@
 package logic.vehicles;
 
+import logic.city.City;
 import logic.city.Lane;
 import logic.city.Path;
 
@@ -16,8 +17,8 @@ public class PublicVehicle extends Vehicle {
      */
     int priorty;
 
-    public PublicVehicle(int weight, int maxSpeed, Path path, int streetKnowledge, int speeder) {
-        super( weight, maxSpeed, path, streetKnowledge, speeder);
-    }
 
-   }
+    public PublicVehicle(int weight, int maxSpeed, Path path, int streetKnowledge, int speeder, City city) {
+        super(weight, maxSpeed, path, streetKnowledge, speeder, city);
+    }
+}

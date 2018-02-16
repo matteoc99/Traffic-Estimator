@@ -10,11 +10,11 @@ import java.awt.*;
  */
 public class StreetComponent {
 
-    int xFrom;
-    int xTo;
-    int yFrom;
-    int yTo;
-    protected double degrees = -1;
+    private int xFrom;
+    private int xTo;
+    private int yFrom;
+    private int yTo;
+    private double degrees = -1;
 
     public StreetComponent() {
     }
@@ -25,6 +25,9 @@ public class StreetComponent {
         this.yFrom = yFrom;
         this.yTo = yTo;
         calcDegrees();
+
+
+
     }
 
     /**
@@ -42,7 +45,8 @@ public class StreetComponent {
      * @return the legth of the line
      */
     public double getLength() {
-        return Utils.calcDistanceBetweenPoints(new Point(xFrom,yTo),new Point(xTo,yTo));
+
+        return Utils.calcDistanceBetweenPoints(new Point(xFrom,yFrom),new Point(xTo,yTo));
     }
 
     public double getDegrees() {

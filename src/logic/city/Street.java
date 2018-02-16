@@ -16,21 +16,23 @@ public class Street extends StreetComponent {
     private Node from;
     private Node to;
     private double maxSpeed;
-    private double prominence;
+    //the higher the less known a street is. 0 very known
+    private double unProminence;
 
     private ArrayList<Lane> forwardLanes;
     private ArrayList<Lane> backwardLanes;
     private ArrayList<Congestion> congestions;
 
 
-    public Street(String id, City parent, Node from, Node to, double maxSpeed, double prominence) {
+    public Street(String id, City parent, Node from, Node to, double maxSpeed, double unProminence) {
         super(from.getX(), to.getX(), from.getY(), to.getY());
         this.id = id;
         this.parent = parent;
         this.from = from;
         this.to = to;
         this.maxSpeed = maxSpeed;
-        this.prominence = prominence;
+        this.unProminence = unProminence;
+
 
         forwardLanes = new ArrayList<>();
         backwardLanes = new ArrayList<>();
@@ -158,12 +160,12 @@ public class Street extends StreetComponent {
         this.maxSpeed = maxSpeed;
     }
 
-    public double getProminence() {
-        return prominence;
+    public double getUnProminence() {
+        return unProminence;
     }
 
-    public void setProminence(double prominence) {
-        this.prominence = prominence;
+    public void setUnProminence(double unProminence) {
+        this.unProminence = unProminence;
     }
 
     public ArrayList<Lane> getForwardLanes() {
@@ -234,5 +236,12 @@ public class Street extends StreetComponent {
         for (int i = 0; i < forwardLanes.size(); i++) {
             forwardLanes.get(i).calcLane();
         }
+    }
+
+    @Override
+    public String toString() {
+        return "Street{" +
+                "id='" + id + '\'' +
+                '}';
     }
 }
