@@ -6,6 +6,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import utils.DataIOs;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -20,7 +21,7 @@ public final class OsmToJSonParser {
 
     public static void main(String[] args) {
         parse(System.getProperty("user.dir")+"\\src\\parsing\\map.osm",
-                System.getProperty("user.dir")+"\\src\\parsing\\lana.json");
+                System.getProperty("user.dir")+"\\src\\parsing\\res\\bozenLarge.json");
     }
 
     public static void parse(String osmFilePath, String jsonFilePath) {
@@ -140,52 +141,55 @@ public final class OsmToJSonParser {
 
                 Element eWayElement = (Element) nWay;
 
-                NodeList ndsList = eWayElement.getElementsByTagName("nd");
+                if (!isInvalidWay(eWayElement)) {
 
-                JSONObject lastNode = null;
+                    NodeList ndsList = eWayElement.getElementsByTagName("nd");
 
-                for (int j = 0; j < ndsList.getLength(); j++) {
-                    Node nNds = ndsList.item(j);
+                    JSONObject lastNode = null;
 
-                    if (nNds.getNodeType() == Node.ELEMENT_NODE) {
-                        Element eNdsElement = (Element) nNds;
+                    for (int j = 0; j < ndsList.getLength(); j++) {
+                        Node nNds = ndsList.item(j);
 
-                        String nodeRef = eNdsElement.getAttribute("ref");
-                        JSONObject jNode = getNodeById(nodeRef);
+                        if (nNds.getNodeType() == Node.ELEMENT_NODE) {
+                            Element eNdsElement = (Element) nNds;
 
-                        if (lastNode == null)
-                            lastNode  = jNode;
-                        else {
-                            JSONObject jStreet = new JSONObject();
+                            String nodeRef = eNdsElement.getAttribute("ref");
+                            JSONObject jNode = getNodeById(nodeRef);
 
-                            String jStreetID = eWayElement.getAttribute("id")+"_"+j;
+                            if (lastNode == null)
+                                lastNode = jNode;
+                            else {
+                                JSONObject jStreet = new JSONObject();
 
-                            jStreet.put("id", jStreetID);
-                            jStreet.put("from", lastNode.getString("id"));
-                            jStreet.put("to", jNode.getString("id"));
-                            jStreet.put("maxSpeed", 1);
-                            jStreet.put("prominence", 1);
+                                String jStreetID = eWayElement.getAttribute("id") + "_" + j;
 
-                            lastNode = jNode;
+                                jStreet.put("id", jStreetID);
+                                jStreet.put("from", lastNode.getString("id"));
+                                jStreet.put("to", jNode.getString("id"));
+                                jStreet.put("maxSpeed", 1);
+                                jStreet.put("prominence", 1);
 
-                            jStreets.put(jStreet);
+                                lastNode = jNode;
 
-                            // TODO: 02.02.2018 always 2 lanes on street
-                            JSONObject jLane = new JSONObject();
-                            JSONObject jLaneR = new JSONObject();
+                                jStreets.put(jStreet);
 
-                            jLane.put("id", jStreetID+"_f_0");
-                            jLane.put("parent", jStreetID);
-                            jLane.put("index", 0);
-                            jLane.put("reversed", false);
+                                // TODO: 02.02.2018 always 2 lanes on street
+                                JSONObject jLane = new JSONObject();
+                                JSONObject jLaneR = new JSONObject();
 
-                            jLaneR.put("id", jStreetID+"_t_0");
-                            jLaneR.put("parent", jStreetID);
-                            jLaneR.put("index", 0);
-                            jLaneR.put("reversed", true);
+                                jLane.put("id", jStreetID + "_f_0");
+                                jLane.put("parent", jStreetID);
+                                jLane.put("index", 0);
+                                jLane.put("reversed", false);
 
-                            jLanes.put(jLane);
-                            jLanes.put(jLaneR);
+                                jLaneR.put("id", jStreetID + "_t_0");
+                                jLaneR.put("parent", jStreetID);
+                                jLaneR.put("index", 0);
+                                jLaneR.put("reversed", true);
+
+                                jLanes.put(jLane);
+                                jLanes.put(jLaneR);
+                            }
                         }
                     }
                 }
@@ -236,6 +240,27 @@ public final class OsmToJSonParser {
         }
 
         throw new RuntimeException("NodeNotFound:"+id);
+    }
+
+    private static boolean isInvalidWay(Element way) {
+        NodeList nodeList = way.getElementsByTagName("tag");
+        for (int i = 0; i < nodeList.getLength(); i++) {
+            Node node = nodeList.item(i);
+            if (node.getNodeType() == Node.ELEMENT_NODE) {
+                Element element = ((Element) node);
+
+                String key = element.getAttribute("k");
+                String value = element.getAttribute("v");
+
+                switch (key) {
+                    case "building":
+                        if (value.equals("yes"))
+                            return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     private OsmToJSonParser() {}
