@@ -1,5 +1,6 @@
 package logic.city;
 
+import logic.PathUtils;
 import logic.vehicles.Vehicle;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -19,14 +20,14 @@ import java.util.Iterator;
 public class City {
 
     public static void main(String[] args) {
-        createCityFromJson(new File(System.getProperty("user.dir")+"\\src\\parsing\\sumo.json"));
+        createCityFromJson(new File(System.getProperty("user.dir") + "\\src\\parsing\\sumo.json"));
     }
 
     private ArrayList<Node> nodes;
 
     private String name;
 
-    public City() {
+    private City() {
         nodes = new ArrayList<>();
     }
 
@@ -36,7 +37,8 @@ public class City {
     }
 
     public static City createCityFromJson(File jsonFile) {
-        City city = new City("Blogland");
+
+        City city = new City(jsonFile.getName().replace(".json",""));
         JSONTokener root;
         try {
             root = new JSONTokener(new FileReader(jsonFile));
@@ -131,8 +133,8 @@ public class City {
         open.add(from);
 
 
-        int antiendlos=0;
-        while (!open.isEmpty()&&antiendlos<10000) {
+        int antiendlos = 0;
+        while (!open.isEmpty() && antiendlos < 10000) {
             double lowcost = Double.MAX_VALUE;
             int index = 0;
             //get lowest cost
@@ -155,20 +157,17 @@ public class City {
                 if (streets.get(i).getFrom().equals(current)) {
                     neighbour = streets.get(i).getTo();
                     if (streets.get(i).getForwardLanes().isEmpty()) {
-                        System.out.println("FROWARD LANE SHOULD EXIST");
                         isReachable = false;
                     }
                 } else {
                     neighbour = streets.get(i).getFrom();
                     if (streets.get(i).getBackwardLanes().isEmpty()) {
-                        System.out.println("Backward " +
-                                "LANE SHOULD EXIST");
                         isReachable = false;
                     }
                 }
-                if(closed.contains(neighbour))
-                    isReachable=false;
-                if (vehicle==null)
+                if (closed.contains(neighbour))
+                    isReachable = false;
+                if (vehicle == null)
                     vehicle = new Vehicle(50);
                 if (isReachable) {
                     if (!(open.contains(neighbour)) ||
@@ -185,15 +184,15 @@ public class City {
         }
 
         Node prevNode = to;
-        while(prevNode!=null){
-            ret.addNode(prevNode);
-            prevNode= prevNode.getPreviousNode();
+        while (prevNode != null) {
+            ret.addNodeIdAtIndex(prevNode.getId(),0);
+            prevNode = prevNode.getPreviousNode();
         }
         return ret;
     }
 
     public Path getRandomPath(int breaking) {
-        if(breaking>30) {
+        if (breaking > 30) {
             return null;
         }
         //get two random nodes based on fame
@@ -202,12 +201,9 @@ public class City {
         while (to.equals(from)) {
             to = getRandomNode();
         }
-        System.out.println("-----start-----");
-        System.out.println(from.getId()+"/"+to.getId());
         Path path = doAStern(from, to, null);
-        if (!path.isValid()){
-            System.out.println("PATH NOT VALID");
-            path = getRandomPath(breaking+1);
+        if (!path.isValid()) {
+            path = getRandomPath(breaking + 1);
         }
         return path;
     }
@@ -276,12 +272,13 @@ public class City {
         }
         return null;
     }
+
     public ArrayList<Street> getStreets() {
-        ArrayList<Street>ret= new ArrayList<>();
-        for (int i = 0; i < nodes.size(); i++) {
-            for (int j = 0; j < nodes.get(i).getStreets().size(); j++) {
-                if (!ret.contains(nodes.get(i).getStreets().get(j))) {
-                    ret.add(nodes.get(i).getStreets().get(j));
+        ArrayList<Street> ret = new ArrayList<>();
+        for (Node node : nodes) {
+            for (int j = 0; j < node.getStreets().size(); j++) {
+                if (!ret.contains(node.getStreets().get(j))) {
+                    ret.add(node.getStreets().get(j));
                 }
             }
         }
@@ -309,27 +306,33 @@ public class City {
     }
 
     public ArrayList<Vehicle> getVehicles() {
-        ArrayList<Vehicle>ret = new ArrayList<>();
+        ArrayList<Vehicle> ret = new ArrayList<>();
         for (Node node : nodes) {
-            for (Street street: node.getStreets()) {
-                for (Lane lane: street.getBackwardLanes()) {
-                    ret.addAll(lane.getVehicles());
+            for (Street street : node.getStreets()) {
+                for (Lane lane : street.getBackwardLanes()) {
+                    for (Vehicle vehicle : lane.getVehicles()) {
+                        if (!ret.contains(vehicle))
+                            ret.add(vehicle);
+                    }
                 }
             }
         }
         for (Node node : nodes) {
-            for (Street street: node.getStreets()) {
-                for (Lane lane: street.getForwardLanes()) {
-                    ret.addAll(lane.getVehicles());
+            for (Street street : node.getStreets()) {
+                for (Lane lane : street.getForwardLanes()) {
+                    for (Vehicle vehicle : lane.getVehicles()) {
+                        if (!ret.contains(vehicle))
+                            ret.add(vehicle);
+                    }
                 }
             }
         }
         return ret;
     }
 
-    public void calcCity(){
+    public void calcCity() {
         ArrayList<Street> streets = getStreets();
-        for (int i = 0; i <streets.size(); i++) {
+        for (int i = 0; i < streets.size(); i++) {
             streets.get(i).calcStreet();
         }
     }
@@ -348,22 +351,23 @@ public class City {
 
 
     public Rectangle getBounds() {
-        return new Rectangle(0,0,getMaxWidth(),getMaxHeight());
+        return new Rectangle(0, 0, getMaxWidth(), getMaxHeight());
     }
+
     private int getMaxHeight() {
-        int ret=0;
+        int ret = 0;
         for (Node node : nodes) {
             if (node.getX() > ret)
-                ret =node.getX();
+                ret = node.getX();
         }
         return ret;
     }
 
     private int getMaxWidth() {
-        int ret=0;
+        int ret = 0;
         for (Node node : nodes) {
             if (node.getY() > ret)
-                ret =node.getY();
+                ret = node.getY();
         }
         return ret;
     }

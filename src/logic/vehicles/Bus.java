@@ -1,5 +1,6 @@
 package logic.vehicles;
 
+import logic.city.City;
 import logic.city.Lane;
 import logic.city.Path;
 
@@ -17,11 +18,9 @@ public class Bus extends PublicVehicle{
      */
     int length;
 
-    public Bus(int weight, int maxSpeed, Path path, int streetKnowledge, int speeder, int line, int length) {
-        super(weight, maxSpeed, path, streetKnowledge, speeder);
-        this.line = line;
-        this.length = length;
+
+    public Bus(int weight, int maxSpeed, Path path, int streetKnowledge, int speeder, City city) {
+        super(weight, maxSpeed, path, streetKnowledge, speeder, city);
     }
-
-
+    // TODO: 16.02.2018 set line& length
 }

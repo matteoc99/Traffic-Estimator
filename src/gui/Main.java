@@ -3,8 +3,10 @@ package gui;
 import com.sun.deploy.util.ArrayUtil;
 import com.sun.org.apache.regexp.internal.RE;
 import gui.city.JCity;
+import logic.PathUtils;
 import logic.city.City;
 import logic.city.Node;
+import logic.city.Path;
 import logic.city.Street;
 import logic.vehicles.Vehicle;
 
@@ -126,19 +128,18 @@ public class Main extends JFrame {
 
         Main main = new Main(city);
 
-
         while (true) {
             try {
                 Thread.sleep(100);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            long time = System.currentTimeMillis();
             main.calcCity();
-            System.out.println("time" + (System.currentTimeMillis() - time));
-            if (city.getVehicles().size() < 20) {
-                Vehicle c = new Vehicle(1000, 50, city.getRandomPath(0), 1, 1);
+
+            if(city.getVehicles().size()<20){
+                Vehicle vehicle = new Vehicle(1000,60,PathUtils.getRandomPath(city),1,1,city);
             }
+
         }
 
     }

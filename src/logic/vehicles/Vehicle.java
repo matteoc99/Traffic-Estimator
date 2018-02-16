@@ -51,7 +51,7 @@ public class Vehicle {
 
     public static int SICHERHEITS_ABSTAND = 30; //TODO variabel je nach raser?
 
-    public Vehicle(int weight, int maxSpeed, Path path, int streetKnowledge, int speeder) {
+    public Vehicle(int weight, int maxSpeed, Path path, int streetKnowledge, int speeder, City city) {
         this.weight = weight;
         this.maxSpeed = maxSpeed;
         this.path = path;
@@ -60,11 +60,14 @@ public class Vehicle {
         progressInLane = 0;
         currentSpeed = 2;
 
-        if(path!=null) {
-            prevGoal = path.getGoalAndIncrement();
-            currentGoal = path.getGoalAndIncrement();
-            Lane lane = prevGoal.setOnLaneTo(currentGoal);
-            changeLane(lane);
+        if (path != null && path.isValid()) {
+            prevGoal = city.getNodeById(path.getGoalAndIncrement());
+            currentGoal = city.getNodeById(path.getGoalAndIncrement());
+
+            if (currentGoal != null && prevGoal != null) {
+                Lane lane = prevGoal.setOnLaneTo(currentGoal);
+                changeLane(lane);
+            }
         }
     }
 
@@ -79,7 +82,7 @@ public class Vehicle {
         if (progressInLane / lane.getLength() > 0.90) {
             //change lane or die if path end is reached
             prevGoal = currentGoal;
-            currentGoal = path.getGoalAndIncrement();
+            currentGoal = getLane().getParent().getParent().getNodeById(path.getGoalAndIncrement());
             if (currentGoal == null)
                 lane.removeVehicle(this);
             else {

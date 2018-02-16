@@ -153,7 +153,9 @@ public class Lane {
         List<Vehicle> iter = vehicles;
         for (int i = 0; i < iter.size(); i++) {
             Vehicle vehicle = iter.get(i);
+            //long time = System.currentTimeMillis();
             vehicle.move();
+            //System.out.println("time" + (System.currentTimeMillis() - time));
         }
     }
 
