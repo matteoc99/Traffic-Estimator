@@ -2,9 +2,7 @@ package logic.city;
 
 import logic.vehicles.Vehicle;
 
-import java.awt.*;
-import java.util.ArrayList;
-import java.util.ConcurrentModificationException;
+import java.util.*;
 
 /**
  * @author Matteo Cosi
@@ -151,12 +149,11 @@ public class Lane {
 
 
     void calcLane() {
-        try {
-            for (Vehicle vehicle : vehicles) {
-                vehicle.move();
-            }
-        } catch (ConcurrentModificationException exception) {
-
+        //anti ConcurrentModificationException
+        List<Vehicle> iter = vehicles;
+        for (int i = 0; i < iter.size(); i++) {
+            Vehicle vehicle = iter.get(i);
+            vehicle.move();
         }
     }
 

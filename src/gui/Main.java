@@ -33,7 +33,7 @@ public class Main extends JFrame {
 
     public Main(City city) {
         setupWindow();
-        this.city= city;
+        this.city = city;
         c = getContentPane();
         controlPanel = setUpControlPanel();
         jCity = setUpCity(city);
@@ -121,31 +121,22 @@ public class Main extends JFrame {
 
     public static void main(String[] args) {
         City city = City.createCityFromJson(
-                new File(System.getProperty("user.dir") + "\\src\\parsing\\sumo.json"));
+                new File(System.getProperty("user.dir") + "\\src\\parsing\\testcity.json"));
 
 
+        Main main = new Main(city);
 
-
-        System.out.println("Size:"+ city.getNodes().size());
-        int couter=0;
-        for (Node node : city.getNodes()) {
-            if(node.getStreets().isEmpty()){
-                couter++;
-            }
-        }
-        System.out.println("Empty:"+couter);
-
-
-        Main main=new Main(city);
 
         while (true) {
             try {
-                Thread.sleep(400);
+                Thread.sleep(100);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+            long time = System.currentTimeMillis();
             main.calcCity();
-            if (city.getVehicles().size()<5){
+            System.out.println("time" + (System.currentTimeMillis() - time));
+            if (city.getVehicles().size() < 20) {
                 Vehicle c = new Vehicle(1000, 50, city.getRandomPath(0), 1, 1);
             }
         }

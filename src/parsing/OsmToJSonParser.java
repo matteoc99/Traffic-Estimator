@@ -18,8 +18,8 @@ public final class OsmToJSonParser {
     private static JSONObject jsonRoot;
 
     public static void main(String[] args) {
-        parse(System.getProperty("user.dir")+"\\src\\parsing\\map.osm",
-                System.getProperty("user.dir")+"\\src\\parsing\\lana.json");
+        parse(System.getProperty("user.dir")+"\\src\\parsing\\smallBZ.osm",
+                System.getProperty("user.dir")+"\\src\\parsing\\smallbz.json");
     }
 
     public static void parse(String osmFilePath, String jsonFilePath) {

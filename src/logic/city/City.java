@@ -130,7 +130,9 @@ public class City {
         from.setWalkedCost(0);
         open.add(from);
 
-        while (!open.isEmpty()) {
+
+        int antiendlos=0;
+        while (!open.isEmpty()&&antiendlos<10000) {
             double lowcost = Double.MAX_VALUE;
             int index = 0;
             //get lowest cost
@@ -147,19 +149,20 @@ public class City {
                 break;
             }
             ArrayList<Street> streets = current.getStreets();
-            if (streets.isEmpty())
-                System.out.println("NO STREETS");
             for (int i = 0; i < streets.size(); i++) {
                 Node neighbour;
                 boolean isReachable = true;
-                if (streets.get(i).getFrom() == current) {
+                if (streets.get(i).getFrom().equals(current)) {
                     neighbour = streets.get(i).getTo();
                     if (streets.get(i).getForwardLanes().isEmpty()) {
+                        System.out.println("FROWARD LANE SHOULD EXIST");
                         isReachable = false;
                     }
                 } else {
                     neighbour = streets.get(i).getFrom();
                     if (streets.get(i).getBackwardLanes().isEmpty()) {
+                        System.out.println("Backward " +
+                                "LANE SHOULD EXIST");
                         isReachable = false;
                     }
                 }
@@ -178,6 +181,7 @@ public class City {
                     }
                 }
             }
+            antiendlos++;
         }
 
         Node prevNode = to;
@@ -198,6 +202,7 @@ public class City {
         while (to.equals(from)) {
             to = getRandomNode();
         }
+        System.out.println("-----start-----");
         System.out.println(from.getId()+"/"+to.getId());
         Path path = doAStern(from, to, null);
         if (!path.isValid()){
