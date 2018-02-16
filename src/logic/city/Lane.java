@@ -150,12 +150,10 @@ public class Lane {
 
     void calcLane() {
         //anti ConcurrentModificationException
-        List<Vehicle> iter = vehicles;
-        for (int i = 0; i < iter.size(); i++) {
-            Vehicle vehicle = iter.get(i);
-            //long time = System.currentTimeMillis();
+        List<Vehicle> list = vehicles;
+        for (int i = 0; i < list.size(); i++) {
+            Vehicle vehicle = list.get(i);
             vehicle.move();
-            //System.out.println("time" + (System.currentTimeMillis() - time));
         }
     }
 

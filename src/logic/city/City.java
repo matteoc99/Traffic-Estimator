@@ -5,13 +5,13 @@ import logic.vehicles.Vehicle;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
+import utils.Stopwatch;
 
 import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 /**
  * @author Matteo Cosi
@@ -331,10 +331,13 @@ public class City {
     }
 
     public void calcCity() {
+        Stopwatch timer = new Stopwatch().start();
         ArrayList<Street> streets = getStreets();
+        timer.printAndReset("City_BDG_ME: 1: ");
         for (int i = 0; i < streets.size(); i++) {
             streets.get(i).calcStreet();
         }
+        timer.printAndReset("City_BDG_ME: 2: ");
     }
 
     public String getName() {

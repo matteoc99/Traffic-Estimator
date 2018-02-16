@@ -4,6 +4,7 @@ import logic.city.City;
 import logic.city.Lane;
 import logic.city.Node;
 import logic.city.Path;
+import utils.Stopwatch;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -78,8 +79,10 @@ public class Vehicle {
 
 
     public void move() {
+        Stopwatch timer = new Stopwatch().start();
 
         if (progressInLane / lane.getLength() > 0.90) {
+
             //change lane or die if path end is reached
             prevGoal = currentGoal;
             currentGoal = getLane().getParent().getParent().getNodeById(path.getGoalAndIncrement());
@@ -93,6 +96,7 @@ public class Vehicle {
                 if (currentSpeed < 5)
                     currentSpeed = 5;
             }
+            timer.print("Vehicles_DBG_ME: 1: ");
         } else {
             if (progressInLane / lane.getLength() > 0.80) {
                 //goto better lane for dir change
@@ -112,13 +116,26 @@ public class Vehicle {
                         currentSpeed--;
                     }
                     incrementProgrssInLane(currentSpeed / 5); //TODO trimm
+                    timer.print("Vehicles_DBG_ME: 2.1.1: ");
                 } else {
                     //slow down
-                    while (progressInLane + SICHERHEITS_ABSTAND + currentSpeed > lane.getNextVehicle(progressInLane).progressInLane) {
+                    int c = 0;
+                    int nextVehiclesProgress = lane.getNextVehicle(progressInLane).progressInLane;
+                    while (progressInLane + SICHERHEITS_ABSTAND + currentSpeed > nextVehiclesProgress) {
                         currentSpeed -= 5;
+                        c++;
+                        if (c > 1000) {
+                            System.out.println(progressInLane);
+                            System.out.println(SICHERHEITS_ABSTAND);
+                            System.out.println(currentSpeed);
+                            System.out.println(nextVehiclesProgress);
+                            throw new RuntimeException("Vehicle_EndlessLoop");
+                        }
                     }
                     incrementProgrssInLane(currentSpeed / 5); //TODO trimm
+                    timer.print("Vehicles_DBG_ME: 2.1.2: ");
                 }
+                timer.print("Vehicles_DBG_ME: 2.1: ");
             } else {
                 //just move
                 if (currentSpeed < maxSpeed) {
@@ -129,7 +146,9 @@ public class Vehicle {
                 incrementProgrssInLane(currentSpeed / 5); //TODO trimm
                 if (progressInLane > lane.getLength())
                     progressInLane = (int) lane.getLength();
+                timer.printAndReset("Vehicles_DBG_ME: 2.2: ");
             }
+            timer.print("Vehicles_DBG_ME: 2: ");
         }
     }
 

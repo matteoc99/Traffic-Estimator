@@ -9,6 +9,7 @@ import logic.city.Node;
 import logic.city.Path;
 import logic.city.Street;
 import logic.vehicles.Vehicle;
+import utils.Stopwatch;
 
 import javax.swing.*;
 import java.awt.*;
@@ -136,8 +137,8 @@ public class Main extends JFrame {
             }
             main.calcCity();
 
-            if(city.getVehicles().size()<20){
-                Vehicle vehicle = new Vehicle(1000,60,PathUtils.getRandomPath(city),1,1,city);
+            if (city.getVehicles().size() < 20) {
+                Vehicle vehicle = new Vehicle(1000, 60, PathUtils.getRandomPath(city), 1, 1, city);
             }
 
         }
@@ -145,8 +146,12 @@ public class Main extends JFrame {
     }
 
     private void calcCity() {
+        Stopwatch timer = new Stopwatch().start();
         city.calcCity();
+        timer.printAndReset("Main_BDG_ME: 1: ");
         repaint();
+        timer.printAndReset("Main_BDG_ME: 2: ");
         jCity.repaint();
+        timer.printAndReset("Main_BDG_ME: 3: ");
     }
 }
