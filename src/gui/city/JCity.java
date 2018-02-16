@@ -6,6 +6,7 @@ import logic.vehicles.Vehicle;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.geom.GeneralPath;
 import java.util.ArrayList;
 
 import static gui.Main.prevZoom;
@@ -57,29 +58,54 @@ public class JCity extends JPanel {
                 RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         g2.setRenderingHints(rh);
 
+
+        GeneralPath path = new GeneralPath();
+
+
+        g2.draw(path);
         //drawStreets
         for (Street street : streets) {
-            g2.setColor(Color.BLACK);
-            g2.drawLine((int) (street.getxFrom() * zoom), (int) (street.getyFrom() * zoom), (int) (street.getxTo() * zoom), (int) (street.getyTo() * zoom));
-            g2.setColor(Color.RED);
-            //drawcars
-            for (Lane lane : street.getForwardLanes()) {
+
+            ArrayList<Lane> forwardLanes = street.getForwardLanes();
+            for (int i = 0; i < forwardLanes.size(); i++) {
+                Lane lane = forwardLanes.get(i);
+                g2.setColor(lane.getColorByTraffic());
+                g2.drawLine((int) (lane.getParent().getxFrom() * zoom) + (1 + i * 2),
+                        (int) (lane.getParent().getyFrom() * zoom) + (1 + i * 2),
+                        (int) (lane.getParent().getxTo() * zoom) + (1 + i * 2),
+                        (int) (lane.getParent().getyTo() * zoom) + (1 + i * 2));
+                //drawlanes
                 for (Vehicle vehicle : lane.getVehicles()) {
-                    g.fillOval((int) ((vehicle.getPointOnLane().x)*zoom)-2,
-                            (int) ((vehicle.getPointOnLane().y)*zoom)-2,
-                            4+(int)(zoom), 4+(int)(zoom));
+                    //drawcars
+                    g2.setColor(Color.RED);
+                    g.fillOval((int) ((vehicle.getPointOnLane().x) * zoom) - 2 + (1 + i * 2),
+                            (int) ((vehicle.getPointOnLane().y) * zoom) - 2 + (1 + i * 2),
+                            4 + (int) (zoom), 4 + (int) (zoom));
                 }
             }
-            //drawcars
-            for (Lane lane : street.getBackwardLanes()) {
-                for (Vehicle vehicle : lane.getVehicles()) {
-                    g.fillOval((int) ((vehicle.getPointOnLane().x)*zoom)-2,
-                            (int) ((vehicle.getPointOnLane().y)*zoom)-2,
-                            4+(int)(zoom), 4+(int)(zoom));
+            ArrayList<Lane> backwardLanes = street.getBackwardLanes();
+            for (int i = 0; i < backwardLanes.size(); i++) {
+                Lane lane = backwardLanes.get(i);
+                //drawlanes
+                g2.setColor(lane.getColorByTraffic());
+                g2.drawLine((int) (lane.getParent().getxFrom() * zoom) - (1 + i * 2),
+                        (int) (lane.getParent().getyFrom() * zoom) - (1 + i * 2),
+                        (int) (lane.getParent().getxTo() * zoom) - (1 + i * 2),
+                        (int) (lane.getParent().getyTo() * zoom) - (1 + i * 2));
+                ArrayList<Vehicle> vehicles = lane.getVehicles();
+                //anti duplicate
+                for (int j = 0; j < vehicles.size(); j++) {
+                    g2.setColor(Color.RED);
+                    Vehicle vehicle = vehicles.get(j);
+                    //drawcars
+                    g.fillOval((int) ((vehicle.getPointOnLane().x) * zoom) - 2 - (1 + i * 2),
+                            (int) ((vehicle.getPointOnLane().y) * zoom) - 2 - (1 + i * 2),
+                            4 + (int) (zoom), 4 + (int) (zoom));
 
                 }
             }
         }
+
 
         setSize((int) (city.getBounds().width * zoom), (int) (city.getBounds().height * zoom));
     }
