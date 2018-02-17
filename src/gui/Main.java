@@ -32,8 +32,12 @@ public class Main extends JFrame {
 
 
     public static double zoom = 1;
+    //zoom modes
     public static boolean fineZoom = false;
     public static boolean superFineZoom = false;
+    public static boolean preciseZoom = true; //zoom to mouse point
+
+    //moving modes
     public static boolean hovermode = false;
 
     //fps stuff
@@ -55,16 +59,17 @@ public class Main extends JFrame {
         jCity.setBackground(Color.RED);
         c.add(controlPanel);
         c.add(jCity);
+        setResizable(false);
 
         //getNodesPos durchschnitt
         while (getAvgNodePosition() > getHeight() / 2) {
-            System.out.println(getAvgNodePosition());
             zoom /= 1.5;
         }
         while (getAvgNodePosition() < getHeight() / 4) {
-            System.out.println(getAvgNodePosition());
             zoom *= 1.5;
         }
+        jCity.setLocation(0, 0);
+
         repaint();
 
         addKeyListener(new KeyListener() {
@@ -78,13 +83,12 @@ public class Main extends JFrame {
                 boolean recalc = false;
                 switch (e.getKeyCode()) {
                     case KeyEvent.VK_PLUS:
-                        zoom += Math.log(1 + zoom);
+                        zoom += 1;
                         recalc = true;
                         break;
                     case KeyEvent.VK_MINUS:
-                        zoom -= Math.log(1 + zoom);
-                        if (zoom < 0.00000000001)
-                            zoom = 0.0000001;
+                        if (zoom > 1)
+                            zoom -= 1;
                         recalc = true;
                         break;
                     case KeyEvent.VK_LEFT:
@@ -133,14 +137,17 @@ public class Main extends JFrame {
                     case KeyEvent.VK_S:
                         superFineZoom = false;
                         break;
+                    case KeyEvent.VK_P:
+                        preciseZoom = !preciseZoom;
+                        break;
                     case KeyEvent.VK_R:
-                        jCity.setLocation(0, 0);
                         while (getAvgNodePosition() > getHeight() / 2) {
                             zoom /= 1.5;
                         }
                         while (getAvgNodePosition() < getHeight() / 4) {
                             zoom *= 1.5;
                         }
+                        jCity.setLocation(0, 0);
                         repaint();
                         break;
                 }
@@ -151,14 +158,22 @@ public class Main extends JFrame {
             public void mouseWheelMoved(MouseWheelEvent e) {
                 if (e.getWheelRotation() < 0) {
                     //zoom++
+                    if (preciseZoom) {
+                        //// TODO: 17.02.2018 kp wie
+                    }
                     if (fineZoom) {
                         zoom += 0.01;
                     } else if (superFineZoom) {
-                        zoom += 0.0001;
+                        zoom += 0.0005;
                     } else {
                         zoom += 0.5;
                     }
+
                 } else {
+                    //zoom--
+                    if (preciseZoom) {
+                        //// TODO: 17.02.2018 kp wie
+                    }
                     if (fineZoom) {
                         if (zoom > 0.01)
                             zoom -= 0.01;
@@ -168,8 +183,8 @@ public class Main extends JFrame {
                     } else {
                         if (zoom > 0.5)
                             zoom -= 0.5;
-                    }
 
+                    }
                 }
             }
 
@@ -192,12 +207,18 @@ public class Main extends JFrame {
                 fromCords = toCords;
             }
         };
+
         addMouseWheelListener(mouseAdapter);
+
         addMouseMotionListener(mouseAdapter);
+
         addMouseListener(mouseAdapter);
+
     }
 
+
     /**
+     * /**
      * get avg node pos relative to zoom
      *
      * @return

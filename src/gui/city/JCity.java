@@ -9,6 +9,7 @@ import java.awt.*;
 import java.awt.geom.GeneralPath;
 import java.util.ArrayList;
 
+import static gui.Main.preciseZoom;
 import static gui.Main.zoom;
 
 /**
@@ -58,7 +59,7 @@ public class JCity extends JPanel {
         g2.setRenderingHints(rh);
 
         g2.setColor(new Color(213, 187, 255));
-        g2.fillRect(0,0,getWidth(),getHeight());
+        g2.fillRect(0, 0, getWidth(), getHeight());
         //drawStreets
         for (Street street : streets) {
 
@@ -102,7 +103,12 @@ public class JCity extends JPanel {
             }
         }
 
+        int newWidth= (int) (city.getBounds().width * zoom);
+        int newHeight= (int) (city.getBounds().height * zoom);
+        if (preciseZoom){
 
-        setSize((int) (city.getBounds().width * zoom), (int) (city.getBounds().height * zoom));
+            setLocation(getX()+(getWidth()-newWidth)/2, getY()+(getHeight()-newHeight)/2);
+        }
+        setSize(newWidth,newHeight);
     }
 }
