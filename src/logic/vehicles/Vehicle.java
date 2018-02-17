@@ -120,7 +120,7 @@ public class Vehicle {
                     } else {
                         currentSpeed--;
                     }
-                    incrementProgrssInLane(currentSpeed / 5); //TODO trimm
+                    incrementProgrssInLane(currentSpeed);
                     timer.print("Vehicles_DBG_ME: 2.1.1: ");
                 } else {
                     //slow down
@@ -134,7 +134,7 @@ public class Vehicle {
                             break;
                         }
                     }
-                    incrementProgrssInLane(currentSpeed / 5); //TODO trimm
+                    incrementProgrssInLane(currentSpeed );
                     timer.print("Vehicles_DBG_ME: 2.1.2: ");
                 }
                 timer.print("Vehicles_DBG_ME: 2.1: ");
@@ -145,7 +145,7 @@ public class Vehicle {
                 } else {
                     currentSpeed--;
                 }
-                incrementProgrssInLane(currentSpeed / 5); //TODO trimm
+                incrementProgrssInLane(currentSpeed);
                 if (progressInLane > lane.getLength())
                     progressInLane = (int) lane.getLength();
                 timer.printAndReset("Vehicles_DBG_ME: 2.2: ");
@@ -279,7 +279,7 @@ public class Vehicle {
     }
 
     public void incrementProgrssInLane(int inc) {
-        progressInLane += inc;
+        progressInLane += inc/10;//// TODO: 17.02.2018 trimm
     }
 
     public Lane getLane() {

@@ -27,12 +27,17 @@ public class Main extends JFrame {
     private static JCity jCity;
     private ControlPanel controlPanel;
     private Container c;
-
     City city;
+
+    int effizienz=0;
 
 
     public static double zoom = 1;
     public static boolean finezoom = false;
+    public static boolean hovermode= false;
+
+    public static final int FPS = 25;
+    public static long zeitvorsleep;
 
 
     public Main(City city) {
@@ -61,11 +66,7 @@ public class Main extends JFrame {
         addKeyListener(new KeyListener() {
             @Override
             public void keyTyped(KeyEvent e) {
-                switch (e.getKeyCode()) {
-                    case KeyEvent.VK_F:
-                        finezoom = !finezoom;
-                        break;
-                }
+
             }
 
             @Override
@@ -100,6 +101,12 @@ public class Main extends JFrame {
                         recalc = true;
                         jCity.setLocation(jCity.getX(), jCity.getY() - 10);
                         break;
+                    case KeyEvent.VK_F:
+                        finezoom = true;
+                        break;
+                    case KeyEvent.VK_H:
+                        hovermode = true;
+                        break;
                 }
                 if (recalc) {
                     jCity.repaint();
@@ -109,7 +116,14 @@ public class Main extends JFrame {
 
             @Override
             public void keyReleased(KeyEvent e) {
-
+                switch (e.getKeyCode()) {
+                    case KeyEvent.VK_F:
+                        finezoom = false;
+                        break;
+                    case KeyEvent.VK_H:
+                        hovermode =false;
+                        break;
+                }
             }
         });
 
@@ -133,7 +147,8 @@ public class Main extends JFrame {
         setTitle("Traffic Estimation");
         setResizable(false);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        setBounds(0, 0, 1280, 720);
+        Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
+        setBounds(0, 0, (int)dimension.getWidth(), (int)dimension.getHeight());
         setLocationRelativeTo(null);
         setVisible(true);
     }
@@ -147,7 +162,7 @@ public class Main extends JFrame {
     private ControlPanel setUpControlPanel() {
         ControlPanel ret = new ControlPanel();
         ret.setBackground(new Color(86, 90, 200));
-        ret.setBounds(980, 0, 300, 720);
+        ret.setBounds(getWidth()-getWidth()/5, 0, getWidth()/5, getHeight());
         return ret;
     }
 
@@ -157,18 +172,23 @@ public class Main extends JFrame {
 
 
         Main main = new Main(city);
+
+
         while (true) {
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            zeitvorsleep = System.currentTimeMillis();
             main.calcCity();
-
-
             if (city.getVehicles().size() < 30) {
-               // Vehicle vehicle = new Vehicle(1000, 60, PathUtils.getRandomPath(city), 1, 1, city);
+               Vehicle vehicle = new Vehicle(1000, 60, PathUtils.getRandomPath(city), 1, 1, city);
             }
+            long zeitvergangen = (long) (System.currentTimeMillis() - zeitvorsleep);
+            if (zeitvergangen < 1000.0 / FPS) {
+                try {
+                    Thread.sleep((long) (1000.0 / FPS - zeitvergangen));
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            System.out.println("FPS:"+(long) (1000.0/FPS - zeitvergangen));
 
 
         }
