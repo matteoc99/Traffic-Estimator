@@ -181,7 +181,6 @@ public class Lane {
 
     public Color getColorByTraffic() {
         double traffic = getTraffic();
-        System.out.println(traffic);
         Color color = null;
         if(traffic<0.1){
             color= new Color(0,255,0);

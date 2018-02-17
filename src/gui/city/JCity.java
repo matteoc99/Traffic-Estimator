@@ -9,7 +9,6 @@ import java.awt.*;
 import java.awt.geom.GeneralPath;
 import java.util.ArrayList;
 
-import static gui.Main.prevZoom;
 import static gui.Main.zoom;
 
 /**

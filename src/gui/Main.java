@@ -30,8 +30,9 @@ public class Main extends JFrame {
 
     City city;
 
+
     public static double zoom = 1;
-    public static double prevZoom = 1;
+    public static boolean finezoom = false;
 
 
     public Main(City city) {
@@ -44,11 +45,27 @@ public class Main extends JFrame {
         c.add(controlPanel);
         c.add(jCity);
 
+        //getNodesPos durchschnitt
+        while (getAvgNodePosition() > getHeight()/2) {
+            System.out.println(getAvgNodePosition());
+            zoom /= 1.5;
+            repaint();
+        }
+        while (getAvgNodePosition() < getHeight()/4) {
+            System.out.println(getAvgNodePosition());
+            zoom *=1.5;
+            repaint();
+        }
+
 
         addKeyListener(new KeyListener() {
             @Override
             public void keyTyped(KeyEvent e) {
-
+                switch (e.getKeyCode()) {
+                    case KeyEvent.VK_F:
+                        finezoom = !finezoom;
+                        break;
+                }
             }
 
             @Override
@@ -56,12 +73,10 @@ public class Main extends JFrame {
                 boolean recalc = false;
                 switch (e.getKeyCode()) {
                     case KeyEvent.VK_PLUS:
-                        prevZoom = zoom;
                         zoom += Math.log(1 + zoom);
                         recalc = true;
                         break;
                     case KeyEvent.VK_MINUS:
-                        prevZoom = zoom;
                         zoom -= Math.log(1 + zoom);
                         if (zoom < 0.00000000001)
                             zoom = 0.0000001;
@@ -98,6 +113,20 @@ public class Main extends JFrame {
             }
         });
 
+    }
+
+    /**
+     * get avg node pos relative to zoom
+     *
+     * @return
+     */
+    private int getAvgNodePosition() {
+        int sumx = 0, sumy = 0;
+        for (Node node : city.getNodes()) {
+            sumx += node.getX() * zoom;
+            sumy += node.getY() * zoom;
+        }
+        return Integer.min(sumx / city.getNodes().size(), (int) (sumy / city.getNodes().size()));
     }
 
     private void setupWindow() {
@@ -138,8 +167,8 @@ public class Main extends JFrame {
 
 
             if (city.getVehicles().size() < 30) {
-                Vehicle vehicle = new Vehicle(1000, 60, PathUtils.getRandomPath(city), 1, 1, city);
-                }
+               // Vehicle vehicle = new Vehicle(1000, 60, PathUtils.getRandomPath(city), 1, 1, city);
+            }
 
 
         }
@@ -149,6 +178,7 @@ public class Main extends JFrame {
     private void calcCity() {
         Stopwatch timer = new Stopwatch().start();
 
+        System.out.println(zoom);
         city.calcCity();
         timer.printAndReset("Main_BDG_ME: 1: ");
         repaint();
