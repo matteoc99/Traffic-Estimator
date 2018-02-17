@@ -162,8 +162,9 @@ public class Node {
         return null;
     }
 
-    public void request(Vehicle vehicle) {
-        // TODO: 31.01.2018
 
+    public boolean register(Vehicle vehicle, Node nextNode) {
+        // TODO: 17.02.2018 für maxi  ret tru wenn er fahren darf
+        return true;
     }
 }

@@ -69,11 +69,11 @@ public class Vehicle {
             if (currentGoal != null && prevGoal != null) {
                 Lane lane = prevGoal.getLaneTo(currentGoal);
                 changeLane(lane);
-            }else {
+            } else {
                 System.out.println("BAD PATH");
 
             }
-        }else
+        } else
             System.out.println("DIE2");
     }
 
@@ -94,12 +94,15 @@ public class Vehicle {
             if (currentGoal == null)
                 lane.removeVehicle(this);
             else {
-                Lane lane = prevGoal.getLaneTo(currentGoal);
-                changeLane(lane);
-                progressInLane = 0;
-                currentSpeed /= 4;
-                if (currentSpeed < 5)
-                    currentSpeed = 5;
+                boolean canGo = prevGoal.register(this, currentGoal);
+                if (canGo) {
+                    Lane lane = prevGoal.getLaneTo(currentGoal);
+                    changeLane(lane);
+                    progressInLane = 0;
+                    currentSpeed /= 4;
+                    if (currentSpeed < 5)
+                        currentSpeed = 5;
+                }
             }
             timer.print("Vehicles_DBG_ME: 1: ");
         } else {
@@ -129,12 +132,12 @@ public class Vehicle {
                     while (progressInLane + safetyDistance + currentSpeed > nextVehiclesProgress) {
                         currentSpeed -= 5;
                         c++;
-                        if (currentSpeed<0){
-                            currentSpeed=0;
+                        if (currentSpeed < 0) {
+                            currentSpeed = 0;
                             break;
                         }
                     }
-                    incrementProgrssInLane(currentSpeed );
+                    incrementProgrssInLane(currentSpeed);
                     timer.print("Vehicles_DBG_ME: 2.1.2: ");
                 }
                 timer.print("Vehicles_DBG_ME: 2.1: ");
@@ -279,7 +282,7 @@ public class Vehicle {
     }
 
     public void incrementProgrssInLane(int inc) {
-        progressInLane += inc/10;//// TODO: 17.02.2018 trimm
+        progressInLane += inc / 10;//// TODO: 17.02.2018 trimm
     }
 
     public Lane getLane() {
