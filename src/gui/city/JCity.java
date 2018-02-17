@@ -57,11 +57,8 @@ public class JCity extends JPanel {
                 RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         g2.setRenderingHints(rh);
 
-
-        GeneralPath path = new GeneralPath();
-
-
-        g2.draw(path);
+        g2.setColor(new Color(213, 187, 255));
+        g2.fillRect(0,0,getWidth(),getHeight());
         //drawStreets
         for (Street street : streets) {
 

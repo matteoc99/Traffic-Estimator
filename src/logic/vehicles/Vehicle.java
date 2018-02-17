@@ -67,7 +67,7 @@ public class Vehicle {
             currentGoal = city.getNodeById(path.getGoalAndIncrement());
 
             if (currentGoal != null && prevGoal != null) {
-                Lane lane = prevGoal.setOnLaneTo(currentGoal);
+                Lane lane = prevGoal.getLaneTo(currentGoal);
                 changeLane(lane);
             }else {
                 System.out.println("BAD PATH");
@@ -94,7 +94,7 @@ public class Vehicle {
             if (currentGoal == null)
                 lane.removeVehicle(this);
             else {
-                Lane lane = prevGoal.setOnLaneTo(currentGoal);
+                Lane lane = prevGoal.getLaneTo(currentGoal);
                 changeLane(lane);
                 progressInLane = 0;
                 currentSpeed /= 4;

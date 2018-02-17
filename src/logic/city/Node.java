@@ -66,18 +66,7 @@ public class Node {
         return false;
     }
 
-    public ArrayList<Lane> getIncLanes(){
-        // TODO: 29.01.2018
-        return null;
-    }
-    public ArrayList<Lane> getOutLanes(){
-        // TODO: 29.01.2018
-        return null;
-    }
-    public ArrayList<Lane> getLanesTo(Node toNode){
-        // TODO: 29.01.2018
-        return null;
-    }
+
 
     public int getX(){
         return position.x;
@@ -157,7 +146,7 @@ public class Node {
     /**
      * returns the lane for a new goal
      */
-    public Lane setOnLaneTo(Node currentGoal) {
+    public Lane getLaneTo(Node currentGoal) {
         for (Street street : streets) {
             for (int j = 0; j < street.getBackwardLanes().size(); j++) {
                 if (street.getBackwardLanes().get(j).getToNode().equals(currentGoal)) {

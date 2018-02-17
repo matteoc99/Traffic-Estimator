@@ -13,8 +13,7 @@ import utils.Stopwatch;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.awt.event.*;
 import java.io.File;
 import java.util.ArrayList;
 
@@ -29,16 +28,23 @@ public class Main extends JFrame {
     private Container c;
     City city;
 
-    int effizienz=0;
+    int effizienz = 0;
 
 
     public static double zoom = 1;
-    public static boolean finezoom = false;
-    public static boolean hovermode= false;
+    public static boolean fineZoom = false;
+    public static boolean superFineZoom = false;
+    public static boolean hovermode = false;
 
+    //fps stuff
     public static final int FPS = 25;
     public static long zeitvorsleep;
 
+
+    /**
+     * Used to drag & drop the contacts
+     */
+    private Point fromCords;
 
     public Main(City city) {
         setupWindow();
@@ -51,17 +57,15 @@ public class Main extends JFrame {
         c.add(jCity);
 
         //getNodesPos durchschnitt
-        while (getAvgNodePosition() > getHeight()/2) {
+        while (getAvgNodePosition() > getHeight() / 2) {
             System.out.println(getAvgNodePosition());
             zoom /= 1.5;
-            repaint();
         }
-        while (getAvgNodePosition() < getHeight()/4) {
+        while (getAvgNodePosition() < getHeight() / 4) {
             System.out.println(getAvgNodePosition());
-            zoom *=1.5;
-            repaint();
+            zoom *= 1.5;
         }
-
+        repaint();
 
         addKeyListener(new KeyListener() {
             @Override
@@ -102,10 +106,13 @@ public class Main extends JFrame {
                         jCity.setLocation(jCity.getX(), jCity.getY() - 10);
                         break;
                     case KeyEvent.VK_F:
-                        finezoom = true;
+                        fineZoom = true;
                         break;
                     case KeyEvent.VK_H:
                         hovermode = true;
+                        break;
+                    case KeyEvent.VK_S:
+                        superFineZoom = true;
                         break;
                 }
                 if (recalc) {
@@ -118,15 +125,76 @@ public class Main extends JFrame {
             public void keyReleased(KeyEvent e) {
                 switch (e.getKeyCode()) {
                     case KeyEvent.VK_F:
-                        finezoom = false;
+                        fineZoom = false;
                         break;
                     case KeyEvent.VK_H:
-                        hovermode =false;
+                        hovermode = false;
+                        break;
+                    case KeyEvent.VK_S:
+                        superFineZoom = false;
+                        break;
+                    case KeyEvent.VK_R:
+                        jCity.setLocation(0, 0);
+                        while (getAvgNodePosition() > getHeight() / 2) {
+                            zoom /= 1.5;
+                        }
+                        while (getAvgNodePosition() < getHeight() / 4) {
+                            zoom *= 1.5;
+                        }
+                        repaint();
                         break;
                 }
             }
         });
+        MouseAdapter mouseAdapter = new MouseAdapter() {
+            @Override
+            public void mouseWheelMoved(MouseWheelEvent e) {
+                if (e.getWheelRotation() < 0) {
+                    //zoom++
+                    if (fineZoom) {
+                        zoom += 0.01;
+                    } else if (superFineZoom) {
+                        zoom += 0.0001;
+                    } else {
+                        zoom += 0.5;
+                    }
+                } else {
+                    if (fineZoom) {
+                        if (zoom > 0.01)
+                            zoom -= 0.01;
+                    } else if (superFineZoom) {
+                        if (zoom > 0.0005)
+                            zoom -= 0.0005;
+                    } else {
+                        if (zoom > 0.5)
+                            zoom -= 0.5;
+                    }
 
+                }
+            }
+
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                super.mouseMoved(e);
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                fromCords = e.getPoint();
+            }
+
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                Point toCords = e.getPoint();
+                int offsetx = toCords.x - fromCords.x;
+                int offsety = toCords.y - fromCords.y;
+                jCity.setLocation(jCity.getX() + offsetx, jCity.getY() + offsety);
+                fromCords = toCords;
+            }
+        };
+        addMouseWheelListener(mouseAdapter);
+        addMouseMotionListener(mouseAdapter);
+        addMouseListener(mouseAdapter);
     }
 
     /**
@@ -148,7 +216,7 @@ public class Main extends JFrame {
         setResizable(false);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
-        setBounds(0, 0, (int)dimension.getWidth(), (int)dimension.getHeight());
+        setBounds(0, 0, (int) dimension.getWidth(), (int) dimension.getHeight());
         setLocationRelativeTo(null);
         setVisible(true);
     }
@@ -162,7 +230,7 @@ public class Main extends JFrame {
     private ControlPanel setUpControlPanel() {
         ControlPanel ret = new ControlPanel();
         ret.setBackground(new Color(86, 90, 200));
-        ret.setBounds(getWidth()-getWidth()/5, 0, getWidth()/5, getHeight());
+        ret.setBounds(getWidth() - getWidth() / 5, 0, getWidth() / 5, getHeight());
         return ret;
     }
 
@@ -178,7 +246,7 @@ public class Main extends JFrame {
             zeitvorsleep = System.currentTimeMillis();
             main.calcCity();
             if (city.getVehicles().size() < 30) {
-               Vehicle vehicle = new Vehicle(1000, 60, PathUtils.getRandomPath(city), 1, 1, city);
+                Vehicle vehicle = new Vehicle(1000, 60, PathUtils.getRandomPath(city), 1, 1, city);
             }
             long zeitvergangen = (long) (System.currentTimeMillis() - zeitvorsleep);
             if (zeitvergangen < 1000.0 / FPS) {
@@ -188,7 +256,7 @@ public class Main extends JFrame {
                     e.printStackTrace();
                 }
             }
-            System.out.println("FPS:"+(long) (1000.0/FPS - zeitvergangen));
+            // System.out.println("FPS:"+(long) (1000.0/FPS - zeitvergangen));
 
 
         }
@@ -198,7 +266,6 @@ public class Main extends JFrame {
     private void calcCity() {
         Stopwatch timer = new Stopwatch().start();
 
-        System.out.println(zoom);
         city.calcCity();
         timer.printAndReset("Main_BDG_ME: 1: ");
         repaint();
