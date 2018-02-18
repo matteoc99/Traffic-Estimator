@@ -39,6 +39,7 @@ public class Main extends JFrame {
 
     //moving modes
     public static boolean hovermode = false;
+    public static Point hoverpoint = null;
 
     //fps stuff
     public static final int FPS = 25;
@@ -113,7 +114,16 @@ public class Main extends JFrame {
                         fineZoom = true;
                         break;
                     case KeyEvent.VK_H:
-                        hovermode = true;
+                        if(hoverpoint==null) {
+                            hovermode = true;
+                            hoverpoint = MouseInfo.getPointerInfo().getLocation();
+                        }else{
+                            int xoff = hoverpoint.x - MouseInfo.getPointerInfo().getLocation().x;
+                            int yoff = hoverpoint.y - MouseInfo.getPointerInfo().getLocation().y;
+                            xoff /= 10;
+                            yoff /= 10;
+                            jCity.setLocation(jCity.getX() - xoff, jCity.getY() - yoff);
+                        }
                         break;
                     case KeyEvent.VK_S:
                         superFineZoom = true;
@@ -133,6 +143,7 @@ public class Main extends JFrame {
                         break;
                     case KeyEvent.VK_H:
                         hovermode = false;
+                        hoverpoint = null;
                         break;
                     case KeyEvent.VK_S:
                         superFineZoom = false;
@@ -190,7 +201,7 @@ public class Main extends JFrame {
 
             @Override
             public void mouseMoved(MouseEvent e) {
-                super.mouseMoved(e);
+
             }
 
             @Override
