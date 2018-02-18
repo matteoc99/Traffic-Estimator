@@ -15,7 +15,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * @author Matteo Cosi
@@ -212,9 +214,9 @@ public class Main extends JFrame {
             @Override
             public void mouseDragged(MouseEvent e) {
                 Point toCords = e.getPoint();
-                int offsetx = toCords.x - fromCords.x;
-                int offsety = toCords.y - fromCords.y;
-                jCity.setLocation(jCity.getX() + offsetx, jCity.getY() + offsety);
+                int offsetX = toCords.x - fromCords.x;
+                int offsetY = toCords.y - fromCords.y;
+                jCity.setLocation(jCity.getX() + offsetX, jCity.getY() + offsetY);
                 fromCords = toCords;
             }
         };
@@ -229,18 +231,18 @@ public class Main extends JFrame {
 
 
     /**
-     * /**
      * get avg node pos relative to zoom
-     *
-     * @return
      */
     private int getAvgNodePosition() {
-        int sumx = 0, sumy = 0;
-        for (Node node : city.getNodes()) {
-            sumx += node.getX() * zoom;
-            sumy += node.getY() * zoom;
+        int sumX = 0, sumY = 0;
+        Iterator<Node> nodes = city.getNodeIterator();
+        while (nodes.hasNext()) {
+            Node node = nodes.next();
+            sumX += node.getX() * zoom;
+            sumY += node.getY() * zoom;
         }
-        return Integer.min(sumx / city.getNodes().size(), (int) (sumy / city.getNodes().size()));
+
+        return Integer.min(sumX / city.getNodeSize(), sumY / city.getNodeSize());
     }
 
     private void setupWindow() {
@@ -267,12 +269,12 @@ public class Main extends JFrame {
     }
 
     public static void main(String[] args) {
+        System.out.println("Main:" + new Timestamp(System.currentTimeMillis()) + " Creating City from .json...");
         City city = City.createCityFromJson(
-                new File(System.getProperty("user.dir") + "\\src\\parsing\\testcity.json"));
+                new File(System.getProperty("user.dir") + "\\src\\parsing\\res\\lana.json"));
 
-
+        System.out.println("Main:" + new Timestamp(System.currentTimeMillis()) + " Starting GUI...");
         Main main = new Main(city);
-
 
         while (true) {
             zeitvorsleep = System.currentTimeMillis();

@@ -23,13 +23,11 @@ public class JCity extends JPanel {
      */
     private City city;
     ArrayList<Street> streets;
-    ArrayList<Node> nodes;
 
 
     public JCity(City city) {
         this.city = city;
         streets = city.getStreets();
-        nodes = city.getNodes();
 
         setLayout(null);
         setBounds(city.getBounds());

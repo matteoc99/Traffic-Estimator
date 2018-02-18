@@ -15,6 +15,10 @@ public class PathUtils {
     private static ArrayList<Path> paths = null;
 
     private static void generatePaths(City city) {
+        generatePaths(city, city.getNodeSize() / 6);
+    }
+
+    private static void generatePaths(City city, int count) {
         File pth = new File(System.getProperty("user.dir") + "/src/logic/paths/" + city.getName() + ".pth");
         FileOutputStream fos = null;
         try {
@@ -24,8 +28,8 @@ public class PathUtils {
         }
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos));
         System.out.println("generating");
-        for (int i = 0; i < city.getNodes().size() * 3; i++) {
-            System.out.println("progress:"+i+" of "+city.getNodes().size() * 3);
+        for (int i = 0; i < count; i++) {
+            System.out.println("progress:"+i+" of "+city.getNodeSize() * 3);
             Path path = city.getRandomPath(0);
             try {
                 if (path != null && path.isValid()) {

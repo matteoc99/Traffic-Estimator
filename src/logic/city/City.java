@@ -11,7 +11,11 @@ import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
 
 /**
  * @author Matteo Cosi
@@ -24,6 +28,7 @@ public class City {
     }
 
     private ArrayList<Node> nodes;
+    private boolean nodesSorted = false;
 
     private String name;
 
@@ -38,7 +43,7 @@ public class City {
 
     public static City createCityFromJson(File jsonFile) {
 
-        City city = new City(jsonFile.getName().replace(".json",""));
+        City city = new City(jsonFile.getName().replace(".json", ""));
         JSONTokener root;
         try {
             root = new JSONTokener(new FileReader(jsonFile));
@@ -48,10 +53,11 @@ public class City {
         }
         JSONObject topNode = new JSONObject(root);
 
-        JSONArray nodes = topNode.getJSONArray("nodes");
-        for (int i = 0; i < nodes.length(); i++) {
+        System.out.println("City:" + new Timestamp(System.currentTimeMillis()) + " Creating Nodes...");
+        JSONArray jNodes = topNode.getJSONArray("nodes");
+        for (int i = 0; i < jNodes.length(); i++) {
             // id(String), x(number), y(number), fame(number), type(String)
-            JSONObject nodeEntry = nodes.getJSONObject(i);
+            JSONObject nodeEntry = jNodes.getJSONObject(i);
             String id = nodeEntry.getString("id");
             int x = nodeEntry.getInt("x");
             int y = nodeEntry.getInt("y");
@@ -59,11 +65,14 @@ public class City {
             String type = nodeEntry.getString("type");
 
             createNodeByClassName(type, city, new Point(x, y), fame, id);
+
+            city.sortNodes();
         }
 
-        JSONArray streets = topNode.getJSONArray("streets");
-        for (int i = 0; i < streets.length(); i++) {
-            JSONObject streetEntry = streets.getJSONObject(i);
+        System.out.println("City:" + new Timestamp(System.currentTimeMillis()) + " Creating Streets...");
+        JSONArray jStreets = topNode.getJSONArray("streets");
+        for (int i = 0; i < jStreets.length(); i++) {
+            JSONObject streetEntry = jStreets.getJSONObject(i);
             String id = streetEntry.getString("id");
             String from = streetEntry.getString("from");
             String to = streetEntry.getString("to");
@@ -73,12 +82,14 @@ public class City {
             Node fromNode = city.getNodeById(from);
             Node toNode = city.getNodeById(to);
 
+
             new Street(id, city, fromNode, toNode, maxSpeed, prominence);
         }
 
-        JSONArray lanes = topNode.getJSONArray("lanes");
-        for (int i = 0; i < lanes.length(); i++) {
-            JSONObject laneEntry = lanes.getJSONObject(i);
+        System.out.println("City:" + new Timestamp(System.currentTimeMillis()) + " Creating Lanes...");
+        JSONArray jLanes = topNode.getJSONArray("lanes");
+        for (int i = 0; i < jLanes.length(); i++) {
+            JSONObject laneEntry = jLanes.getJSONObject(i);
             String id = laneEntry.getString("id");
             String parentStreet = laneEntry.getString("parent");
             int index = laneEntry.getInt("index");
@@ -90,30 +101,28 @@ public class City {
         }
 
         // delete lonely nodes
-        city.nodes.removeIf(node -> node.getStreets().isEmpty());
+        // TODO: 18.02.2018 deactivated, as there shouldn't be any nodes without a single street
+        //city.nodes.removeIf(node -> node.getStreets().isEmpty());
 
         return city;
     }
 
-    private static Node createNodeByClassName(String className,
+    private static void createNodeByClassName(String className,
                                               City city,
                                               Point point,
                                               double fame,
                                               String id) {
-        Node ret = null;
         switch (className) {
             case "Connection":
-                ret = new Connection(city, point, fame, id);
+                new Connection(city, point, fame, id);
                 break;
             case "MultiConnection":
-                ret = new MultiConnection(city, point, fame, id);
+                new MultiConnection(city, point, fame, id);
                 break;
             case "DeadEnd":
-                ret = new DeadEnd(city, point, fame, id);
+                new DeadEnd(city, point, fame, id);
                 break;
         }
-
-        return ret;
     }
 
     private Path doDijkstra(Node from, Node to) {
@@ -231,6 +240,7 @@ public class City {
     public void addNode(Node node) {
         if (!contains(node)) {
             nodes.add(node);
+            nodesSorted = false;
         } else {
             throw new RuntimeException("CITY NODE ALREADY ADDED");
         }
@@ -253,14 +263,28 @@ public class City {
         return false;
     }
 
-    public Node getNodeById(String id) {
-        for (Node node : nodes) {
-            if (node.getId().equals(id))
-                return node;
-        }
-        return null;
+    public void sortNodes() {
+        nodes.sort(Comparator.comparing(Node::getId));
+        nodesSorted = true;
     }
 
+    public Node getNodeById(String id) {
+        if (!nodesSorted)
+            sortNodes();
+        return getNodeByID(id, 0, nodes.size()-1);
+    }
+
+    private Node getNodeByID(String id, int left, int right) {
+        if (left > right)
+            return null;
+        int mid = (left+right) >>> 1;
+        if (nodes.get(mid).getId().equals(id))
+            return nodes.get(mid);
+        else
+            return (nodes.get(mid).getId().compareTo(id) > 0)?
+                    getNodeByID(id, left, mid-1):
+                    getNodeByID(id, mid+1, right);
+    }
 
     public Street getStreetById(String id) {
         for (int i = 0; i < nodes.size(); i++) {
@@ -348,8 +372,18 @@ public class City {
         this.name = name;
     }
 
+    // TODO: 18.02.2018 There should be no getNodes, create getNodeSize instead
+    @Deprecated
     public ArrayList<Node> getNodes() {
         return nodes;
+    }
+
+    public int getNodeSize() {
+        return nodes.size();
+    }
+
+    public Iterator<Node> getNodeIterator() {
+        return nodes.iterator();
     }
 
 
