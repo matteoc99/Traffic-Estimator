@@ -101,6 +101,11 @@ public class JCity extends JPanel {
                     (int) ((int) (lane.getParent().getyFrom() * zoom) - (zoom + i*zoom * 2)*dir),
                     (int) ((int) (lane.getParent().getxTo() * zoom) - (zoom + i*zoom * 2)*dir),
                     (int) ((int) (lane.getParent().getyTo() * zoom) - (zoom + i*zoom * 2)*dir));
+        }else{
+            g2.drawLine((int) ((int) (lane.getParent().getxFrom() * zoom) - (1 + i * 2)*dir),
+                    (int) ((int) (lane.getParent().getyFrom() * zoom) - (1 + i * 2)*dir),
+                    (int) ((int) (lane.getParent().getxTo() * zoom) - (1 + i * 2)*dir),
+                    (int) ((int) (lane.getParent().getyTo() * zoom) - (1 + i * 2)*dir));
         }
         ArrayList<Vehicle> vehicles = lane.getVehicles();
         //anti duplicate

@@ -15,7 +15,7 @@ public class PathUtils {
     private static ArrayList<Path> paths = new ArrayList<>();
 
     private static void generatePaths(City city) {
-        generatePaths(city, city.getNodeSize() / 6);
+        generatePaths(city, 100);
     }
 
     private static void generatePaths(City city, int count) {
