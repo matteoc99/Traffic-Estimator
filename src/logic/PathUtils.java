@@ -12,7 +12,7 @@ import java.util.ArrayList;
  */
 public class PathUtils {
 
-    private static ArrayList<Path> paths = null;
+    private static ArrayList<Path> paths = new ArrayList<>();
 
     private static void generatePaths(City city) {
         generatePaths(city, city.getNodeSize() / 6);
@@ -33,6 +33,7 @@ public class PathUtils {
             Path path = city.getRandomPath(0);
             try {
                 if (path != null && path.isValid()) {
+                    // TODO: 18.02.2018 check to add only paths that are ! equal
                     bw.write(path.toString());
                     bw.newLine();
                 }
@@ -51,8 +52,7 @@ public class PathUtils {
         //check if paths are already generated
         File pth = new File(System.getProperty("user.dir") + "/src/logic/paths/" + city.getName() + ".pth");
         if (pth.exists()) {
-            if (paths == null) {
-                paths = new ArrayList<>();
+            if (paths.isEmpty()) {
                 try {
                     FileReader fileReader = new FileReader(pth);
                     BufferedReader bufferedReader = new BufferedReader(fileReader);

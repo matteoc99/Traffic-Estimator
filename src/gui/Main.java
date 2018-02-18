@@ -332,6 +332,7 @@ public class Main extends JFrame {
             main.calcCity();
             if (city.getVehicles().size() < VEHICLE_AMOUNT) {
                 Vehicle vehicle = new Vehicle(1000, (int) (Math.random()*40)+10, PathUtils.getRandomPath(city), 1, 1, city);
+                vehicle.setColor(new Color((int) ((Math.random()*200)+50),(int) (Math.random()*200)+50,(int) (Math.random()*200)+50));
             }
             long zeitvergangen = (long) (System.currentTimeMillis() - zeitvorsleep);
             if (zeitvergangen < 1000.0 / FPS) {
