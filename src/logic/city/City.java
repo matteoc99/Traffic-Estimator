@@ -203,7 +203,7 @@ public class City {
 
         Node prevNode = to;
         while (prevNode != null) {
-            ret.addNodeIdAtIndex(prevNode.getId(),0);
+            ret.addNodeIdAtIndex(prevNode.getId(), 0);
             prevNode = prevNode.getPreviousNode();
         }
         return ret;
@@ -279,13 +279,13 @@ public class City {
         if (id == null) return null;
         if (!nodesSorted)
             sortNodes();
-        return getNodeById(id, 0, nodes.size()-1);
+        return getNodeById(id, 0, nodes.size() - 1);
     }
 
     private Node getNodeById(String id, int left, int right) {
         if (left > right)
             return null;
-        int mid = (left+right) >>> 1;
+        int mid = (left + right) >>> 1;
         if (nodes.get(mid).getId().equals(id))
             return nodes.get(mid);
         else
@@ -322,13 +322,13 @@ public class City {
         if (id == null) return null;
         if (!streetsSorted)
             sortNodes();
-        return getStreetById(id, 0, streets.size()-1);
+        return getStreetById(id, 0, streets.size() - 1);
     }
 
     public Street getStreetById(String id, int left, int right) {
         if (left > right)
             return null;
-        int mid = (left+right) >>> 1;
+        int mid = (left + right) >>> 1;
         if (streets.get(mid).getId().equals(id))
             return streets.get(mid);
         else
@@ -346,13 +346,13 @@ public class City {
         if (id == null) return null;
         if (!lanesSorted)
             sortLanes();
-        return getLaneById(id, 0, lanes.size()-1);
+        return getLaneById(id, 0, lanes.size() - 1);
     }
 
     public Lane getLaneById(String id, int left, int right) {
         if (left > right)
             return null;
-        int mid = (left+right) >>> 1;
+        int mid = (left + right) >>> 1;
         if (lanes.get(mid).getId().equals(id))
             return lanes.get(mid);
         else
@@ -404,6 +404,25 @@ public class City {
                 ret.add(vehicle);
         }
     }
+
+    public Street getStreetByPoint(Point c) {
+        int attempts=50;
+        for (int i = 0; i < attempts; i+=5) {
+            for (Street street : getStreets()) {
+                Point a = street.getFrom().getPosition();
+                Point b = street.getTo().getPosition();
+                if ((distance(a, c) + distance(b,c) <= distance(a, b)+i)&&(distance(a, c) + distance(b,c) >= distance(a, b)-i))
+                    return street;
+
+            }
+        }
+        return null;
+    }
+
+    public double distance(Point a, Point b){
+        return Math.sqrt(Math.pow(a.x-b.x,2)+Math.pow(a.y-b.y,2));
+    }
+
 
     public void calcCity() {
         for (Street street : streets) {
@@ -463,5 +482,17 @@ public class City {
                 ret = node.getY();
         }
         return ret;
+    }
+
+    public ArrayList<Node> getNodes() {
+        return nodes;
+    }
+
+    public ArrayList<Street> getStreets() {
+        return streets;
+    }
+
+    public ArrayList<Lane> getLanes() {
+        return lanes;
     }
 }

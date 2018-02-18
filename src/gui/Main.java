@@ -208,8 +208,12 @@ public class Main extends JFrame {
             }
 
             @Override
-            public void mouseMoved(MouseEvent e) {
-
+            public void mouseClicked(MouseEvent e) {
+                int x=e.getX()-jCity.getX();
+                int y=e.getY()-jCity.getY();
+                x/=zoom;
+                y/=zoom;
+                System.out.println(city.getStreetByPoint(new Point(x,y)));
             }
 
             @Override
@@ -322,7 +326,7 @@ public class Main extends JFrame {
     public static void main(String[] args) {
         System.out.println("Main:" + new Timestamp(System.currentTimeMillis()) + " Creating City from .json...");
         City city = City.createCityFromJson(
-                new File(System.getProperty("user.dir") + "\\src\\parsing\\res\\bozenLarge.json"));
+                new File(System.getProperty("user.dir") + "\\src\\parsing\\res\\testcity.json"));
 
         System.out.println("Main:" + new Timestamp(System.currentTimeMillis()) + " Starting GUI...");
         Main main = new Main(city);
