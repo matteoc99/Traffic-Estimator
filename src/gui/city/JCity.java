@@ -24,6 +24,7 @@ public class JCity extends JPanel {
     private City city;
     ArrayList<Street> streets;
 
+    boolean firsttime= true;
 
     public JCity(City city) {
         this.city = city;
@@ -116,5 +117,9 @@ public class JCity extends JPanel {
             setLocation(getX()+(getWidth()-newWidth)/2, getY()+(getHeight()-newHeight)/2);
         }
         setSize(newWidth,newHeight);
+        if(firsttime) {
+            firsttime=false;
+            System.out.println("painting done");
+        }
     }
 }
