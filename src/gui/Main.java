@@ -120,8 +120,8 @@ public class Main extends JFrame {
                         }else{
                             int xoff = hoverpoint.x - MouseInfo.getPointerInfo().getLocation().x;
                             int yoff = hoverpoint.y - MouseInfo.getPointerInfo().getLocation().y;
-                            xoff /= 10;
-                            yoff /= 10;
+                            xoff /= 4;
+                            yoff /= 4;
                             jCity.setLocation(jCity.getX() - xoff, jCity.getY() - yoff);
                         }
                         break;
