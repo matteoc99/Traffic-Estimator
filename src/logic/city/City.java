@@ -4,7 +4,6 @@ import logic.vehicles.Vehicle;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
-import utils.Stopwatch;
 
 import java.awt.*;
 import java.io.File;
@@ -38,6 +37,8 @@ public class City {
 
     private City() {
         nodes = new ArrayList<>();
+        streets = new ArrayList<>();
+        lanes = new ArrayList<>();
     }
 
     public City(String name) {
@@ -69,9 +70,8 @@ public class City {
             String type = nodeEntry.getString("type");
 
             createNodeByClassName(type, city, new Point(x, y), fame, id);
-
-            city.sortNodes();
         }
+        city.sortNodes();
 
         System.out.println("City:" + new Timestamp(System.currentTimeMillis()) + " Creating Streets...");
         JSONArray jStreets = topNode.getJSONArray("streets");
@@ -89,6 +89,7 @@ public class City {
 
             new Street(id, city, fromNode, toNode, maxSpeed, prominence);
         }
+        city.sortStreets();
 
         System.out.println("City:" + new Timestamp(System.currentTimeMillis()) + " Creating Lanes...");
         JSONArray jLanes = topNode.getJSONArray("lanes");
@@ -103,10 +104,11 @@ public class City {
 
             new Lane(id, parent, reversed, index);
         }
+        city.sortLanes();
 
         // delete lonely nodes
         // TODO: 18.02.2018 deactivated, as there shouldn't be any nodes without a single street
-        //city.nodes.removeIf(node -> node.getStreets().isEmpty());
+        //city.nodes.removeIf(node -> !node.getStreetIterator().hasNext());
 
         return city;
     }
@@ -244,8 +246,8 @@ public class City {
     }
 
 
-    public void addNode(Node node) {
-        if (!containsNode(node)) {
+    public void add(Node node) {
+        if (!contains(node)) {
             nodes.add(node);
             nodesSorted = false;
         } else {
@@ -253,21 +255,19 @@ public class City {
         }
     }
 
-    public void removeNode(Node node) {
-        if (containsNode(node)) {
+    public void remove(Node node) {
+        if (contains(node)) {
             nodes.remove(node);
         } else {
             throw new RuntimeException("NO NODE TO REMOVE");
         }
     }
 
-    public boolean containsNode(Node node) {
-        for (Node node1 : nodes) {
-            if (node.getId().equals(node1.getId())) {
-                return true;
-            }
-        }
-        return false;
+    public boolean contains(Node node) {
+        if (nodesSorted)
+            return getNodeById(node.getId()) != null;
+        else
+            return nodes.contains(node);
     }
 
     public void sortNodes() {
@@ -279,10 +279,10 @@ public class City {
         if (id == null) return null;
         if (!nodesSorted)
             sortNodes();
-        return getNodeByID(id, 0, nodes.size()-1);
+        return getNodeById(id, 0, nodes.size()-1);
     }
 
-    private Node getNodeByID(String id, int left, int right) {
+    private Node getNodeById(String id, int left, int right) {
         if (left > right)
             return null;
         int mid = (left+right) >>> 1;
@@ -290,8 +290,27 @@ public class City {
             return nodes.get(mid);
         else
             return (nodes.get(mid).getId().compareTo(id) > 0) ?
-                    getNodeByID(id, left, mid - 1) :
-                    getNodeByID(id, mid + 1, right);
+                    getNodeById(id, left, mid - 1) :
+                    getNodeById(id, mid + 1, right);
+    }
+
+    public void add(Street street) {
+        if (!contains(street)) {
+            streets.add(street);
+            streetsSorted = false;
+        }
+    }
+
+    public void remove(Street street) {
+        if (contains(street))
+            streets.remove(street);
+    }
+
+    public boolean contains(Street street) {
+        if (streetsSorted)
+            return getStreetById(street.getId()) != null;
+        else
+            return streets.contains(street);
     }
 
     public void sortStreets() {
@@ -300,81 +319,96 @@ public class City {
     }
 
     public Street getStreetById(String id) {
-        for (int i = 0; i < nodes.size(); i++) {
-            for (int j = 0; j < nodes.get(i).getStreetSize(); j++) {
-                if (nodes.get(i).getStreet(j).getId().equals(id)) {
-                    return nodes.get(i).getStreet(j);
-                }
-            }
-        }
-        return null;
+        if (id == null) return null;
+        if (!streetsSorted)
+            sortNodes();
+        return getStreetById(id, 0, streets.size()-1);
     }
 
-    public ArrayList<Street> getStreets() {
-        ArrayList<Street> ret = new ArrayList<>();
-        for (Node node : nodes) {
-            for (int j = 0; j < node.getStreetSize(); j++) {
-                if (!ret.contains(node.getStreet(j))) {
-                    ret.add(node.getStreet(j));
-                }
-            }
-        }
-        return ret;
+    public Street getStreetById(String id, int left, int right) {
+        if (left > right)
+            return null;
+        int mid = (left+right) >>> 1;
+        if (streets.get(mid).getId().equals(id))
+            return streets.get(mid);
+        else
+            return (streets.get(mid).getId().compareTo(id) > 0) ?
+                    getStreetById(id, left, mid - 1) :
+                    getStreetById(id, mid + 1, right);
+    }
+
+    public void sortLanes() {
+        lanes.sort(Comparator.comparing(Lane::getId));
+        lanesSorted = true;
     }
 
     public Lane getLaneById(String id) {
-        for (int i = 0; i < nodes.size(); i++) {
-            for (int j = 0; j < nodes.get(i).getStreetSize(); j++) {
-                for (int k = 0; k < nodes.get(i).getStreet(j).getBackwardLanesSize(); k++) {
-                    if (nodes.get(i).getStreet(j).getBackwardLanes().get(k).getId().equals(id))
-                        return nodes.get(i).getStreet(j).getBackwardLanes().get(k);
-                }
-            }
+        if (id == null) return null;
+        if (!lanesSorted)
+            sortLanes();
+        return getLaneById(id, 0, lanes.size()-1);
+    }
+
+    public Lane getLaneById(String id, int left, int right) {
+        if (left > right)
+            return null;
+        int mid = (left+right) >>> 1;
+        if (lanes.get(mid).getId().equals(id))
+            return lanes.get(mid);
+        else
+            return (lanes.get(mid).getId().compareTo(id) > 0) ?
+                    getLaneById(id, left, mid - 1) :
+                    getLaneById(id, mid + 1, right);
+    }
+
+    public boolean contains(Lane lane) {
+        return lanes.contains(lane);
+    }
+
+    public void add(Lane lane) {
+        if (!contains(lane)) {
+            lanes.add(lane);
+            lanesSorted = false;
         }
-        for (int i = 0; i < nodes.size(); i++) {
-            for (int j = 0; j < nodes.get(i).getStreetSize(); j++) {
-                for (int k = 0; k < nodes.get(i).getStreet(j).getForwardLanesSize(); k++) {
-                    if (nodes.get(i).getStreet(j).getForwardLanes().get(k).getId().equals(id))
-                        return nodes.get(i).getStreet(j).getForwardLanes().get(k);
-                }
-            }
-        }
-        return null;
+    }
+
+    public void remove(Lane lane) {
+        if (contains(lane))
+            lanes.remove(lane);
     }
 
     public ArrayList<Vehicle> getVehicles() {
         ArrayList<Vehicle> ret = new ArrayList<>();
         for (Node node : nodes) {
-            for (Street street : node.getStreets()) {
-                for (Lane lane : street.getBackwardLanes()) {
-                    for (Vehicle vehicle : lane.getVehicles()) {
-                        if (!ret.contains(vehicle))
-                            ret.add(vehicle);
-                    }
+            Iterator<Street> streets = node.getStreetIterator();
+            while (streets.hasNext()) {
+                Street street = streets.next();
+                Iterator<Lane> bLanes = street.getBackwardLanesIterator();
+                while (bLanes.hasNext()) {
+                    Lane lane = bLanes.next();
+                    extractVehicles(ret, lane);
                 }
-            }
-        }
-        for (Node node : nodes) {
-            for (Street street : node.getStreets()) {
-                for (Lane lane : street.getForwardLanes()) {
-                    for (Vehicle vehicle : lane.getVehicles()) {
-                        if (!ret.contains(vehicle))
-                            ret.add(vehicle);
-                    }
+                Iterator<Lane> fLanes = street.getForwardLanesIterator();
+                while (fLanes.hasNext()) {
+                    Lane lane = fLanes.next();
+                    extractVehicles(ret, lane);
                 }
             }
         }
         return ret;
     }
 
-    public void calcCity() {
-        Stopwatch timer = new Stopwatch().start();
-        ArrayList<Street> streets = getStreets();
-        timer.printAndReset("City_BDG_ME: 1: ");
-        for (int i = 0; i < streets.size(); i++) {
-            streets.get(i).calcStreet();
+    private void extractVehicles(ArrayList<Vehicle> ret, Lane lane) {
+        for (Vehicle vehicle : lane.getVehicles()) {
+            if (!ret.contains(vehicle))
+                ret.add(vehicle);
         }
-        timer.printAndReset("City_BDG_ME: 2: ");
+    }
+
+    public void calcCity() {
+        for (Street street : streets) {
+            street.calcStreet();
+        }
     }
 
     public String getName() {
@@ -393,6 +427,21 @@ public class City {
         return nodes.iterator();
     }
 
+    public int getStreetSize() {
+        return streets.size();
+    }
+
+    public Iterator<Street> getStreetIterator() {
+        return streets.iterator();
+    }
+
+    public int getLaneSize() {
+        return lanes.size();
+    }
+
+    public Iterator<Lane> getLaneIterator() {
+        return lanes.iterator();
+    }
 
     public Rectangle getBounds() {
         return new Rectangle(0, 0, getMaxWidth(), getMaxHeight());

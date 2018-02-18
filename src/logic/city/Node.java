@@ -31,7 +31,7 @@ public class Node {
         this.fame = fame;
         this.id = id;
         this.streets = new ArrayList<>();
-        parent.addNode(this);
+        parent.add(this);
     }
 
     public Street getStreetById(String id){
@@ -49,7 +49,7 @@ public class Node {
         } else {
             throw new RuntimeException("ALREADY CONTAINS STREET");
         }
-        // TODO: 18.02.2018
+        parent.add(street);
     }
 
     public void removeStreet(Street street){
@@ -58,7 +58,7 @@ public class Node {
         }else {
             throw new RuntimeException("NO STREET TO REMOVE");
         }
-        // TODO: 18.02.2018
+        parent.remove(street);
     }
 
     public boolean contains(Street street){
@@ -92,7 +92,6 @@ public class Node {
         return fame;
     }
 
-    // TODO: 18.02.2018 Avoid
     @Deprecated
     public ArrayList<Street> getStreets() {
         return streets;
@@ -111,7 +110,8 @@ public class Node {
     }
 
     public void clearStreets() {
-        streets.clear();
+        // TODO: 18.02.2018
+        System.out.println("Error: Streets cannot be cleared yet");
     }
 
     public String getId() {
@@ -158,14 +158,18 @@ public class Node {
      */
     public Lane getLaneTo(Node currentGoal) {
         for (Street street : streets) {
-            for (int j = 0; j < street.getBackwardLanes().size(); j++) {
-                if (street.getBackwardLanes().get(j).getToNode().equals(currentGoal)) {
-                   return  street.getBackwardLanes().get(j);
+            Iterator<Lane> bLanes = street.getBackwardLanesIterator();
+            for (int j = 0; bLanes.hasNext(); j++) {
+                Lane lane = bLanes.next();
+                if (lane.getToNode().equals(currentGoal)) {
+                    return  lane;
                 }
             }
-            for (int j = 0; j < street.getForwardLanes().size(); j++) {
-                if (street.getForwardLanes().get(j).getToNode().equals(currentGoal)) {
-                    return  street.getForwardLanes().get(j);
+            Iterator<Lane> fLanes = street.getForwardLanesIterator();
+            for (int j = 0; fLanes.hasNext(); j++) {
+                Lane lane = fLanes.next();
+                if (lane.getToNode().equals(currentGoal)) {
+                    return  lane;
                 }
             }
         }

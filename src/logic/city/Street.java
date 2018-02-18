@@ -93,7 +93,7 @@ public class Street extends StreetComponent {
         } else {
             throw new RuntimeException("CONTAINS LANE 2");
         }
-        // TODO: 18.02.2018
+        parent.add(lane);
     }
 
     public void removeLane(Lane lane) {
@@ -106,7 +106,7 @@ public class Street extends StreetComponent {
         } else {
             throw new RuntimeException("NO REMOVE LANE 2");
         }
-        // TODO: 18.02.2018
+        parent.remove(lane);
     }
 
     public boolean contains(Lane lane) {
@@ -171,10 +171,13 @@ public class Street extends StreetComponent {
         this.unProminence = unProminence;
     }
 
-    // TODO: 18.02.2018 Avoid
     @Deprecated
     public ArrayList<Lane> getForwardLanes() {
         return forwardLanes;
+    }
+
+    public Lane getForwardLane(int i) {
+        return forwardLanes.get(i);
     }
 
     public Iterator<Lane> getForwardLanesIterator() {
@@ -186,14 +189,19 @@ public class Street extends StreetComponent {
     }
 
     public void clearForwardLanes() {
+        for (Lane forwardLane : forwardLanes) {
+            parent.remove(forwardLane);
+        }
         forwardLanes.clear();
-        // TODO: 18.02.2018
     }
 
-    // TODO: 18.02.2018 Avoid
     @Deprecated
     public ArrayList<Lane> getBackwardLanes() {
         return backwardLanes;
+    }
+
+    public Lane getBackwardLane(int i) {
+        return backwardLanes.get(i);
     }
 
     public Iterator<Lane> getBackwardLanesIterator() {
@@ -205,8 +213,10 @@ public class Street extends StreetComponent {
     }
 
     public void clearBackwardLanes() {
+        for (Lane backwardLane : backwardLanes) {
+            parent.remove(backwardLane);
+        }
         backwardLanes.clear();
-        // TODO: 18.02.2018
     }
 
     public Lane getBackwardLaneByIndex(int index) {

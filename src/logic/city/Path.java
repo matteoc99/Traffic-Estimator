@@ -146,7 +146,7 @@ public class Path {
     }
 
     public static Path pathFromString(String path) {
-        String props = extactProps(path);
+        String props = extractProps(path);
         Path ret = new Path(Integer.parseInt(getProp(ATTR_MIN_KNOWLEGE, props)));
         String nodes = getProp(ATTR_NODE, props);
 
@@ -171,7 +171,7 @@ public class Path {
         return props.substring(index, props.indexOf(";", index));
     }
 
-    private static String extactProps(String pth) {
+    private static String extractProps(String pth) {
         return pth.substring(pth.indexOf(OPEN_PROPS) + 1, pth.indexOf(CLOSE_PROPS));
     }
 

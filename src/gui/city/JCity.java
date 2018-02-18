@@ -8,6 +8,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.GeneralPath;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import static gui.Main.preciseZoom;
 import static gui.Main.zoom;
@@ -22,13 +23,11 @@ public class JCity extends JPanel {
      * reference
      */
     private City city;
-    ArrayList<Street> streets;
 
     boolean firsttime= true;
 
     public JCity(City city) {
         this.city = city;
-        streets = city.getStreets();
 
         setLayout(null);
         setBounds(city.getBounds());
@@ -60,15 +59,16 @@ public class JCity extends JPanel {
         g2.setColor(new Color(55, 55, 55));
         g2.fillRect(0, 0, getWidth(), getHeight());
         //drawStreets
-        for (Street street : streets) {
-
-            ArrayList<Lane> forwardLanes = street.getForwardLanes();
-            for (int i = 0; i < forwardLanes.size(); i++) {
-                drawLaneAndCars(forwardLanes.get(i),g2,i,false);
+        Iterator<Street> streets = city.getStreetIterator();
+        while (streets.hasNext()) {
+            Street street = streets.next();
+            Iterator<Lane> forwardLanes = street.getForwardLanesIterator();
+            for (int i = 0; forwardLanes.hasNext(); i++) {
+                drawLaneAndCars(forwardLanes.next(),g2,i,false);
             }
-            ArrayList<Lane> backwardLanes = street.getBackwardLanes();
-            for (int i = 0; i < backwardLanes.size(); i++) {
-               drawLaneAndCars(backwardLanes.get(i),g2,i,true);
+            Iterator<Lane> backwardLanes = street.getBackwardLanesIterator();
+            for (int i = 0; backwardLanes.hasNext(); i++) {
+                drawLaneAndCars(backwardLanes.next(),g2,i,true);
             }
         }
 
@@ -85,7 +85,7 @@ public class JCity extends JPanel {
         }
     }
 
-    private void drawLaneAndCars(Lane lane, Graphics2D g2,int i, boolean isBackward) {
+    private void drawLaneAndCars(Lane lane, Graphics2D g2, int i, boolean isBackward) {
         int dir=1;
         if(isBackward)
             dir=-1;
