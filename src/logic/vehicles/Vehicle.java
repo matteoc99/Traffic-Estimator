@@ -1,9 +1,6 @@
 package logic.vehicles;
 
-import logic.city.City;
-import logic.city.Lane;
-import logic.city.Node;
-import logic.city.Path;
+import logic.city.*;
 import utils.Stopwatch;
 
 import java.awt.*;
@@ -50,7 +47,7 @@ public class Vehicle {
     private Node prevGoal;
 
 
-    public int safetyDistance = 30; //TODO variabel je nach raser?
+    public int safetyDistance = 0; //TODO variabel je nach raser?
 
     public Vehicle(int weight, int maxSpeed, Path path, int streetKnowledge, int speeder, City city) {
         this.weight = weight;
@@ -86,7 +83,7 @@ public class Vehicle {
     public void move() {
         Stopwatch timer = new Stopwatch().start();
 
-        if (progressInLane / lane.getLength() > 0.90) {
+        if (progressInLane / lane.getLength() > 0.98) {
 
             //change lane or die if path end is reached
             prevGoal = currentGoal;
@@ -99,9 +96,9 @@ public class Vehicle {
                     Lane lane = prevGoal.getLaneTo(currentGoal);
                     changeLane(lane);
                     progressInLane = 0;
-                    currentSpeed /= 4;
-                    if (currentSpeed < 5)
-                        currentSpeed = 5;
+                    //current speed bleibt bei einfachen kurven erhalten
+                    if (!(prevGoal instanceof Connection))
+                        currentSpeed = maxSpeed / 8;
                 }
             }
             timer.print("Vehicles_DBG_ME: 1: ");
@@ -287,5 +284,9 @@ public class Vehicle {
 
     public Lane getLane() {
         return lane;
+    }
+
+    public int getCurrentSpeed() {
+        return currentSpeed;
     }
 }

@@ -67,6 +67,10 @@ public class JCity extends JPanel {
             for (int i = 0; i < forwardLanes.size(); i++) {
                 Lane lane = forwardLanes.get(i);
                 g2.setColor(lane.getColorByTraffic());
+                int stroke= (int) (5*lane.getTraffic());
+                if(stroke<1)
+                    stroke=1;
+                g2.setStroke(new BasicStroke(stroke, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
                 g2.drawLine((int) (lane.getParent().getxFrom() * zoom) + (1 + i * 2),
                         (int) (lane.getParent().getyFrom() * zoom) + (1 + i * 2),
                         (int) (lane.getParent().getxTo() * zoom) + (1 + i * 2),
@@ -85,6 +89,10 @@ public class JCity extends JPanel {
                 Lane lane = backwardLanes.get(i);
                 //drawlanes
                 g2.setColor(lane.getColorByTraffic());
+                int stroke= (int) (5*lane.getTraffic());
+                if(stroke<1)
+                    stroke=1;
+                g2.setStroke(new BasicStroke(stroke, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
                 g2.drawLine((int) (lane.getParent().getxFrom() * zoom) - (1 + i * 2),
                         (int) (lane.getParent().getyFrom() * zoom) - (1 + i * 2),
                         (int) (lane.getParent().getxTo() * zoom) - (1 + i * 2),

@@ -12,6 +12,8 @@ import logic.vehicles.Vehicle;
 import utils.Stopwatch;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
@@ -42,8 +44,12 @@ public class Main extends JFrame {
     public static Point hoverpoint = null;
 
     //fps stuff
-    public static final int FPS = 25;
+    public static int FPS = 25;
     public static long zeitvorsleep;
+
+
+    //Slider controlls
+    public static int VEHICLE_AMOUNT = 65;
 
 
     /**
@@ -262,7 +268,52 @@ public class Main extends JFrame {
     private ControlPanel setUpControlPanel() {
         ControlPanel ret = new ControlPanel();
         ret.setBackground(new Color(86, 90, 200));
-        ret.setBounds(getWidth() - getWidth() / 5, 0, getWidth() / 5, getHeight());
+        ret.setBounds(getWidth() - getWidth() / 6, 0, getWidth() / 6, getHeight());
+
+        MySlider fps = new MySlider(JSlider.HORIZONTAL, 0, 100, FPS);
+        MySlider traffic = new MySlider(JSlider.HORIZONTAL, 0, 350, VEHICLE_AMOUNT);
+
+
+        int xOff = ret.getWidth()/4;
+
+        JLabel[] labels = new JLabel[4];
+        for (int i = 0; i < labels.length; i++) {
+            labels[i] = new JLabel();
+            labels[i].setBounds(20, (ret.getHeight() / 12) * i, xOff - 10, ret.getHeight() / 10);
+            labels[i].setFont(new Font("Times New Roman", 0, 20));
+            ret.add(labels[i]);
+        }
+
+        labels[0].setText("FPS");
+        labels[1].setText("Traffic");
+
+
+        fps.setBounds(xOff, 10 + (ret.getHeight() / 12) * 0, ret.getWidth() - xOff - 20, ret.getHeight() / 10);
+        traffic.setBounds(xOff, 10 + (ret.getHeight() / 12) * 1, ret.getWidth() - xOff - 20, ret.getHeight() / 10);
+
+        System.out.println(fps.getBounds());
+        fps.setMajorTickSpacing(20);
+        traffic.setMajorTickSpacing(50);
+
+        fps.setMinorTickSpacing(5);
+        traffic.setMinorTickSpacing(10);
+        fps.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                FPS = fps.getValue() + 1;
+                requestFocus();
+            }
+        });
+
+        traffic.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                VEHICLE_AMOUNT= traffic.getValue() + 1;
+                requestFocus();
+            }
+        });
+        ret.add(traffic);
+        ret.add(fps);
         return ret;
     }
 
@@ -277,8 +328,8 @@ public class Main extends JFrame {
         while (true) {
             zeitvorsleep = System.currentTimeMillis();
             main.calcCity();
-            if (city.getVehicles().size() < 30) {
-                Vehicle vehicle = new Vehicle(1000, 60, PathUtils.getRandomPath(city), 1, 1, city);
+            if (city.getVehicles().size() < VEHICLE_AMOUNT) {
+                Vehicle vehicle = new Vehicle(1000, (int) (Math.random()*40)+10, PathUtils.getRandomPath(city), 1, 1, city);
             }
             long zeitvergangen = (long) (System.currentTimeMillis() - zeitvorsleep);
             if (zeitvergangen < 1000.0 / FPS) {

@@ -172,11 +172,27 @@ public class Lane {
      * @return traffic
      */
     public double getTraffic(){
-        int spaceNeeded=0;
+        double traffic=0;
+        int avgSpeed=0;
         for (Vehicle vehicle : getVehicles()) {
-            spaceNeeded+=vehicle.safetyDistance;
+            avgSpeed+=vehicle.getCurrentSpeed();
         }
-        return (spaceNeeded/getLength());
+        if(getVehicles().size()>0) {
+            avgSpeed = avgSpeed / getVehicles().size();
+            if (avgSpeed > 50) {
+                traffic += 0.05;
+            } else if (avgSpeed < 40) {
+                traffic += 0.15;
+            } else if (avgSpeed < 30) {
+                traffic += 0.25;
+            } else if (avgSpeed < 20) {
+                traffic += 0.45;
+            } else if (avgSpeed < 10) {
+                traffic += 0.65;
+            }
+            traffic+=getVehicles().size() / getLength()*10;
+        }
+        return (traffic);
     }
 
     public Color getColorByTraffic() {
@@ -185,17 +201,15 @@ public class Lane {
         if(traffic<0.1){
             color= new Color(0,255,0);
         }else if(traffic<0.4){
-            color= new Color(160,255, 20);
+            color= new Color(255, 239, 12);
         }else if(traffic<0.6){
-            color= new Color(250,255, 19);
+            color= new Color(255, 179, 6);
         }else if(traffic<0.8){
-            color= new Color(255, 228, 17);
+            color= new Color(255, 75, 7);
         }else if(traffic<0.9){
-            color= new Color(255, 143, 18);
+            color= new Color(255, 17, 0);
         }else if(traffic<1.1){
-            color= new Color(255, 67, 17);
-        }else if(traffic<1.8){
-            color= new Color(255, 14, 17);
+            color= new Color(91, 3, 0);
         }else
             color= new Color(71, 0,0);
         return color;
