@@ -1,6 +1,7 @@
 package logic.city;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import static logic.Utils.calcDegreesBetweenTwoPoint;
 
@@ -70,13 +71,13 @@ public class Street extends StreetComponent {
     }
 
 
-    public Lane getLaneById(String id){
+    public Lane getLaneById(String id) {
         for (int i = 0; i < forwardLanes.size(); i++) {
-            if(forwardLanes.get(i).getId().equals(id))
+            if (forwardLanes.get(i).getId().equals(id))
                 return forwardLanes.get(i);
         }
         for (int i = 0; i < backwardLanes.size(); i++) {
-            if(backwardLanes.get(i).getId().equals(id))
+            if (backwardLanes.get(i).getId().equals(id))
                 return backwardLanes.get(i);
         }
         return null;
@@ -89,9 +90,10 @@ public class Street extends StreetComponent {
             } else {
                 forwardLanes.add(lane);
             }
-        }else{
+        } else {
             throw new RuntimeException("CONTAINS LANE 2");
         }
+        // TODO: 18.02.2018
     }
 
     public void removeLane(Lane lane) {
@@ -101,9 +103,10 @@ public class Street extends StreetComponent {
             } else {
                 forwardLanes.remove(lane);
             }
-        }else{
+        } else {
             throw new RuntimeException("NO REMOVE LANE 2");
         }
+        // TODO: 18.02.2018
     }
 
     public boolean contains(Lane lane) {
@@ -168,20 +171,42 @@ public class Street extends StreetComponent {
         this.unProminence = unProminence;
     }
 
+    // TODO: 18.02.2018 Avoid
+    @Deprecated
     public ArrayList<Lane> getForwardLanes() {
         return forwardLanes;
     }
 
-    public void setForwardLanes(ArrayList<Lane> forwardLanes) {
-        this.forwardLanes = forwardLanes;
+    public Iterator<Lane> getForwardLanesIterator() {
+        return forwardLanes.iterator();
     }
 
+    public int getForwardLanesSize() {
+        return forwardLanes.size();
+    }
+
+    public void clearForwardLanes() {
+        forwardLanes.clear();
+        // TODO: 18.02.2018
+    }
+
+    // TODO: 18.02.2018 Avoid
+    @Deprecated
     public ArrayList<Lane> getBackwardLanes() {
         return backwardLanes;
     }
 
-    public void setBackwardLanes(ArrayList<Lane> backwardLanes) {
-        this.backwardLanes = backwardLanes;
+    public Iterator<Lane> getBackwardLanesIterator() {
+        return backwardLanes.iterator();
+    }
+
+    public int getBackwardLanesSize() {
+        return backwardLanes.size();
+    }
+
+    public void clearBackwardLanes() {
+        backwardLanes.clear();
+        // TODO: 18.02.2018
     }
 
     public Lane getBackwardLaneByIndex(int index) {
@@ -192,6 +217,7 @@ public class Street extends StreetComponent {
         }
         return lane;
     }
+
     public Lane getForwardLaneByIndex(int index) {
         Lane lane = null;
         for (int i = 0; i < forwardLanes.size(); i++) {
@@ -224,7 +250,7 @@ public class Street extends StreetComponent {
     /**
      * for dijkstra
      */
-    public double getGesamtKosten(double autoSpeed){
+    public double getTotalCost(double autoSpeed){
         return getLength()/Double.min(autoSpeed,maxSpeed);
     }
 

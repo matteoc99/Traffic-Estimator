@@ -19,7 +19,7 @@ public class DeadEnd extends Node {
 
     @Override
     public void addStreet(Street street) {
-        if (getStreets().isEmpty())
+        if (getStreetSize() == 0)
             super.addStreet(street);
         else
             throw new RuntimeException("TO MANY ADDED");

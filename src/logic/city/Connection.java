@@ -18,7 +18,7 @@ public class Connection extends Node {
 
     @Override
     public void addStreet(Street street) {
-        if(getStreets().size()<2)
+        if(getStreetSize() < 2)
             super.addStreet(street);
         else
             throw new RuntimeException("TO MANY ADDED");

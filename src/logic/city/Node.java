@@ -5,6 +5,7 @@ import logic.vehicles.Vehicle;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * @author Matteo Cosi
@@ -17,8 +18,8 @@ public class Node {
     private double fame;
     private ArrayList<Street> streets;
     private String id;
-    private double distanceCost; // distannce to goal node
-    private double walkedCost; //the cost of the path walked till now
+    private double distanceCost; // distance to goal node
+    private double walkedCost; // the cost of the path walked until now
 
     //for pathfinder
     private Node previousNode;
@@ -43,18 +44,21 @@ public class Node {
 
 
     public void addStreet(Street street){
-        if(!contains(street)){
+        if (!contains(street)) {
             streets.add(street);
-        }else{
+        } else {
             throw new RuntimeException("ALREADY CONTAINS STREET");
         }
+        // TODO: 18.02.2018
     }
+
     public void removeStreet(Street street){
         if(contains(street)){
             streets.remove(street);
         }else {
             throw new RuntimeException("NO STREET TO REMOVE");
         }
+        // TODO: 18.02.2018
     }
 
     public boolean contains(Street street){
@@ -88,8 +92,26 @@ public class Node {
         return fame;
     }
 
+    // TODO: 18.02.2018 Avoid
+    @Deprecated
     public ArrayList<Street> getStreets() {
         return streets;
+    }
+
+    public Street getStreet(int index) {
+        return streets.get(index);
+    }
+
+    public Iterator<Street> getStreetIterator() {
+        return streets.iterator();
+    }
+
+    public int getStreetSize() {
+        return streets.size();
+    }
+
+    public void clearStreets() {
+        streets.clear();
     }
 
     public String getId() {
@@ -131,18 +153,6 @@ public class Node {
         this.previousNode = previousNode;
     }
 
-    @Override
-    public String toString() {
-        return "Node(" + this.getClass().toString()+
-                "){" +
-                "parent=" + parent +
-                ", position=" + position +
-                ", fame=" + fame +
-                ", streets=" + streets +
-                ", id='" + id + '\'' +
-                '}';
-    }
-
     /**
      * returns the lane for a new goal
      */
@@ -162,9 +172,21 @@ public class Node {
         return null;
     }
 
-
     public boolean register(Vehicle vehicle, Node nextNode) {
         // TODO: 17.02.2018 für maxi  ret tru wenn er fahren darf
         return true;
+    }
+
+
+    @Override
+    public String toString() {
+        return "Node(" + this.getClass().toString()+
+                "){" +
+                "parent=" + parent +
+                ", position=" + position +
+                ", fame=" + fame +
+                ", streets=" + streets +
+                ", id='" + id + '\'' +
+                '}';
     }
 }

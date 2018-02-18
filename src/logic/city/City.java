@@ -1,6 +1,5 @@
 package logic.city;
 
-import logic.PathUtils;
 import logic.vehicles.Vehicle;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -13,7 +12,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 
@@ -29,6 +27,12 @@ public class City {
 
     private ArrayList<Node> nodes;
     private boolean nodesSorted = false;
+
+    private ArrayList<Street> streets;
+    private boolean streetsSorted = false;
+
+    private ArrayList<Lane> lanes;
+    private boolean lanesSorted = false;
 
     private String name;
 
@@ -159,18 +163,21 @@ public class City {
             if (current.equals(to)) {
                 break;
             }
-            ArrayList<Street> streets = current.getStreets();
-            for (int i = 0; i < streets.size(); i++) {
+
+            Iterator<Street> streets = current.getStreetIterator();
+            while (streets.hasNext()) {
+                Street currentStreet = streets.next();
+
                 Node neighbour;
                 boolean isReachable = true;
-                if (streets.get(i).getFrom().equals(current)) {
-                    neighbour = streets.get(i).getTo();
-                    if (streets.get(i).getForwardLanes().isEmpty()) {
+                if (currentStreet.getFrom().equals(current)) {
+                    neighbour = currentStreet.getTo();
+                    if (currentStreet.getForwardLanesSize() == 0) {
                         isReachable = false;
                     }
                 } else {
-                    neighbour = streets.get(i).getFrom();
-                    if (streets.get(i).getBackwardLanes().isEmpty()) {
+                    neighbour = currentStreet.getFrom();
+                    if (currentStreet.getBackwardLanesSize() == 0) {
                         isReachable = false;
                     }
                 }
@@ -180,8 +187,8 @@ public class City {
                     vehicle = new Vehicle(50);
                 if (isReachable) {
                     if (!(open.contains(neighbour)) ||
-                            current.getWalkedCost() + streets.get(i).getGesamtKosten(vehicle.getMaxSpeed()) < neighbour.getWalkedCost()) {
-                        neighbour.setWalkedCost(current.getWalkedCost() + streets.get(i).getGesamtKosten(vehicle.getMaxSpeed()));
+                            current.getWalkedCost() + currentStreet.getTotalCost(vehicle.getMaxSpeed()) < neighbour.getWalkedCost()) {
+                        neighbour.setWalkedCost(current.getWalkedCost() + currentStreet.getTotalCost(vehicle.getMaxSpeed()));
                         neighbour.setPreviousNode(current);
                         if (!(open.contains(neighbour))) {
                             open.add(neighbour);
@@ -238,7 +245,7 @@ public class City {
 
 
     public void addNode(Node node) {
-        if (!contains(node)) {
+        if (!containsNode(node)) {
             nodes.add(node);
             nodesSorted = false;
         } else {
@@ -247,14 +254,14 @@ public class City {
     }
 
     public void removeNode(Node node) {
-        if (contains(node)) {
+        if (containsNode(node)) {
             nodes.remove(node);
         } else {
             throw new RuntimeException("NO NODE TO REMOVE");
         }
     }
 
-    public boolean contains(Node node) {
+    public boolean containsNode(Node node) {
         for (Node node1 : nodes) {
             if (node.getId().equals(node1.getId())) {
                 return true;
@@ -269,6 +276,7 @@ public class City {
     }
 
     public Node getNodeById(String id) {
+        if (id == null) return null;
         if (!nodesSorted)
             sortNodes();
         return getNodeByID(id, 0, nodes.size()-1);
@@ -281,16 +289,21 @@ public class City {
         if (nodes.get(mid).getId().equals(id))
             return nodes.get(mid);
         else
-            return (nodes.get(mid).getId().compareTo(id) > 0)?
-                    getNodeByID(id, left, mid-1):
-                    getNodeByID(id, mid+1, right);
+            return (nodes.get(mid).getId().compareTo(id) > 0) ?
+                    getNodeByID(id, left, mid - 1) :
+                    getNodeByID(id, mid + 1, right);
+    }
+
+    public void sortStreets() {
+        streets.sort(Comparator.comparing(Street::getId));
+        streetsSorted = true;
     }
 
     public Street getStreetById(String id) {
         for (int i = 0; i < nodes.size(); i++) {
-            for (int j = 0; j < nodes.get(i).getStreets().size(); j++) {
-                if (nodes.get(i).getStreets().get(j).getId().equals(id)) {
-                    return nodes.get(i).getStreets().get(j);
+            for (int j = 0; j < nodes.get(i).getStreetSize(); j++) {
+                if (nodes.get(i).getStreet(j).getId().equals(id)) {
+                    return nodes.get(i).getStreet(j);
                 }
             }
         }
@@ -300,9 +313,9 @@ public class City {
     public ArrayList<Street> getStreets() {
         ArrayList<Street> ret = new ArrayList<>();
         for (Node node : nodes) {
-            for (int j = 0; j < node.getStreets().size(); j++) {
-                if (!ret.contains(node.getStreets().get(j))) {
-                    ret.add(node.getStreets().get(j));
+            for (int j = 0; j < node.getStreetSize(); j++) {
+                if (!ret.contains(node.getStreet(j))) {
+                    ret.add(node.getStreet(j));
                 }
             }
         }
@@ -311,18 +324,18 @@ public class City {
 
     public Lane getLaneById(String id) {
         for (int i = 0; i < nodes.size(); i++) {
-            for (int j = 0; j < nodes.get(i).getStreets().size(); j++) {
-                for (int k = 0; k < nodes.get(i).getStreets().get(j).getBackwardLanes().size(); k++) {
-                    if (nodes.get(i).getStreets().get(j).getBackwardLanes().get(k).getId().equals(id))
-                        return nodes.get(i).getStreets().get(j).getBackwardLanes().get(k);
+            for (int j = 0; j < nodes.get(i).getStreetSize(); j++) {
+                for (int k = 0; k < nodes.get(i).getStreet(j).getBackwardLanesSize(); k++) {
+                    if (nodes.get(i).getStreet(j).getBackwardLanes().get(k).getId().equals(id))
+                        return nodes.get(i).getStreet(j).getBackwardLanes().get(k);
                 }
             }
         }
         for (int i = 0; i < nodes.size(); i++) {
-            for (int j = 0; j < nodes.get(i).getStreets().size(); j++) {
-                for (int k = 0; k < nodes.get(i).getStreets().get(j).getForwardLanes().size(); k++) {
-                    if (nodes.get(i).getStreets().get(j).getForwardLanes().get(k).getId().equals(id))
-                        return nodes.get(i).getStreets().get(j).getForwardLanes().get(k);
+            for (int j = 0; j < nodes.get(i).getStreetSize(); j++) {
+                for (int k = 0; k < nodes.get(i).getStreet(j).getForwardLanesSize(); k++) {
+                    if (nodes.get(i).getStreet(j).getForwardLanes().get(k).getId().equals(id))
+                        return nodes.get(i).getStreet(j).getForwardLanes().get(k);
                 }
             }
         }
@@ -370,12 +383,6 @@ public class City {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    // TODO: 18.02.2018 There should be no getNodes, create getNodeSize instead
-    @Deprecated
-    public ArrayList<Node> getNodes() {
-        return nodes;
     }
 
     public int getNodeSize() {
