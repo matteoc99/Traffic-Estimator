@@ -24,6 +24,9 @@ public class Node {
     //for pathfinder
     private Node previousNode;
 
+    //provisory
+    int letCarTrough = 10;
+
 
     public Node(City parent, Point position, double fame, String id) {
         this.parent = parent;
@@ -34,16 +37,16 @@ public class Node {
         parent.add(this);
     }
 
-    public Street getStreetById(String id){
+    public Street getStreetById(String id) {
         for (int i = 0; i < streets.size(); i++) {
-            if(streets.get(i).getId().equals(id))
+            if (streets.get(i).getId().equals(id))
                 return streets.get(i);
         }
         return null;
     }
 
 
-    public void addStreet(Street street){
+    public void addStreet(Street street) {
         if (!contains(street)) {
             streets.add(street);
         } else {
@@ -52,18 +55,18 @@ public class Node {
         parent.add(street);
     }
 
-    public void removeStreet(Street street){
-        if(contains(street)){
+    public void removeStreet(Street street) {
+        if (contains(street)) {
             streets.remove(street);
-        }else {
+        } else {
             throw new RuntimeException("NO STREET TO REMOVE");
         }
         parent.remove(street);
     }
 
-    public boolean contains(Street street){
-        for (Street street1: streets) {
-            if (street.getId().equals(street1.getId())){
+    public boolean contains(Street street) {
+        for (Street street1 : streets) {
+            if (street.getId().equals(street1.getId())) {
                 return true;
             }
         }
@@ -71,12 +74,11 @@ public class Node {
     }
 
 
-
-    public int getX(){
+    public int getX() {
         return position.x;
     }
 
-    public int getY(){
+    public int getY() {
         return position.y;
     }
 
@@ -119,14 +121,14 @@ public class Node {
     }
 
 
-    public void startPathCalculation(Node goal){
+    public void startPathCalculation(Node goal) {
         setDistanceCost(goal);
-        setWalkedCost(Double.MAX_VALUE/2);
+        setWalkedCost(Double.MAX_VALUE / 2);
         setPreviousNode(null);
     }
 
     public void setDistanceCost(Node goal) {
-        this.distanceCost = Utils.calcDistanceBetweenPoints(getPosition(),goal.getPosition());
+        this.distanceCost = Utils.calcDistanceBetweenPoints(getPosition(), goal.getPosition());
     }
 
     public void setWalkedCost(double walkedCost) {
@@ -134,7 +136,7 @@ public class Node {
     }
 
     public double getFieldCost() {
-        return walkedCost+distanceCost;
+        return walkedCost + distanceCost;
     }
 
     public double getDistanceCost() {
@@ -162,14 +164,14 @@ public class Node {
             for (int j = 0; bLanes.hasNext(); j++) {
                 Lane lane = bLanes.next();
                 if (lane.getToNode().equals(currentGoal)) {
-                    return  lane;
+                    return lane;
                 }
             }
             Iterator<Lane> fLanes = street.getForwardLanesIterator();
             for (int j = 0; fLanes.hasNext(); j++) {
                 Lane lane = fLanes.next();
                 if (lane.getToNode().equals(currentGoal)) {
-                    return  lane;
+                    return lane;
                 }
             }
         }
@@ -177,14 +179,28 @@ public class Node {
     }
 
     public boolean register(Vehicle vehicle, Node nextNode) {
-        // TODO: 17.02.2018 für maxi  ret tru wenn er fahren darf
-        return true;
+        // TODO: 17.02.2018 für maxi  ret true wenn er fahren darf
+        if(letCarTrough == 10){
+            letCarTrough=0;
+            return true;
+        }else {
+            return false;
+        }
+    }
+
+    /**
+     * um nach jeden calc city zurück zu den default werten zu kommen
+     */
+    public void reset() {
+        if (letCarTrough > 10)
+            letCarTrough = 0;
+        else letCarTrough++;
     }
 
 
     @Override
     public String toString() {
-        return "Node(" + this.getClass().toString()+
+        return "Node(" + this.getClass().toString() +
                 "){" +
                 "parent=" + parent +
                 ", position=" + position +
@@ -193,4 +209,6 @@ public class Node {
                 ", id='" + id + '\'' +
                 '}';
     }
+
+
 }

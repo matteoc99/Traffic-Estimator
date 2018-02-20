@@ -406,27 +406,40 @@ public class City {
     }
 
     public Street getStreetByPoint(Point c) {
-        int attempts=50;
-        for (int i = 0; i < attempts; i+=5) {
-            for (Street street : getStreets()) {
-                Point a = street.getFrom().getPosition();
-                Point b = street.getTo().getPosition();
-                if ((distance(a, c) + distance(b,c) <= distance(a, b)+i)&&(distance(a, c) + distance(b,c) >= distance(a, b)-i))
-                    return street;
+        int bestIndex = -1;
+        double bestVal = Integer.MAX_VALUE;
 
+        ArrayList<Street> streets1 = getStreets();
+        for (int i = 0; i < streets1.size(); i++) {
+            Street street = streets1.get(i);
+            Point a = street.getFrom().getPosition();
+            Point b = street.getTo().getPosition();
+            double val = (distance(a, c) + distance(b, c)) - distance(a, b);
+            val = Math.abs(val);
+            if (val < bestVal) {
+                bestVal = val;
+                bestIndex=i;
             }
         }
-        return null;
+        if (bestIndex == -1)
+            return null;
+        else
+            return getStreets().get(bestIndex);
+
     }
 
-    public double distance(Point a, Point b){
-        return Math.sqrt(Math.pow(a.x-b.x,2)+Math.pow(a.y-b.y,2));
+    public double distance(Point a, Point b) {
+        return Math.sqrt(Math.pow(Math.abs(a.x - b.x), 2) + Math.pow(Math.abs(a.y - b.y), 2));
     }
 
 
     public void calcCity() {
         for (Street street : streets) {
+            // TODO: 20.02.2018 calc by ordererd lane.priority. higher priority = first evaluation
             street.calcStreet();
+        }
+        for (Node node: nodes) {
+            node.reset();
         }
     }
 

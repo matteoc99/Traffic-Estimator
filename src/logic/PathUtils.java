@@ -6,6 +6,9 @@ import logic.city.Path;
 import java.io.*;
 import java.util.ArrayList;
 
+import static logic.city.Path.ATTR_MIN_KNOWLEGE;
+import static logic.city.Path.ATTR_NODE;
+
 /**
  * @author Matteo Cosi
  * @since 16.02.2018
@@ -15,7 +18,7 @@ public class PathUtils {
     private static ArrayList<Path> paths = new ArrayList<>();
 
     private static void generatePaths(City city) {
-        generatePaths(city, 100);
+        generatePaths(city, 500);
     }
 
     private static void generatePaths(City city, int count) {
@@ -29,13 +32,12 @@ public class PathUtils {
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos));
         System.out.println("generating");
         for (int i = 0; i < count; i++) {
-            System.out.println("progress:"+i+" of "+city.getNodeSize() * 3);
             Path path = city.getRandomPath(0);
             try {
-                if (path != null && path.isValid()) {
-                    // TODO: 18.02.2018 check to add only paths that are ! equal
+                if (path != null && path.isValid()&&!contains(path)) {
                     bw.write(path.toString());
                     bw.newLine();
+                    paths.add(path);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -46,6 +48,15 @@ public class PathUtils {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private static boolean contains(Path path) {
+        for (Path p : paths) {
+            if(p.equals(path)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static Path getRandomPath(City city) {

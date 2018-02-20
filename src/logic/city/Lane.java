@@ -19,6 +19,9 @@ public class Lane {
     private ArrayList<Vehicle> vehicles;
     private double length = -1;
 
+    // TODO: 20.02.2018 add priority
+    int priority =0;
+
     public Lane(String id, Street parent, boolean reversed, int index) {
         this.id = id;
         this.parent = parent;
@@ -26,6 +29,7 @@ public class Lane {
         this.index = index;
         parent.addLane(this);
         vehicles = new ArrayList<>();
+        streetlights= new ArrayList<>();
     }
 
     public ArrayList<Lane> getNeighbourLanes() {
@@ -213,5 +217,13 @@ public class Lane {
         }else
             color= new Color(71, 0,0);
         return color;
+    }
+
+    public int getPriority() {
+        return priority;
+    }
+
+    public void setPriority(int priority) {
+        this.priority = priority;
     }
 }

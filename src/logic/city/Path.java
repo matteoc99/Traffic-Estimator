@@ -164,14 +164,14 @@ public class Path {
         return ret;
     }
 
-    private static String getProp(String attr, String props) {
+    public static String getProp(String attr, String props) {
         int index = props.indexOf(attr)
                 + attr.length()
                 + ":".length();
         return props.substring(index, props.indexOf(";", index));
     }
 
-    private static String extractProps(String pth) {
+    public static String extractProps(String pth) {
         return pth.substring(pth.indexOf(OPEN_PROPS) + 1, pth.indexOf(CLOSE_PROPS));
     }
 
@@ -183,4 +183,13 @@ public class Path {
         progress=0;
     }
 
+    public boolean equals(Path path) {
+        if(path.ids.size()!=this.ids.size())
+            return false;
+        for (int i = 0; i < ids.size(); i++) {
+            if(!path.ids.get(i).equals(this.ids.get(i)))
+                return false;
+        }
+        return true;
+    }
 }

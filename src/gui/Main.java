@@ -209,11 +209,11 @@ public class Main extends JFrame {
 
             @Override
             public void mouseClicked(MouseEvent e) {
-                int x=e.getX()-jCity.getX();
-                int y=e.getY()-jCity.getY();
+                double x=e.getX()-jCity.getX();
+                double y=e.getY()-jCity.getY();
                 x/=zoom;
                 y/=zoom;
-                System.out.println(city.getStreetByPoint(new Point(x,y)));
+                System.out.println(city.getStreetByPoint(new Point((int)x,(int)y)));
             }
 
             @Override
@@ -326,7 +326,7 @@ public class Main extends JFrame {
     public static void main(String[] args) {
         System.out.println("Main:" + new Timestamp(System.currentTimeMillis()) + " Creating City from .json...");
         City city = City.createCityFromJson(
-                new File(System.getProperty("user.dir") + "\\src\\parsing\\res\\testcity.json"));
+                new File(System.getProperty("user.dir") + "\\src\\parsing\\testcity.json"));
 
         System.out.println("Main:" + new Timestamp(System.currentTimeMillis()) + " Starting GUI...");
         Main main = new Main(city);
@@ -335,7 +335,7 @@ public class Main extends JFrame {
             zeitvorsleep = System.currentTimeMillis();
             main.calcCity();
             if (city.getVehicles().size() < VEHICLE_AMOUNT) {
-                Vehicle vehicle = new Vehicle(1000, (int) (Math.random()*40)+10, PathUtils.getRandomPath(city), 1, 1, city);
+                Vehicle vehicle = new Vehicle(1000, (int) (Math.random()*40)+10, PathUtils.getRandomPath(city), Math.random(), Math.random(), city);
                 vehicle.setColor(new Color((int) ((Math.random()*200)+50),(int) (Math.random()*200)+50,(int) (Math.random()*200)+50));
             }
             long zeitvergangen = (long) (System.currentTimeMillis() - zeitvorsleep);

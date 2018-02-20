@@ -34,12 +34,12 @@ public class Vehicle {
     /**
      * 0-1 knowledge of all the streets in BZ
      */
-    private int streetKnowledge;
+    private double streetKnowledge;
 
     /**
      * 0-1 character of the driver. 1 if he is really fast and careless. 0  : safe driver
      */
-    private int speeder;
+    private double speeder;
 
     private int progressInLane;
 
@@ -47,11 +47,11 @@ public class Vehicle {
     private Node prevGoal;
 
 
-    public int safetyDistance = 4; //TODO variabel je nach raser?
+    public int safetyDistance = 10;
 
     public Color color=Color.RED;
 
-    public Vehicle(int weight, int maxSpeed, Path path, int streetKnowledge, int speeder, City city) {
+    public Vehicle(int weight, int maxSpeed, Path path, double streetKnowledge, double speeder, City city) {
         this.weight = weight;
         this.maxSpeed = maxSpeed;
         this.path = path;
@@ -59,6 +59,7 @@ public class Vehicle {
         this.speeder = speeder;
         progressInLane = 0;
         currentSpeed = 2;
+       calcSafetyDistance(currentSpeed);
 
         if (path != null && path.isValid()) {
             path.resetProgress();
@@ -76,6 +77,13 @@ public class Vehicle {
             System.out.println("DIE2");
     }
 
+    private void calcSafetyDistance(int currentSpeed) {
+        safetyDistance=2;
+        safetyDistance*=speeder/currentSpeed;
+        safetyDistance+=4;
+        System.out.println(safetyDistance);
+    }
+
 
     public Vehicle(int maxSpeed) {
         this.maxSpeed = maxSpeed;
@@ -88,8 +96,10 @@ public class Vehicle {
         if (progressInLane / lane.getLength() > 0.98) {
 
             //change lane or die if path end is reached
-            prevGoal = currentGoal;
-            currentGoal = getLane().getParent().getParent().getNodeById(path.getGoalAndIncrement());
+            if(lane.equals(prevGoal.getLaneTo(currentGoal))) {
+                prevGoal = currentGoal;
+                currentGoal = getLane().getParent().getParent().getNodeById(path.getGoalAndIncrement());
+            }
             if (currentGoal == null)
                 lane.removeVehicle(this);
             else {
@@ -101,6 +111,8 @@ public class Vehicle {
                     //current speed bleibt bei einfachen kurven erhalten
                     if (!(prevGoal instanceof Connection))
                         currentSpeed = maxSpeed / 8;
+                }else {
+                    // me have to wait :(
                 }
             }
             timer.print("Vehicles_DBG_ME: 1: ");
@@ -224,19 +236,19 @@ public class Vehicle {
         this.maxSpeed = maxSpeed;
     }
 
-    public int getStreetKnowledge() {
+    public double getStreetKnowledge() {
         return streetKnowledge;
     }
 
-    public void setStreetKnowledge(int streetKnowledge) {
+    public void setStreetKnowledge(double streetKnowledge) {
         this.streetKnowledge = streetKnowledge;
     }
 
-    public int getSpeeder() {
+    public double getSpeeder() {
         return speeder;
     }
 
-    public void setSpeeder(int speeder) {
+    public void setSpeeder(double speeder) {
         this.speeder = speeder;
     }
 
