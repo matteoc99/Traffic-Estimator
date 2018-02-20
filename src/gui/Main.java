@@ -92,12 +92,28 @@ public class Main extends JFrame {
                 boolean recalc = false;
                 switch (e.getKeyCode()) {
                     case KeyEvent.VK_PLUS:
-                        zoom += 1;
+                        //zoom++
+                        if (fineZoom) {
+                            zoom += 0.01;
+                        } else if (superFineZoom) {
+                            zoom += 0.0005;
+                        } else {
+                            zoom += 0.5;
+                        }
                         recalc = true;
                         break;
                     case KeyEvent.VK_MINUS:
-                        if (zoom > 1)
-                            zoom -= 1;
+                        if (fineZoom) {
+                            if (zoom > 0.01)
+                                zoom -= 0.01;
+                        } else if (superFineZoom) {
+                            if (zoom > 0.0005)
+                                zoom -= 0.0005;
+                        } else {
+                            if (zoom > 0.5)
+                                zoom -= 0.5;
+
+                        }
                         recalc = true;
                         break;
                     case KeyEvent.VK_LEFT:
@@ -277,7 +293,7 @@ public class Main extends JFrame {
         ret.setBounds(getWidth() - getWidth() / 6, 0, getWidth() / 6, getHeight());
 
         MySlider fps = new MySlider(JSlider.HORIZONTAL, 0, 100, FPS);
-        MySlider traffic = new MySlider(JSlider.HORIZONTAL, 0, 350, VEHICLE_AMOUNT);
+        MySlider traffic = new MySlider(JSlider.HORIZONTAL, 0, 30000, VEHICLE_AMOUNT);
 
 
         int xOff = ret.getWidth()/4;
@@ -299,10 +315,10 @@ public class Main extends JFrame {
 
         System.out.println(fps.getBounds());
         fps.setMajorTickSpacing(20);
-        traffic.setMajorTickSpacing(50);
+        traffic.setMajorTickSpacing(5000);
 
         fps.setMinorTickSpacing(5);
-        traffic.setMinorTickSpacing(10);
+        traffic.setMinorTickSpacing(1000);
         fps.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
@@ -326,7 +342,7 @@ public class Main extends JFrame {
     public static void main(String[] args) {
         System.out.println("Main:" + new Timestamp(System.currentTimeMillis()) + " Creating City from .json...");
         City city = City.createCityFromJson(
-                new File(System.getProperty("user.dir") + "\\src\\parsing\\testcity.json"));
+                new File(System.getProperty("user.dir") + "\\src\\parsing\\res\\bozenLarge.json"));
 
         System.out.println("Main:" + new Timestamp(System.currentTimeMillis()) + " Starting GUI...");
         Main main = new Main(city);

@@ -81,7 +81,6 @@ public class Vehicle {
         safetyDistance=2;
         safetyDistance*=speeder/currentSpeed;
         safetyDistance+=4;
-        System.out.println(safetyDistance);
     }
 
 
