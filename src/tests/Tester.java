@@ -1,13 +1,8 @@
 package tests;
 
-import logic.PathUtils;
+import utils.PathUtils;
 import logic.city.City;
-import logic.city.Node;
 import logic.city.Path;
-import logic.vehicles.Vehicle;
-
-import java.awt.*;
-import java.util.ArrayList;
 
 /**
  * @author Matteo Cosi

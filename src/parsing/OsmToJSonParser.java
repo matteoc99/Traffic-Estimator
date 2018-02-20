@@ -23,8 +23,8 @@ public final class OsmToJSonParser {
     private static Map<String, Integer> streetsOnNode = new HashMap<>();
 
     public static void main(String[] args) {
-        parse(System.getProperty("user.dir")+"\\src\\parsing\\st.osm",
-                System.getProperty("user.dir")+"\\src\\parsing\\res\\st.json");
+        parse(System.getProperty("user.dir")+"\\src\\parsing\\res\\bozenLarge.osm",
+                System.getProperty("user.dir")+"\\src\\parsing\\res\\remove.json");
     }
 
     private static void parse(String osmFilePath, String jsonFilePath) {
@@ -102,6 +102,8 @@ public final class OsmToJSonParser {
     }
 
     private static void createNodes(NodeList nNodeList, JSONArray jNodes) {
+        if (true)
+            return;
         double smallestX = Integer.MAX_VALUE;
         double smallestY = Integer.MAX_VALUE;
 
@@ -156,6 +158,8 @@ public final class OsmToJSonParser {
                 Element eWayElement = (Element) nWay;
 
                 if (!isInvalidWay(eWayElement)) {
+                    if (true)
+                        continue;
 
                     NodeList ndsList = eWayElement.getElementsByTagName("nd");
 
@@ -255,9 +259,9 @@ public final class OsmToJSonParser {
     }
 
     private static boolean isInvalidWay(Element way) {
-        NodeList nodeList = way.getElementsByTagName("tag");
-        for (int i = 0; i < nodeList.getLength(); i++) {
-            Node node = nodeList.item(i);
+        NodeList attrList = way.getElementsByTagName("tag");
+        for (int i = 0; i < attrList.getLength(); i++) {
+            Node node = attrList.item(i);
             if (node.getNodeType() == Node.ELEMENT_NODE) {
                 Element element = ((Element) node);
 
@@ -266,9 +270,47 @@ public final class OsmToJSonParser {
 
                 switch (key) {
                     case "building":
-                        if (value.equals("yes"))
-                            return true;
+                    case "power":
+                    case "landuse":
+                    case "leisure":
+                    case "barrier":
+                    case "foot":
+                    case "cycleway":
+                    case "bicylce":
+                    case "cables":
+                    case "voltage":
+                    case "waterway":
+                    case "natural":
+                    case "railway":
+                        return true;
+                    case "substance":
+                        switch (value) {
+                            case "water":
+                                return true;
+                        }
+                        break;
+                    case "man_made":
+                        switch (value) {
+                            case "pipeline":
+                                return true;
+                        }
+                        break;
+                    case "highway":
+                        switch (value) {
+                            case "cycleway":
+                            case "footway":
+                            case "pedestrians":
+                                return true;
+                        }
+                        break;
+                    case "access":
+                        switch (value) {
+                            case "private":
+                                return true;
+                        }
                 }
+                if (!(key.startsWith("addr") || key.startsWith("name")))
+                    System.out.println("Unknown: " + key + "->" + value);
             }
         }
 

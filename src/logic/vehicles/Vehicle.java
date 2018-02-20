@@ -122,7 +122,7 @@ public class Vehicle {
             //move
             //if car in front
             if (lane.getNextVehicle(progressInLane) != null) {
-                //check car distance
+                //check car calcDistance
                 if (progressInLane + safetyDistance + currentSpeed/4 < lane.getNextVehicle(progressInLane).progressInLane) {
                     //move
                     if (currentSpeed < maxSpeed) {
@@ -188,7 +188,7 @@ public class Vehicle {
         lane = newLane;
     }
 
-    public Point getPointOnLane() {
+    public Point currentPointOnLane() {
         Point ret = new Point();
         int deltax = lane.getFromNode().getX() - lane.getToNode().getX();
         int deltay = lane.getFromNode().getY() - lane.getToNode().getY();
@@ -199,7 +199,6 @@ public class Vehicle {
 
         /*
 
-        // TODO: 13.02.2018 vllt currentPointOnLane nennen, so klingts a wian als wars parameter obhängig
         int fromX = lane.getFromNode().getX();
         int fromY = lane.getFromNode().getY();
         int toX = lane.getToNode().getX();

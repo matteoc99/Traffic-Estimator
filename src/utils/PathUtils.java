@@ -1,4 +1,4 @@
-package logic;
+package utils;
 
 import logic.city.City;
 import logic.city.Path;

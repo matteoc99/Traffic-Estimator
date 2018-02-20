@@ -3,7 +3,7 @@ package logic.city;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import static logic.Utils.calcDegreesBetweenTwoPoint;
+import static utils.Utils.calcDegreesBetweenTwoPoint;
 
 /**
  * @author Matteo Cosi

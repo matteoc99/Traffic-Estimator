@@ -148,14 +148,14 @@ public class City {
         open.add(from);
 
 
-        int antiendlos = 0;
-        while (!open.isEmpty() && antiendlos < 10000) {
-            double lowcost = Double.MAX_VALUE;
+        int counter = 0;
+        while (!open.isEmpty() && counter < 10000) {
+            double lowestCost = Double.MAX_VALUE;
             int index = 0;
             //get lowest cost
             for (int i = 0; i < open.size(); i++) {
-                if (open.get(i).getFieldCost() < lowcost) {
-                    lowcost = open.get(i).getFieldCost();
+                if (open.get(i).getFieldCost() < lowestCost) {
+                    lowestCost = open.get(i).getFieldCost();
                     index = i;
                 }
             }
@@ -198,7 +198,7 @@ public class City {
                     }
                 }
             }
-            antiendlos++;
+            counter++;
         }
 
         Node prevNode = to;

@@ -4,40 +4,40 @@
       "id": "0",
       "x": 100,
       "y": 100,
-      "fame":  0.2,
+      "fame":  0.01,
       "type": "MultiConnection"
     },
     {
       "id": "0C1_0",
       "x": 150,
-      "y": 120,
-      "fame": 0.5,
+      "y": 110,
+      "fame": 0.01,
       "type": "Connection"
     },
     {
       "id": "1",
-      "x": 200,
+      "x": 220,
       "y": 100,
-      "fame": 0.5,
+      "fame": 0.01,
       "type": "MultiConnection"
     },
     {
       "id": "2",
       "x": 200,
-      "y": 200,
-      "fame": 0.2,
+      "y": 220,
+      "fame": 0.01,
       "type": "MultiConnection"
     },
     {
       "id": "3",
       "x": 100,
-      "y": 200,
-      "fame": 0.25,
+      "y": 240,
+      "fame": 0.01,
       "type": "MultiConnection"
     },
     {
       "id": "4",
-      "x": 100,
+      "x": 120,
       "y": 0,
       "fame": 1,
       "type": "DeadEnd"

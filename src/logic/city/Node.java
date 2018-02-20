@@ -1,6 +1,6 @@
 package logic.city;
 
-import logic.Utils;
+import utils.Utils;
 import logic.vehicles.Vehicle;
 
 import java.awt.*;
@@ -18,10 +18,10 @@ public class Node {
     private double fame;
     private ArrayList<Street> streets;
     private String id;
-    private double distanceCost; // distance to goal node
+    private double distanceCost; // calcDistance to goal node
     private double walkedCost; // the cost of the path walked until now
 
-    //for pathfinder
+    // for pathfinder
     private Node previousNode;
 
     //provisory
@@ -179,17 +179,17 @@ public class Node {
     }
 
     public boolean register(Vehicle vehicle, Node nextNode) {
-        // TODO: 17.02.2018 für maxi  ret true wenn er fahren darf
-        if(letCarTrough == 10){
-            letCarTrough=0;
+        // TODO: 17.02.2018 für maxi ret true wenn er fahren darf
+        if (letCarTrough == 10) {
+            letCarTrough = 0;
             return true;
-        }else {
+        } else {
             return false;
         }
     }
 
     /**
-     * um nach jeden calc city zurück zu den default werten zu kommen
+     * sets default
      */
     public void reset() {
         if (letCarTrough > 10)

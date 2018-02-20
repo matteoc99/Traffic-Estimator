@@ -1,6 +1,6 @@
 package logic.city;
 
-import logic.Utils;
+import utils.Utils;
 
 import java.awt.*;
 
@@ -27,16 +27,14 @@ public class StreetComponent {
         calcDegrees();
 
 
-
     }
 
     /**
      * Calculates the degrees from the "From x,y" to the "To x,y"
      */
     protected void calcDegrees() {
-        this.degrees = Utils.calcDegreesBetweenTwoPoint(getxFrom(),getyFrom(),getxTo(),getyTo());
+        this.degrees = Utils.calcDegreesBetweenTwoPoint(getxFrom(), getyFrom(), getxTo(), getyTo());
     }
-
 
 
     /**
@@ -46,7 +44,7 @@ public class StreetComponent {
      */
     public double getLength() {
 
-        return Utils.calcDistanceBetweenPoints(new Point(xFrom,yFrom),new Point(xTo,yTo));
+        return Utils.calcDistanceBetweenPoints(new Point(xFrom, yFrom), new Point(xTo, yTo));
     }
 
     public double getDegrees() {
@@ -93,30 +91,29 @@ public class StreetComponent {
     }
 
 
-    public Rectangle getBounds(){
+    public Rectangle getBounds() {
         calcNewPositionsBasedOnDegrees();
-        int x=Integer.min(xTo,xFrom);
-        int y=Integer.min(yTo,yFrom);
-        int width=Integer.max(xTo,xFrom)-Integer.min(xTo,xFrom);
-        int height=Integer.max(yTo,yFrom)-Integer.min(yTo,yFrom);
-        if(height==0)
-            height=1;
-        if(width==0)
-            width=1;
+        int x = Integer.min(xTo, xFrom);
+        int y = Integer.min(yTo, yFrom);
+        int width = Integer.max(xTo, xFrom) - Integer.min(xTo, xFrom);
+        int height = Integer.max(yTo, yFrom) - Integer.min(yTo, yFrom);
+        if (height == 0)
+            height = 1;
+        if (width == 0)
+            width = 1;
 
-        return new Rectangle(x,y,width,height);
+        return new Rectangle(x, y, width, height);
     }
 
     private void calcNewPositionsBasedOnDegrees() {
-        if (getDegrees()>=45&&getDegrees()<135){
+        if (getDegrees() >= 45 && getDegrees() < 135) {
 
-        }else if (getDegrees()>=135&&getDegrees()<225){
+        } else if (getDegrees() >= 135 && getDegrees() < 225) {
 
-        }else if (getDegrees()>=225&&getDegrees()<315){
+        } else if (getDegrees() >= 225 && getDegrees() < 315) {
 
-        }else{
+        } else {
 
         }
     }
-
 }

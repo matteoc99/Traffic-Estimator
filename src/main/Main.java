@@ -1,13 +1,11 @@
-package gui;
+package main;
 
-import com.sun.deploy.util.ArrayUtil;
-import com.sun.org.apache.regexp.internal.RE;
+import gui.ControlPanel;
+import gui.MySlider;
 import gui.city.JCity;
-import logic.PathUtils;
+import utils.PathUtils;
 import logic.city.City;
 import logic.city.Node;
-import logic.city.Path;
-import logic.city.Street;
 import logic.vehicles.Vehicle;
 import utils.Stopwatch;
 
@@ -18,7 +16,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.Iterator;
 
 /**
@@ -342,7 +339,7 @@ public class Main extends JFrame {
     public static void main(String[] args) {
         System.out.println("Main:" + new Timestamp(System.currentTimeMillis()) + " Creating City from .json...");
         City city = City.createCityFromJson(
-                new File(System.getProperty("user.dir") + "\\src\\parsing\\res\\bozenLarge.json"));
+                new File(System.getProperty("user.dir") + "\\src\\parsing\\res\\testcity.json"));
 
         System.out.println("Main:" + new Timestamp(System.currentTimeMillis()) + " Starting GUI...");
         Main main = new Main(city);
