@@ -65,7 +65,7 @@ public class JSliderUI extends BasicSliderUI {
         g2d.fill(shape);
         Stroke old = g2d.getStroke();
         g2d.setStroke(new BasicStroke(4f));
-        g2d.setPaint(Color.orange);
+        g2d.setPaint(Color.BLUE);
         g2d.draw(shape);
         g2d.setStroke(old);
     }

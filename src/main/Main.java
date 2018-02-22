@@ -290,8 +290,8 @@ public class Main extends JFrame {
         ret.setBackground(new Color(86, 90, 200));
         ret.setBounds(getWidth() - getWidth() / 6, 0, getWidth() / 6, getHeight());
 
-        MySlider fps = new MySlider(JSlider.HORIZONTAL, 0, 100, FPS);
-        MySlider traffic = new MySlider(JSlider.HORIZONTAL, 0, 30000, VEHICLE_AMOUNT);
+        MySlider fps = new MySlider(JSlider.HORIZONTAL, 0, 1000, FPS);
+        MySlider traffic = new MySlider(JSlider.HORIZONTAL, 0, 1000, VEHICLE_AMOUNT);
 
 
         int xOff = ret.getWidth()/4;
@@ -312,11 +312,11 @@ public class Main extends JFrame {
         traffic.setBounds(xOff, 10 + (ret.getHeight() / 12) * 1, ret.getWidth() - xOff - 20, ret.getHeight() / 10);
 
         System.out.println(fps.getBounds());
-        fps.setMajorTickSpacing(20);
-        traffic.setMajorTickSpacing(5000);
+        fps.setMajorTickSpacing(500);
+        traffic.setMajorTickSpacing(500);
 
-        fps.setMinorTickSpacing(5);
-        traffic.setMinorTickSpacing(1000);
+        fps.setMinorTickSpacing(100);
+        traffic.setMinorTickSpacing(100);
         fps.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {

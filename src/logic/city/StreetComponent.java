@@ -9,24 +9,33 @@ import java.awt.*;
  * @since 15.12.2017
  */
 public class StreetComponent {
-
+    /**
+     * bounds of the lane
+     */
     private int xFrom;
     private int xTo;
     private int yFrom;
     private int yTo;
+    /**
+     * the degrees of the lane
+     */
     private double degrees = -1;
 
-    public StreetComponent() {
-    }
+    /**
+     * the bounds of this street component
+     */
+    private Rectangle bounds;
 
+
+    /**
+     * automatically sets xFrom xTo yFrom yTo and automatically calculates the degrees
+     */
     public StreetComponent(int xFrom, int xTo, int yFrom, int yTo) {
         this.xFrom = xFrom;
         this.xTo = xTo;
         this.yFrom = yFrom;
         this.yTo = yTo;
         calcDegrees();
-
-
     }
 
     /**
@@ -91,8 +100,12 @@ public class StreetComponent {
     }
 
 
+    /**
+     * calculates the bounds of the street component
+     *
+     * @return the bounds
+     */
     public Rectangle getBounds() {
-        calcNewPositionsBasedOnDegrees();
         int x = Integer.min(xTo, xFrom);
         int y = Integer.min(yTo, yFrom);
         int width = Integer.max(xTo, xFrom) - Integer.min(xTo, xFrom);
@@ -101,19 +114,9 @@ public class StreetComponent {
             height = 1;
         if (width == 0)
             width = 1;
-
-        return new Rectangle(x, y, width, height);
-    }
-
-    private void calcNewPositionsBasedOnDegrees() {
-        if (getDegrees() >= 45 && getDegrees() < 135) {
-
-        } else if (getDegrees() >= 135 && getDegrees() < 225) {
-
-        } else if (getDegrees() >= 225 && getDegrees() < 315) {
-
-        } else {
-
-        }
+        if (bounds == null)
+            return bounds = new Rectangle(x, y, width, height);
+        else
+            return bounds;
     }
 }
