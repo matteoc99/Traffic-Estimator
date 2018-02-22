@@ -16,6 +16,11 @@ public class Connection extends Node {
         super(parent, position, fame, id);
     }
 
+    /**
+     * can add only two streets, because this node is a connection
+     * connections are used to implement turns
+     * @param street the two streets that are connected together
+     */
     @Override
     public void addStreet(Street street) {
         if(getStreetSize() < 2)

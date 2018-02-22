@@ -11,17 +11,50 @@ import java.util.List;
  * @since 15.12.2017
  */
 public class Lane {
+
+    /**
+     * Unique identifier of the lane
+     */
     private String id;
+
+    /**
+     * The street where the lane is contained
+     */
     private Street parent;
+    /**
+     * tells if the lane goes in street direction or in lane direction
+     */
     private boolean reversed;
+
+    /**
+     * index of lane if there are multiple lanes of the same direction
+     */
     private int index;
+
+    /**
+     * all streetlights on this lane
+     */
     private ArrayList<Streetlight> streetlights;
+    /**
+     * all vehicles driving on this lane
+     */
     private ArrayList<Vehicle> vehicles;
+
+    /**
+     * length of this lane
+     */
     private double length = -1;
 
+    /**
+     * priority of the lane. used to implement the right of way
+     * the higher the priority is, the more likely this lane is to be calced first
+     */
     // TODO: 20.02.2018 add priority
-    int priority =0;
+    int priority = 0;
 
+    /**
+     * setup the Lane and add the lane to the street
+     */
     public Lane(String id, Street parent, boolean reversed, int index) {
         this.id = id;
         this.parent = parent;
@@ -29,21 +62,57 @@ public class Lane {
         this.index = index;
         parent.addLane(this);
         vehicles = new ArrayList<>();
-        streetlights= new ArrayList<>();
+        streetlights = new ArrayList<>();
     }
 
+    /**
+     * returns the neighbour lanes if there are multiple in the same direction
+     *
+     * @return the neighbour lanes
+     */
     public ArrayList<Lane> getNeighbourLanes() {
         return parent.getNeighbourLanes(this);
     }
 
+
+    /**
+     * returns the next vehicle relative to a position on this lane
+     *
+     * @param position the position to check
+     * @return the next vehicle
+     */
     public Vehicle getNextVehicle(int position) {
-        int smallest = Integer.MAX_VALUE;
+        double smallest = Integer.MAX_VALUE;
         int index = -1;
         int i = 0;
         for (Vehicle vehicle : vehicles) {
             if (vehicle.getProgressInLane() > position && vehicle.getProgressInLane() < smallest) {
                 index = i;
                 smallest = vehicle.getProgressInLane();
+            }
+            i++;
+        }
+        if (index > -1)
+            return vehicles.get(index);
+        else
+            return null;
+    }
+
+    /**
+     * returns the previous vehicle relative to a position on this lane
+     *
+     * @param position the position to check
+     * @return the previous vehicle
+     * // TODO: 22.02.2018 test, because well ick nickt schlau
+     */
+    public Vehicle getPrevVehicle(int position) {
+        double biggest = -1;
+        int index = -1;
+        int i = 0;
+        for (Vehicle vehicle : vehicles) {
+            if (vehicle.getProgressInLane() > position && vehicle.getProgressInLane() > biggest) {
+                index = i;
+                biggest = vehicle.getProgressInLane();
             }
             i++;
         }
@@ -154,6 +223,10 @@ public class Lane {
     }
 
 
+    /**
+     * calc lane is called every frame
+     * and calls the move of every car
+     */
     void calcLane() {
         for (int i = 0; i < vehicles.size(); i++) {
             Vehicle vehicle = vehicles.get(i);
@@ -171,6 +244,7 @@ public class Lane {
 
     /**
      * calculates the amount of traffic from 0-1
+     *
      * @return traffic
      */
     public double getTraffic() {
@@ -181,7 +255,7 @@ public class Lane {
         }
         if (getVehicles().size() > 0) {
             avgSpeed = avgSpeed / getVehicles().size();
-            if (avgSpeed > 50) {
+            if (avgSpeed < 50) {
                 traffic += 0.05;
             } else if (avgSpeed < 40) {
                 traffic += 0.15;
@@ -197,6 +271,11 @@ public class Lane {
         return (traffic);
     }
 
+    /**
+     * returns a color based on the traffic of the lanes
+     *
+     * @return a color based on the traffic
+     */
     public Color getColorByTraffic() {
         double traffic = getTraffic();
         Color color = null;
@@ -212,8 +291,10 @@ public class Lane {
             color = new Color(255, 17, 0);
         } else if (traffic < 1.1) {
             color = new Color(91, 3, 0);
+        } else if (traffic < 2) {
+            color = new Color(46, 2, 0);
         } else
-            color = new Color(71, 0, 0);
+            color = new Color(24, 0, 0);
         return color;
     }
 

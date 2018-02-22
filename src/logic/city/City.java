@@ -57,7 +57,15 @@ public class City {
      */
     private boolean lanesSorted = false;
 
+    /**
+     * name of the city
+     */
     private String name;
+
+    /**
+     * bounds of the city
+     */
+    private Rectangle bounds;
 
     private City() {
         nodes = new ArrayList<>();
@@ -530,7 +538,10 @@ public class City {
     }
 
     public Rectangle getBounds() {
-        return new Rectangle(0, 0, getMaxWidth(), getMaxHeight());
+        if(bounds==null)
+        return bounds = new Rectangle(0, 0, getMaxWidth(), getMaxHeight());
+        else
+            return bounds;
     }
 
     private int getMaxHeight() {

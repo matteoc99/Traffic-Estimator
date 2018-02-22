@@ -17,6 +17,10 @@ public class DeadEnd extends Node {
         super(parent, position, fame, id);
     }
 
+
+    /**
+     * can add only one street, because this node is a dead end
+     */
     @Override
     public void addStreet(Street street) {
         if (getStreetSize() == 0)

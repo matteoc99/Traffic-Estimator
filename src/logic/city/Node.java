@@ -13,21 +13,50 @@ import java.util.Iterator;
  */
 public class Node {
 
+    /**
+     * A reference to he city where this lane is contained
+     */
     private City parent;
-    private Point position;
-    private double fame;
-    private ArrayList<Street> streets;
-    private String id;
-    private double distanceCost; // calcDistance to goal node
-    private double walkedCost; // the cost of the path walked until now
 
-    // for pathfinder
+    /**
+     * graphical position of the Node
+     */
+    private Point position;
+
+    /**
+     * How likely this place is chosen as a goal/start
+     */
+    private double fame;
+    /**
+     * all the streets that are connected to this Node
+     */
+    private ArrayList<Street> streets;
+    /**
+     * Unique identifier of the Street
+     */
+    private String id;
+
+    /**
+     * used for the A* Algorithm
+     */
+    private double distanceCost; // calcDistance to goal node
+    /**
+     * used for the A* Algorithm
+     */
+    private double walkedCost; // the cost of the path walked until now
+    /**
+     * used for the A* Algorithm
+     * to get the whole path
+     */
     private Node previousNode;
 
     //provisory
     int letCarTrough = 10;
 
 
+    /**
+     * creates a node and adds it to the city
+     */
     public Node(City parent, Point position, double fame, String id) {
         this.parent = parent;
         this.position = position;
@@ -37,6 +66,11 @@ public class Node {
         parent.add(this);
     }
 
+    /**
+     * returns a street based on the Id
+     * @param id the needed id
+     * @return the requested street, otherwise null
+     */
     public Street getStreetById(String id) {
         for (int i = 0; i < streets.size(); i++) {
             if (streets.get(i).getId().equals(id))
@@ -121,6 +155,9 @@ public class Node {
     }
 
 
+    /**
+     * used for A* Algorithm
+     */
     public void startPathCalculation(Node goal) {
         setDistanceCost(goal);
         setWalkedCost(Double.MAX_VALUE / 2);
@@ -178,6 +215,12 @@ public class Node {
         return null;
     }
 
+    /**
+     * This method is called when a Vehicle wants to drive over this node to another Node
+     * @param vehicle the vehicle that does the request
+     * @param nextNode the desiered goal
+     * @return true if the vehicle can drive, otherwise false
+     */
     public boolean register(Vehicle vehicle, Node nextNode) {
         // TODO: 17.02.2018 für maxi ret true wenn er fahren darf
         if (letCarTrough == 10) {

@@ -8,7 +8,9 @@ import java.util.ArrayList;
  */
 public class Path {
 
-    //pth file constants
+    /**
+     * pth file constants
+     */
     public static String HEADER = "pth";
     public static String OPEN_PROPS = "{";
     public static String CLOSE_PROPS = "}";
@@ -17,6 +19,9 @@ public class Path {
     public static String NODE_DELIMITER = "-->";
 
 
+    /**
+     * contains the ids of all the nodes contained in this path
+     */
     ArrayList<String> ids;
 
     /**
@@ -25,26 +30,46 @@ public class Path {
     private int progress;
 
 
+    /**
+     * tells what knowledge is needed to drive on this path
+     */
     int minKnowledge;
 
+
+    /**
+     * sets the defaults
+     */
     public Path() {
         progress = 0;
         ids = new ArrayList<>();
         minKnowledge = 0;
     }
 
+    /**
+     * create a path with a minimum knowledge
+     */
     public Path(int minKnowledge) {
         this();
         this.minKnowledge = minKnowledge;
     }
 
 
+    /**
+     * returns the next Node id on this Path that we want to reach
+     * @return the next nOde
+     */
     public String getGoal() {
         if (progress >= ids.size())
             return null;
         return ids.get(progress);
     }
 
+
+    /**
+     * returns the next Node id on this Path that we want to reach
+     * also increments the progress on this path
+     * @return the next node
+     */
     public String getGoalAndIncrement() {
         if (progress >= ids.size()) {
             return null;
@@ -74,6 +99,7 @@ public class Path {
             throw new RuntimeException("Path 45");
         }
     }
+
 
     public void addNodeId(String nodeId) {
         if (!contains(nodeId)) {
@@ -110,6 +136,10 @@ public class Path {
         return false;
     }
 
+    /**
+     * transforms the path to a String compatible with a *.pth file
+     * @return a string for this path
+     */
     @Override
     public String toString() {
         StringBuilder ret = new StringBuilder();
@@ -130,6 +160,10 @@ public class Path {
         return ret.toString();
     }
 
+    /**
+     * checks if the path is valid
+     * @return true if the path is valid, otherwise false
+     */
     public boolean isValid() {
         if (ids.size() >= 3) {
             return true;
@@ -145,6 +179,11 @@ public class Path {
         return minKnowledge;
     }
 
+    /**
+     * Ceates a Path from a string and returns it
+     * @param path the string with which we want to create
+     * @return a new Path
+     */
     public static Path pathFromString(String path) {
         String props = extractProps(path);
         Path ret = new Path(Integer.parseInt(getProp(ATTR_MIN_KNOWLEGE, props)));
@@ -164,25 +203,53 @@ public class Path {
         return ret;
     }
 
-    public static String getProp(String attr, String props) {
+    /**
+     * searches for the requested attribute in all the properties
+     * @param attr teh requested attribute
+     * @param props the properties of a path use extractProps on a path to get the props
+     * @return the value of the attribute
+     */
+    private static String getProp(String attr, String props) {
         int index = props.indexOf(attr)
                 + attr.length()
                 + ":".length();
         return props.substring(index, props.indexOf(";", index));
     }
 
-    public static String extractProps(String pth) {
+    /**
+     * extracts the properties of a path string
+     * @param pth the path to string
+     * @return the properties of the path
+     */
+    private static String extractProps(String pth) {
         return pth.substring(pth.indexOf(OPEN_PROPS) + 1, pth.indexOf(CLOSE_PROPS));
+    }
+
+    /**
+     * extracts the properties of a path
+     * @param pth the path
+     * @return the properties of the path
+     */
+    public static String extractProps(Path pth) {
+        return pth.toString().substring(pth.toString().indexOf(OPEN_PROPS) + 1, pth.toString().indexOf(CLOSE_PROPS));
     }
 
     public ArrayList<String> getIds() {
         return ids;
     }
 
+    /**
+     * resets the progress to zero
+     */
     public void resetProgress() {
         progress=0;
     }
 
+    /**
+     * checks if this path equals to another path
+     * @param path the path to check
+     * @return true if the paths equal each other, otherwise false
+     */
     public boolean equals(Path path) {
         if(path.ids.size()!=this.ids.size())
             return false;

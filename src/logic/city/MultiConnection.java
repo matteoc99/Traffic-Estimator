@@ -8,7 +8,11 @@ import java.awt.*;
  */
 public class MultiConnection extends Node{
 
+    /**
+     * Street crossing contains a StreetlightLogic system
+     */
     private StreetlightLogic logic;
+
 
     public MultiConnection(City parent, Point position, double fame, String id, StreetlightLogic logic) {
         this(parent, position, fame, id);
