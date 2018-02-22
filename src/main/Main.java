@@ -3,6 +3,7 @@ package main;
 import gui.ControlPanel;
 import gui.MySlider;
 import gui.city.JCity;
+import logic.vehicles.driving.VehicleDriving;
 import utils.PathUtils;
 import logic.city.City;
 import logic.city.Node;
@@ -48,7 +49,7 @@ public class Main extends JFrame {
 
 
     //Slider controlls
-    public static int VEHICLE_AMOUNT = 65;
+    public static int VEHICLE_AMOUNT = 15;
 
 
     /**
@@ -348,7 +349,8 @@ public class Main extends JFrame {
             zeitvorsleep = System.currentTimeMillis();
             main.calcCity();
             if (city.getVehicles().size() < VEHICLE_AMOUNT) {
-                Vehicle vehicle = new Vehicle(1000, (int) (Math.random()*40)+10, PathUtils.getRandomPath(city), Math.random(), Math.random(), city);
+                Vehicle vehicle = new Vehicle();
+
                 vehicle.setColor(new Color((int) ((Math.random()*200)+50),(int) (Math.random()*200)+50,(int) (Math.random()*200)+50));
             }
             long zeitvergangen = (long) (System.currentTimeMillis() - zeitvorsleep);

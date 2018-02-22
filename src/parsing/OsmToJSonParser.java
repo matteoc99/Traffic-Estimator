@@ -23,8 +23,8 @@ public final class OsmToJSonParser {
     private static Map<String, Integer> streetsOnNode = new HashMap<>();
 
     public static void main(String[] args) {
-        parse(System.getProperty("user.dir")+"\\src\\parsing\\res\\bozenLarge.osm",
-                System.getProperty("user.dir")+"\\src\\parsing\\res\\remove.json");
+        parse(System.getProperty("user.dir")+"\\src\\parsing\\wien.osm",
+                System.getProperty("user.dir")+"\\src\\parsing\\res\\wien.json");
     }
 
     private static void parse(String osmFilePath, String jsonFilePath) {
@@ -276,7 +276,7 @@ public final class OsmToJSonParser {
                     case "barrier":
                     case "foot":
                     case "cycleway":
-                    case "bicylce":
+                    case "bicycle":
                     case "cables":
                     case "voltage":
                     case "waterway":
