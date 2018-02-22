@@ -13,7 +13,9 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
 import java.io.PrintWriter;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 public final class OsmToJsonParser {
@@ -29,8 +31,8 @@ public final class OsmToJsonParser {
     private static Map<String, Integer> streetsOnNode = new HashMap<>();
 
     public static void main(String[] args) {
-        parse(System.getProperty("user.dir")+"\\src\\parsing\\wien.osm",
-                System.getProperty("user.dir")+"\\src\\parsing\\res\\wien.json");
+        parse(System.getProperty("user.dir")+"\\src\\parsing\\res\\lana.osm",
+                System.getProperty("user.dir")+"\\src\\parsing\\res\\remove.json");
     }
 
     /**
@@ -246,15 +248,16 @@ public final class OsmToJsonParser {
      */
     private static void assignTypeToNodes() {
         JSONArray nodes = jsonRoot.getJSONArray("nodes");
-        for (int i = 0; i < nodes.length(); i++) {
-            JSONObject jNode = nodes.getJSONObject(i);
+        for (int pointer = 0; pointer < nodes.length(); pointer++) {
+            JSONObject jNode = nodes.getJSONObject(pointer);
             String nodeId = jNode.getString("id");
 
             int streetCount = streetsOnNode.getOrDefault(nodeId, 0);
 
             switch (streetCount) {
                 case 0:
-                    jNode.put("type", "NotConnected");
+                    nodes.remove(pointer);
+                    pointer--;
                     break;
                 case 1:
                     jNode.put("type", "DeadEnd");

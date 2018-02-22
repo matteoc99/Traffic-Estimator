@@ -11,17 +11,42 @@ import static utils.Utils.calcDegreesBetweenTwoPoint;
  */
 public class Street extends StreetComponent {
 
-
+    /**
+     * Id of the Street, unique in each JsonFile
+     */
     private String id;
+
+    /**
+     * Reference to the City, which contains this Street
+     */
     private City parent;
+
+    /**
+     * Nodes in which this Street starts or ends
+     */
     private Node from;
     private Node to;
+
+    /**
+     * The maximum speed allowed on this Street, actual speed of the car might be higher
+     */
     private double maxSpeed;
-    //the higher the less known a street is. 0 very known
+
+    /**
+     * The higher the less known a street is. 0 very known
+     */
     private double unProminence;
 
+    /**
+     * Lists containing the Lanes on both sides of the Street
+     * Forward means that the vehicles on the Lane drive away from the startNode and towards the endNode
+     */
     private ArrayList<Lane> forwardLanes;
     private ArrayList<Lane> backwardLanes;
+
+    /**
+     * List of all Congestions happening on this Street
+     */
     private ArrayList<Congestion> congestions;
 
 
@@ -47,8 +72,7 @@ public class Street extends StreetComponent {
     public void addCongestion(Congestion congestion) {
         if (!contains(congestion)) {
             congestions.add(congestion);
-        }
-        else
+        } else
             throw new RuntimeException("CONTAINS Congestion ");
 
     }
@@ -221,22 +245,26 @@ public class Street extends StreetComponent {
 
     public Lane getBackwardLaneByIndex(int index) {
         Lane lane = null;
-        for (int i = 0; i < backwardLanes.size(); i++) {
-            if(backwardLanes.get(i).getIndex() == index)
-                lane= backwardLanes.get(i);
+        for (Lane backwardLane : backwardLanes) {
+            if (backwardLane.getIndex() == index)
+                lane = backwardLane;
         }
         return lane;
     }
 
     public Lane getForwardLaneByIndex(int index) {
         Lane lane = null;
-        for (int i = 0; i < forwardLanes.size(); i++) {
-            if(forwardLanes.get(i).getIndex() == index)
-                lane= forwardLanes.get(i);
+        for (Lane forwardLane : forwardLanes) {
+            if (forwardLane.getIndex() == index)
+                lane = forwardLane;
         }
         return lane;
     }
 
+    /**
+     * @param lane to start from
+     * @return the Lanes left and right of the given Lane
+     */
     public ArrayList<Lane> getNeighbourLanes(Lane lane) {
         ArrayList<Lane> ret = new ArrayList<>();
         if (lane.isReversed()) {
@@ -260,17 +288,19 @@ public class Street extends StreetComponent {
     /**
      * for dijkstra
      */
-    public double getTotalCost(double autoSpeed){
-        return getLength()/Double.min(autoSpeed,maxSpeed);
+    public double getTotalCost(double autoSpeed) {
+        return getLength() / Double.min(autoSpeed, maxSpeed);
     }
 
-
+    /**
+     * {@link City#calcCity()}
+     */
     public void calcStreet() {
-        for (int i = 0; i < backwardLanes.size(); i++) {
-            backwardLanes.get(i).calcLane();
+        for (Lane backwardLane : backwardLanes) {
+            backwardLane.calcLane();
         }
-        for (int i = 0; i < forwardLanes.size(); i++) {
-            forwardLanes.get(i).calcLane();
+        for (Lane forwardLane : forwardLanes) {
+            forwardLane.calcLane();
         }
     }
 

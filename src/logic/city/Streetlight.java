@@ -5,10 +5,26 @@ package logic.city;
  * @since 29.01.2018
  */
 public class Streetlight {
+
+    /**
+     * 0:Red
+     * 1:Green
+     */
     private int state;
+
+    /**
+     * Reference to the Lane this Streetlight is part of
+     */
     private Lane parentLane;
+
+    /**
+     * Reference to it's logic
+     */
     private StreetlightLogic parentLogic;
 
+    /**
+     * Direction for which this Streetlight is responsible, it can only be responsible for a single direction
+     */
     private Direction direction;
 
 
@@ -20,15 +36,18 @@ public class Streetlight {
     }
 
     public Streetlight(Lane parentLane, StreetlightLogic parentLogic, Direction direction) {
-        this(0,parentLane,parentLogic,direction);
+        this(0, parentLane, parentLogic, direction);
     }
 
-    public enum Direction{
-        STRAIGHT,RIGHT,LEFT
+    public enum Direction {
+        STRAIGHT, RIGHT, LEFT
     }
 
-    public void toggle(){
-        // TODO: 29.01.2018
+    /**
+     * Change state
+     */
+    public void toggle() {
+        state = (state == 1) ? 0 : 1;
     }
 
     public void setState(int state) {
