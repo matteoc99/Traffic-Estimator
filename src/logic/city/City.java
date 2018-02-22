@@ -4,6 +4,7 @@ import logic.vehicles.Vehicle;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
+import utils.Utils;
 
 import java.awt.*;
 import java.io.File;
@@ -20,17 +21,40 @@ import java.util.Iterator;
  */
 public class City {
 
-    public static void main(String[] args) {
-        createCityFromJson(new File(System.getProperty("user.dir") + "\\src\\parsing\\sumo.json"));
-    }
-
+    /**
+     * A List containing all Nodes within the city. The List will always be ordered by the Id when
+     * trying to get it's content.
+     * To assure this, the access to this List is very limited. There is no way to set or get the whole List,
+     * only it's content can be changed
+     */
     private ArrayList<Node> nodes;
+    /**
+     * Flag to keep track on whether {@link City#nodes} is sorted or not
+     */
     private boolean nodesSorted = false;
 
+    /**
+     * A List containing all Streets within the city. The List will always be ordered by the Id when
+     * trying to get it's content.
+     * To assure this, the access to this List is very limited. There is no way to set or get the whole List,
+     * only it's content can be changed
+     */
     private ArrayList<Street> streets;
+    /**
+     * Flag to keep track on whether {@link City#streets} is sorted or not
+     */
     private boolean streetsSorted = false;
 
+    /**
+     * A List containing all Lanes within the city. The List will always be ordered by the Id when
+     * trying to get it's content.
+     * To assure this, the access to this List is very limited. There is no way to set or get the whole List,
+     * only it's content can be changed
+     */
     private ArrayList<Lane> lanes;
+    /**
+     * Flag to keep track on whether {@link City#lanes} is sorted or not
+     */
     private boolean lanesSorted = false;
 
     private String name;
@@ -46,6 +70,12 @@ public class City {
         this.name = name;
     }
 
+    /**
+     * Creates a CityObject from the given JSonFile
+     * The JsonFile contains nodes, streets, lanes and Streetlights, all with their attributes.
+     * @param jsonFile to read from
+     * @return created City
+     */
     public static City createCityFromJson(File jsonFile) {
 
         City city = new City(jsonFile.getName().replace(".json", ""));
@@ -54,8 +84,9 @@ public class City {
             root = new JSONTokener(new FileReader(jsonFile));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
-            return null;
+            throw new RuntimeException();
         }
+
         JSONObject topNode = new JSONObject(root);
 
         System.out.println("City:" + new Timestamp(System.currentTimeMillis()) + " Creating Nodes...");
@@ -106,13 +137,17 @@ public class City {
         }
         city.sortLanes();
 
-        // delete lonely nodes
-        // TODO: 18.02.2018 deactivated, as there shouldn't be any nodes without a single street
-        //city.nodes.removeIf(node -> !node.getStreetIterator().hasNext());
-
         return city;
     }
 
+    /**
+     * Created the right NodeObject depending on the nodes type
+     * @param className type of the node
+     * @param city reference to the city it will be part of
+     * @param point position of the node
+     * @param fame how of the node, higher fame causes more cars to start or end their path on this node
+     * @param id of the node
+     */
     private static void createNodeByClassName(String className,
                                               City city,
                                               Point point,
@@ -131,11 +166,15 @@ public class City {
         }
     }
 
-    private Path doDijkstra(Node from, Node to) {
-        return new Path(); // TODO: 15.12.2017
-    }
 
-    public Path doAStern(Node from, Node to, Vehicle vehicle) {
+    /**
+     * Performs the A*-Algorithm to find a path between two nodes.
+     * @param from startNode
+     * @param to endNode
+     * @param vehicle that will take this path, not all vehicles may drive on all streets
+     * @return the path
+     */
+    public Path doAStar(Node from, Node to, Vehicle vehicle) {
         Path ret = new Path();
         ArrayList<Node> open = new ArrayList<>();
         ArrayList<Node> closed = new ArrayList<>();
@@ -186,7 +225,7 @@ public class City {
                 if (closed.contains(neighbour))
                     isReachable = false;
                 if (vehicle == null)
-                    vehicle = new Vehicle(50);
+                    vehicle = new Vehicle();
                 if (isReachable) {
                     if (!(open.contains(neighbour)) ||
                             current.getWalkedCost() + currentStreet.getTotalCost(vehicle.getMaxSpeed()) < neighbour.getWalkedCost()) {
@@ -209,6 +248,11 @@ public class City {
         return ret;
     }
 
+    /**
+     * creates a Path from a random start and end. The probability depends on the fame of the nodes.
+     * @param breaking to avoid StackOverflowExceptions
+     * @return a Path
+     */
     public Path getRandomPath(int breaking) {
         if (breaking > 30) {
             return null;
@@ -219,13 +263,17 @@ public class City {
         while (to.equals(from)) {
             to = getRandomNode();
         }
-        Path path = doAStern(from, to, null);
+        Path path = doAStar(from, to, null);
         if (!path.isValid()) {
             path = getRandomPath(breaking + 1);
         }
         return path;
     }
 
+    /**
+     * Picks a random Node depending on the nodes fame.
+     * @return a Node
+     */
     public Node getRandomNode() {
         Node ret = null;
         ArrayList<Double> fames = new ArrayList<>(); // TODO: 30.01.2018 nicht immer neu rechnen
@@ -405,7 +453,13 @@ public class City {
         }
     }
 
-    public Street getStreetByPoint(Point c) {
+    /**
+     * Method returns the Street which is closest to the given Point.
+     * Currently used for debugging
+     * @param point to check
+     * @return closest Street
+     */
+    public Street getStreetByPoint(Point point) {
         int bestIndex = -1;
         double bestVal = Integer.MAX_VALUE;
 
@@ -414,7 +468,9 @@ public class City {
             Street street = streets1.get(i);
             Point a = street.getFrom().getPosition();
             Point b = street.getTo().getPosition();
-            double val = (distance(a, c) + distance(b, c)) - distance(a, b);
+            double val = (Utils.calcDistanceBetweenPoints(a, point) +
+                    Utils.calcDistanceBetweenPoints(b, point)) -
+                    Utils.calcDistanceBetweenPoints(a, b);
             val = Math.abs(val);
             if (val < bestVal) {
                 bestVal = val;
@@ -428,14 +484,12 @@ public class City {
 
     }
 
-    public double distance(Point a, Point b) {
-        return Math.sqrt(Math.pow(Math.abs(a.x - b.x), 2) + Math.pow(Math.abs(a.y - b.y), 2));
-    }
-
-
+    /**
+     * Sends the calcCommand down the Line to the Vehicle
+     */
     public void calcCity() {
         for (Street street : streets) {
-            // TODO: 20.02.2018 calc by ordererd lane.priority. higher priority = first evaluation
+            // TODO: 20.02.2018 calc by ordered lane.priority. higher priority = first evaluation
             street.calcStreet();
         }
         for (Node node: nodes) {

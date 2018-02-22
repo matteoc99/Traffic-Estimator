@@ -7,15 +7,8 @@ import java.awt.*;
  * @since 25.12.2017
  */
 public class Utils {
-    public static double calcDistanceBetweenPoints(Point from, Point to){
-        double ret = Math.abs(
-                Math.sqrt(
-                        Math.pow(to.getX()- from.getX(), 2) +
-                                Math.pow(to.getY()- from.getY(), 2)
-                )
-        );
-
-        return ret;
+    public static double calcDistanceBetweenPoints(Point a, Point b){
+        return Math.sqrt(Math.pow(Math.abs(a.x - b.x), 2) + Math.pow(Math.abs(a.y - b.y), 2));
     }
     public static double calcDegreesBetweenTwoPoint(Point from, Point to){
         return calcDegreesBetweenTwoPoint(from.x,from.y,to.x,to.y);

@@ -109,7 +109,7 @@ public class JCity extends JPanel {
         for (int j = 0; j < vehicles.size(); j++) {
             Vehicle vehicle = vehicles.get(j);
             g2.setColor(vehicle.getColor());
-            //drawcars
+            // draw cars
             g2.fillOval((int) ((int) ((vehicle.currentPointOnLane().x) * zoom) - (4 * (int) (zoom)) / 2 - (zoom + i * zoom * 2) * dir),
                     (int) ((int) ((vehicle.currentPointOnLane().y) * zoom) - (4 * (int) (zoom)) / 2 - (zoom + i * zoom * 2) * dir),
                     4 * (int) (zoom), 4 * (int) (zoom));

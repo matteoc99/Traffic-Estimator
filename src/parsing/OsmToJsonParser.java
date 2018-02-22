@@ -16,10 +16,16 @@ import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Map;
 
-public final class OsmToJSonParser {
+public final class OsmToJsonParser {
 
+    /**
+     * Reference to the root of the JsonFile
+     */
     private static JSONObject jsonRoot;
 
+    /**
+     * Map to keep track of the amount of Streets connected to a Node
+     */
     private static Map<String, Integer> streetsOnNode = new HashMap<>();
 
     public static void main(String[] args) {
@@ -27,6 +33,12 @@ public final class OsmToJSonParser {
                 System.getProperty("user.dir")+"\\src\\parsing\\res\\wien.json");
     }
 
+    /**
+     * Method parses a OsmFile, exported from OpenStreetMap, to a JsonFile,
+     * which can then be read in the City-class to create a City-Object
+     * @param osmFilePath File to read from
+     * @param jsonFilePath File to print to
+     */
     private static void parse(String osmFilePath, String jsonFilePath) {
 
         System.out.println("OsmToJsonParser:" + new Timestamp(System.currentTimeMillis()) + " Parsing from .osm to .json:\n    " +
@@ -101,9 +113,12 @@ public final class OsmToJSonParser {
         }
     }
 
+    /**
+     * Handles the parsing of the node-tags from the OsmFile to Nodes
+     * @param nNodeList to read
+     * @param jNodes to print
+     */
     private static void createNodes(NodeList nNodeList, JSONArray jNodes) {
-        if (true)
-            return;
         double smallestX = Integer.MAX_VALUE;
         double smallestY = Integer.MAX_VALUE;
 
@@ -149,6 +164,12 @@ public final class OsmToJSonParser {
 
     }
 
+    /**
+     * Handles the parsing of the way-tags from the OsmFile to Streets and Lanes
+     * @param nWayList to read
+     * @param jStreets to print
+     * @param jLanes to print
+     */
     private static void createStreetsAndLanes(NodeList nWayList, JSONArray jStreets, JSONArray jLanes) {
         for (int i = 0; i < nWayList.getLength(); i++) {
             Node nWay = nWayList.item(i);
@@ -158,9 +179,6 @@ public final class OsmToJSonParser {
                 Element eWayElement = (Element) nWay;
 
                 if (!isInvalidWay(eWayElement)) {
-                    if (true)
-                        continue;
-
                     NodeList ndsList = eWayElement.getElementsByTagName("nd");
 
                     JSONObject lastNode = null;
@@ -222,6 +240,10 @@ public final class OsmToJSonParser {
         }
     }
 
+    /**
+     * Method reruns over all Nodes to correctly assign the type
+     * The type depends on the amount of Streets connected to the Node
+     */
     private static void assignTypeToNodes() {
         JSONArray nodes = jsonRoot.getJSONArray("nodes");
         for (int i = 0; i < nodes.length(); i++) {
@@ -246,6 +268,11 @@ public final class OsmToJSonParser {
         }
     }
 
+    /**
+     * Searches the Node with the given id
+     * @param id to search for
+     * @return if found, the node
+     */
     private static JSONObject getNodeById(String id) {
         JSONArray nodes = jsonRoot.getJSONArray("nodes");
 
@@ -258,6 +285,11 @@ public final class OsmToJSonParser {
         throw new RuntimeException("NodeNotFound:"+id);
     }
 
+    /**
+     * Method decides whether the given way is useful to the JsonFile
+     * @param way to check
+     * @return validation
+     */
     private static boolean isInvalidWay(Element way) {
         NodeList attrList = way.getElementsByTagName("tag");
         for (int i = 0; i < attrList.getLength(); i++) {
@@ -317,5 +349,5 @@ public final class OsmToJSonParser {
         return false;
     }
 
-    private OsmToJSonParser() {}
+    private OsmToJsonParser() {}
 }
