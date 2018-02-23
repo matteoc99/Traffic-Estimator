@@ -3,6 +3,7 @@ package parsing;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.w3c.dom.*;
+import utils.Stopwatch;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -43,7 +44,6 @@ public final class OsmToJsonParser {
 
         File fXmlFile = new File(osmFilePath);
         File json = new File(jsonFilePath);
-        File jsonBckUp = new File(System.getProperty("user.dir") + "\\src\\parsing\\res\\last_backup.json");
 
         jsonRoot = new JSONObject();
 
@@ -81,17 +81,6 @@ public final class OsmToJsonParser {
             jsonRoot.put("lanes", jLanes);
 
             System.out.println("OsmToJsonParser:" + new Timestamp(System.currentTimeMillis()) +
-                    " Printing Backup...");
-            try {
-                PrintWriter printWriterP = new PrintWriter(jsonBckUp);
-                printWriterP.print(jsonRoot.toString());
-                printWriterP.close();
-            } catch (Exception e) {
-                System.out.println("OsmToJsonParser:" + new Timestamp(System.currentTimeMillis()) +
-                        " Printing failed: " + e.getMessage());
-            }
-
-            System.out.println("OsmToJsonParser:" + new Timestamp(System.currentTimeMillis()) +
                     " Assigning types to nodes...");
             assignTypeToNodes();
 
@@ -121,7 +110,8 @@ public final class OsmToJsonParser {
      * @param jNodes    to print
      */
     private static void createNodes(NodeList nNodeList, JSONArray jNodes) {
-        for (int i = 0; i < nNodeList.getLength(); i++) {
+        int length = nNodeList.getLength();
+        for (int i = 0; i < length; i++) {
 
             Node nNode = nNodeList.item(i);
 
@@ -151,7 +141,8 @@ public final class OsmToJsonParser {
      * @param jLanes   to print
      */
     private static void createStreetsAndLanes(NodeList nWayList, JSONArray jStreets, JSONArray jLanes) {
-        for (int i = 0; i < nWayList.getLength(); i++) {
+        int wayLength = nWayList.getLength();
+        for (int i = 0; i < wayLength; i++) {
             Node nWay = nWayList.item(i);
 
             if (nWay.getNodeType() != Node.ELEMENT_NODE)
@@ -164,9 +155,10 @@ public final class OsmToJsonParser {
 
             NodeList ndsList = eWayElement.getElementsByTagName("nd");
 
-            JSONObject lastNode = null;
+            String lastNodeId = null;
 
-            for (int j = 0; j < ndsList.getLength(); j++) {
+            int ndLength = ndsList.getLength();
+            for (int j = 0; j < ndLength; j++) {
                 Node nNds = ndsList.item(j);
 
                 if (nNds.getNodeType() != Node.ELEMENT_NODE)
@@ -175,10 +167,9 @@ public final class OsmToJsonParser {
                 Element eNdsElement = (Element) nNds;
 
                 String nodeRef = eNdsElement.getAttribute("ref");
-                JSONObject jNode = getNodeById(nodeRef);
 
-                if (lastNode == null) {
-                    lastNode = jNode;
+                if (lastNodeId == null) {
+                    lastNodeId = nodeRef;
                     continue;
                 }
 
@@ -186,22 +177,19 @@ public final class OsmToJsonParser {
 
                 String jStreetID = eWayElement.getAttribute("id") + "_" + j;
 
-                String fromID = lastNode.getString("id");
-                String toID = jNode.getString("id");
-
                 jStreet.put("id", jStreetID);
-                jStreet.put("from", fromID);
-                jStreet.put("to", toID);
+                jStreet.put("from", lastNodeId);
+                jStreet.put("to", nodeRef);
                 jStreet.put("maxSpeed", 1);
                 jStreet.put("prominence", 1);
 
-                lastNode = jNode;
+                lastNodeId = nodeRef;
 
                 jStreets.put(jStreet);
 
                 // register street in map
-                streetsOnNode.put(fromID, streetsOnNode.getOrDefault(fromID, 0) + 1);
-                streetsOnNode.put(toID, streetsOnNode.getOrDefault(toID, 0) + 1);
+                streetsOnNode.put(lastNodeId, streetsOnNode.getOrDefault(lastNodeId, 0) + 1);
+                streetsOnNode.put(nodeRef, streetsOnNode.getOrDefault(nodeRef, 0) + 1);
 
                 // TODO: 02.02.2018 always 2 lanes on street
                 JSONObject jLane = new JSONObject();
@@ -220,7 +208,6 @@ public final class OsmToJsonParser {
                 jLanes.put(jLane);
                 jLanes.put(jLaneR);
             }
-
         }
     }
 
@@ -253,12 +240,15 @@ public final class OsmToJsonParser {
         }
     }
 
+    /**
+     * Method reruns over all Nodes to adjust the positions
+     */
     private static void adjustNodePositions() {
         double smallestX = Integer.MAX_VALUE;
         double smallestY = Integer.MAX_VALUE;
 
         JSONArray nodes = jsonRoot.getJSONArray("nodes");
-        System.out.println(nodes.length());
+
         for (int i = 0; i < nodes.length(); i++) {
             JSONObject jNode = nodes.getJSONObject(i);
             double x = Double.parseDouble(jNode.getString("x"));
@@ -282,24 +272,6 @@ public final class OsmToJsonParser {
             node.put("x", orgX - smallestX);
             node.put("y", orgY - smallestY);
         }
-    }
-
-    /**
-     * Searches the Node with the given id
-     *
-     * @param id to search for
-     * @return if found, the node
-     */
-    private static JSONObject getNodeById(String id) {
-        JSONArray nodes = jsonRoot.getJSONArray("nodes");
-
-        for (int i = 0; i < nodes.length(); i++) {
-            JSONObject node = nodes.getJSONObject(i);
-            if (id.equals(node.getString("id")))
-                return node;
-        }
-
-        throw new RuntimeException("NodeNotFound:" + id);
     }
 
     /**
