@@ -183,13 +183,13 @@ public final class OsmToJsonParser {
                 jStreet.put("maxSpeed", 1);
                 jStreet.put("prominence", 1);
 
-                lastNodeId = nodeRef;
-
                 jStreets.put(jStreet);
 
                 // register street in map
                 streetsOnNode.put(lastNodeId, streetsOnNode.getOrDefault(lastNodeId, 0) + 1);
                 streetsOnNode.put(nodeRef, streetsOnNode.getOrDefault(nodeRef, 0) + 1);
+
+                lastNodeId = nodeRef;
 
                 // TODO: 02.02.2018 always 2 lanes on street
                 JSONObject jLane = new JSONObject();
