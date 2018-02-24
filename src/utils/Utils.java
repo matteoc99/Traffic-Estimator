@@ -21,5 +21,17 @@ public class Utils {
         return angle;
     }
 
-
+    public static String getTileLink(final double lat, final double lon, final int zoom) {
+        int xTile = (int)Math.floor( (lon + 180) / 360 * (1<<zoom) ) ;
+        int yTile = (int)Math.floor( (1 - Math.log(Math.tan(Math.toRadians(lat)) + 1 / Math.cos(Math.toRadians(lat))) / Math.PI) / 2 * (1<<zoom) ) ;
+        if (xTile < 0)
+            xTile=0;
+        if (xTile >= (1<<zoom))
+            xTile=((1<<zoom)-1);
+        if (yTile < 0)
+            yTile=0;
+        if (yTile >= (1<<zoom))
+            yTile=((1<<zoom)-1);
+        return "https://tile.openstreetmap.org/" + zoom + "/" + xTile + "/" + yTile + ".png";
+    }
 }
