@@ -3,7 +3,6 @@ package parsing;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.w3c.dom.*;
-import utils.Stopwatch;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -150,7 +149,7 @@ public final class OsmToJsonParser {
 
             Element eWayElement = (Element) nWay;
 
-            if (isInvalidWay(eWayElement))
+            if (validateWay(eWayElement))
                 continue;
 
             NodeList ndsList = eWayElement.getElementsByTagName("nd");
@@ -280,7 +279,7 @@ public final class OsmToJsonParser {
      * @param way to check
      * @return validation
      */
-    private static boolean isInvalidWay(Element way) {
+    private static boolean validateWay(Element way) {
         NodeList attrList = way.getElementsByTagName("tag");
         for (int i = 0; i < attrList.getLength(); i++) {
             Node node = attrList.item(i);
@@ -290,6 +289,7 @@ public final class OsmToJsonParser {
                 String key = element.getAttribute("k");
                 String value = element.getAttribute("v");
 
+                // TODO: 23.02.2018 amenity:parking
                 switch (key) {
                     case "building":
                     case "power":
@@ -304,31 +304,22 @@ public final class OsmToJsonParser {
                     case "waterway":
                     case "natural":
                     case "railway":
-                        return true;
+                    case "amenity":
                     case "substance":
-                        switch (value) {
-                            case "water":
-                                return true;
-                        }
-                        break;
                     case "man_made":
-                        switch (value) {
-                            case "pipeline":
-                                return true;
-                        }
-                        break;
+                        return false;
                     case "highway":
                         switch (value) {
                             case "cycleway":
                             case "footway":
                             case "pedestrians":
-                                return true;
+                                return false;
                         }
                         break;
                     case "access":
                         switch (value) {
                             case "private":
-                                return true;
+                                return false;
                         }
                 }
                 //if (!(key.startsWith("addr") || key.startsWith("name")))
@@ -336,7 +327,7 @@ public final class OsmToJsonParser {
             }
         }
 
-        return false;
+        return true;
     }
 
     private OsmToJsonParser() {
