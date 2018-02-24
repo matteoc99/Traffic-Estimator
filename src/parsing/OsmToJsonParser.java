@@ -149,7 +149,7 @@ public final class OsmToJsonParser {
 
             Element eWayElement = (Element) nWay;
 
-            if (validateWay(eWayElement))
+            if (!validateWay(eWayElement))
                 continue;
 
             NodeList ndsList = eWayElement.getElementsByTagName("nd");
@@ -289,45 +289,17 @@ public final class OsmToJsonParser {
                 String key = element.getAttribute("k");
                 String value = element.getAttribute("v");
 
-                // TODO: 23.02.2018 amenity:parking
-                switch (key) {
-                    case "building":
-                    case "power":
-                    case "landuse":
-                    case "leisure":
-                    case "barrier":
-                    case "foot":
-                    case "cycleway":
-                    case "bicycle":
-                    case "cables":
-                    case "voltage":
-                    case "waterway":
-                    case "natural":
-                    case "railway":
-                    case "amenity":
-                    case "substance":
-                    case "man_made":
-                        return false;
-                    case "highway":
-                        switch (value) {
-                            case "cycleway":
-                            case "footway":
-                            case "pedestrians":
-                                return false;
-                        }
-                        break;
-                    case "access":
-                        switch (value) {
-                            case "private":
-                                return false;
-                        }
+                if (key.equals("highway")) {
+                    switch (value) {
+                        case "footway":
+                            return false;
+                        default:
+                            return true;
+                    }
                 }
-                //if (!(key.startsWith("addr") || key.startsWith("name")))
-                //    System.out.println("Unknown: " + key + "->" + value);
             }
         }
-
-        return true;
+        return false;
     }
 
     private OsmToJsonParser() {
