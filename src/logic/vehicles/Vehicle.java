@@ -32,12 +32,12 @@ public class Vehicle {
     /**
      * maximum speed that the car can drive
      */
-    private int maxSpeed;
+    private double vehicleMaxSpeed;
 
     /**
      * the actual speed right now
      */
-    private int currentSpeed = 0;
+    private double currentSpeed = 0;
 
 
     /**
@@ -147,19 +147,19 @@ public class Vehicle {
         this.length = length;
     }
 
-    public int getMaxSpeed() {
-        return maxSpeed;
+    public double getVehicleMaxSpeed() {
+        return vehicleMaxSpeed;
     }
 
-    public void setMaxSpeed(int maxSpeed) {
-        this.maxSpeed = maxSpeed;
+    public void setVehicleMaxSpeed(double vehicleMaxSpeed) {
+        this.vehicleMaxSpeed = vehicleMaxSpeed;
     }
 
-    public int getCurrentSpeed() {
+    public double getCurrentSpeed() {
         return currentSpeed;
     }
 
-    public void setCurrentSpeed(int currentSpeed) {
+    public void setCurrentSpeed(double currentSpeed) {
         this.currentSpeed = currentSpeed;
     }
 

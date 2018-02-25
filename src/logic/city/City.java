@@ -239,8 +239,8 @@ public class City {
                     vehicle = new Vehicle();
                 if (isReachable) {
                     if (!(open.contains(neighbour)) ||
-                            current.getWalkedCost() + currentStreet.getTotalCost(vehicle.getMaxSpeed()) < neighbour.getWalkedCost()) {
-                        neighbour.setWalkedCost(current.getWalkedCost() + currentStreet.getTotalCost(vehicle.getMaxSpeed()));
+                            current.getWalkedCost() + currentStreet.getTotalCost(vehicle.getVehicleMaxSpeed()) < neighbour.getWalkedCost()) {
+                        neighbour.setWalkedCost(current.getWalkedCost() + currentStreet.getTotalCost(vehicle.getVehicleMaxSpeed()));
                         neighbour.setPreviousNode(current);
                         if (!(open.contains(neighbour))) {
                             open.add(neighbour);

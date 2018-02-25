@@ -21,6 +21,7 @@ public class Utils {
 
     /*
       Handshake for https files
+      https://stackoverflow.com/a/18576728
      */
     static {
         final TrustManager[] trustAllCertificates = new TrustManager[]{

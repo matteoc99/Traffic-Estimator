@@ -248,7 +248,7 @@ public class Lane {
      */
     public double getTraffic() {
         double traffic = 0;
-        int avgSpeed = 0;
+        double avgSpeed = 0;
         for (Vehicle vehicle : getVehicles()) {
             avgSpeed += vehicle.getCurrentSpeed();
         }

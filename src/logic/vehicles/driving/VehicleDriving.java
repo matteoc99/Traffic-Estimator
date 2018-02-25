@@ -12,14 +12,16 @@ public abstract class VehicleDriving implements DrivingInterface {
     private Vehicle vehicle = null;
 
     /**
-     * how much somone cares about the others 0-1
+     * how much someone cares about the others 0-1
      * 1 very considerative
      */
     private double considerative;
+
     /**
-     * how much some one acts stressed while driving 0-1
+     * how stressed someone acts while driving 0-1
      */
     private double agressivity;
+
     /**
      * desired speed 0-2
      * 1--> respect the limits
@@ -29,20 +31,25 @@ public abstract class VehicleDriving implements DrivingInterface {
     private double desiredSpeed;
 
     /**
+     * cautiousness 0-1
+     * 0-->  very slow and respective
+     * 1--> reckless
+     *
+     * Difference to considerative: Affects behavior when no other vehicles around
+     * Difference to agressivity: Currently none
+     */
+    @Deprecated
+    private double cautiousness;
+
+    /**
      * knowledge of the city 0-1
      * 0--> tourist
      * 1--> taxi driver that knows every street
      */
     private double knowledge;
-    /**
-     * cautiousness 0-1
-     * 0-->  very slow and respective
-     * 1--> reckless
-     */
-    private double coutiousness;
 
     /**
-     * reaction time frames till react
+     * frames until the driver reacts to not expected or sudden things
      */
     private int reactionTime;
 
@@ -53,7 +60,57 @@ public abstract class VehicleDriving implements DrivingInterface {
 
     @Override
     public Action getNextAction() {
-        return null;
+        // evaluate all actions (0 points each)
+        // evaluate possible moves (+1 point)
+        // multiply each point with a number given by the character traits
+        // Note: Abort can never be a regular nextAction
+
+        double surpassPoints = 0;
+        double stepAsidePoints = 0;
+        double followLanePoints = 0;
+        double switchLanePoints = 0;
+        double adjustSpeedPoints = 0;
+
+        surpassPoints = (evaluateAction(Action.SURPASS) == Action.SURPASS)? 1:0;
+        stepAsidePoints = (evaluateAction(Action.STEP_ASIDE) == Action.STEP_ASIDE)? 1:0;
+        followLanePoints = (evaluateAction(Action.FOLLOW_LANE) == Action.FOLLOW_LANE)? 1:0;
+        switchLanePoints = (evaluateAction(Action.SWITCH_LANE) == Action.SWITCH_LANE)? 1:0;
+        adjustSpeedPoints = (evaluateAction(Action.ADJUST_SPEED) == Action.ADJUST_SPEED)? 1:0;
+
+        // Surpass: for each
+        if (surpassPoints != 0) surpassPoints *= getSurpassMultiplier();
+        if (stepAsidePoints != 0) stepAsidePoints *= getStepAsideMultiplier();
+        if (followLanePoints != 0) followLanePoints *= getFollowLaneMultiplier();
+        if (switchLanePoints != 0) switchLanePoints *= getSwitchLaneMultiplier();
+        if (adjustSpeedPoints != 0) adjustSpeedPoints *= getAdjustSpeedMultiplier();
+
+        Action nextAction = null;
+        double highestPoints = 0;
+
+        if (surpassPoints > highestPoints) {
+            nextAction = Action.SURPASS;
+            highestPoints = surpassPoints;
+        }
+        if (stepAsidePoints > highestPoints) {
+            nextAction = Action.STEP_ASIDE;
+            highestPoints = stepAsidePoints;
+        }
+        if (followLanePoints > highestPoints) {
+            nextAction = Action.FOLLOW_LANE;
+            highestPoints = followLanePoints;
+        }
+        if (switchLanePoints > highestPoints) {
+            nextAction = Action.SWITCH_LANE;
+            highestPoints = switchLanePoints;
+        }
+        if (adjustSpeedPoints > highestPoints) {
+            nextAction = Action.ADJUST_SPEED;
+        }
+
+        if (nextAction == null)
+            throw new RuntimeException("No nextAction possible!");
+        else
+            return nextAction;
     }
 
     @Override
@@ -140,6 +197,67 @@ public abstract class VehicleDriving implements DrivingInterface {
 
     }
 
+    /**
+     * Method returns a specific value, fitting the drivers traits, for this action
+     * Range: 0 to 3
+     * @return a value to multiply the points with
+     */
+    private double getSurpassMultiplier() {
+        double ret = 0;
+
+        double specificDesiredSpeed = vehicle.getLane().getParent().getMaxSpeed()*desiredSpeed;
+        double differenceFactor = specificDesiredSpeed / vehicle.getCurrentSpeed();
+
+        if (differenceFactor <= 1) // no need to surpass as we are fine with the speed
+            return 0;
+        if (differenceFactor <= 1.1)
+            ret += 0.33;
+        else if (differenceFactor <= 1.5)
+            ret += 0.8;
+        else
+            ret += 1.5;
+
+        ret += agressivity*0.5;
+
+        return ret;
+    }
+
+    /**
+     * Method returns a specific value, fitting the drivers traits, for this action
+     * Range: 0 to 3
+     * @return a value to multiply the points with
+     */
+    private double getStepAsideMultiplier() {
+        return 0;
+    }
+
+    /**
+     * Method returns a specific value, fitting the drivers traits, for this action
+     * Range: 0 to 3
+     * @return a value to multiply the points with
+     */
+    private double getFollowLaneMultiplier() {
+        return 0;
+    }
+
+    /**
+     * Method returns a specific value, fitting the drivers traits, for this action
+     * Range: 0 to 3
+     * @return a value to multiply the points with
+     */
+    private double getSwitchLaneMultiplier() {
+        return 0;
+    }
+
+    /**
+     * Method returns a specific value, fitting the drivers traits, for this action
+     * Range: 0 to 3
+     * @return a value to multiply the points with
+     */
+    private double getAdjustSpeedMultiplier() {
+        return 0;
+    }
+
     public void setVehicle(Vehicle vehicle) {
         this.vehicle = vehicle;
     }
@@ -169,8 +287,8 @@ public abstract class VehicleDriving implements DrivingInterface {
         return this;
     }
 
-    public VehicleDriving setCoutiousness(double coutiousness) {
-        this.coutiousness = coutiousness;
+    public VehicleDriving setCautiousness(double cautiousness) {
+        this.cautiousness = cautiousness;
         return this;
     }
 
@@ -203,8 +321,8 @@ public abstract class VehicleDriving implements DrivingInterface {
         return knowledge;
     }
 
-    public double getCoutiousness() {
-        return coutiousness;
+    public double getCautiousness() {
+        return cautiousness;
     }
 
     public int getReactionTime() {
