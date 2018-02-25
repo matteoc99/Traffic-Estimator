@@ -6,7 +6,10 @@ package logic.vehicles.driving;
  */
 public interface DrivingInterface {
     Action getNextAction();
+
     Action evaluateAction(Action action);
+
     void performMove();
+
     void actionCompleted();
 }

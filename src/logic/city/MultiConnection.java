@@ -6,7 +6,7 @@ import java.awt.*;
  * @author Matteo Cosi
  * @since 29.01.2018
  */
-public class MultiConnection extends Node{
+public class MultiConnection extends Node {
 
     /**
      * Street crossing contains a StreetlightLogic system

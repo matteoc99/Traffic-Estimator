@@ -6,7 +6,7 @@ import java.util.ArrayList;
  * @author Matteo Cosi
  * @since 29.01.2018
  */
-public class StreetlightLogic extends Thread{
+public class StreetlightLogic extends Thread {
     private MultiConnection parent;
     private ArrayList<Streetlight> streetlights;
 
@@ -22,10 +22,10 @@ public class StreetlightLogic extends Thread{
         super.run();
     }
 
-    public void addStreetlight(Streetlight streetlight){
-        if(!contains(streetlight)){
+    public void addStreetlight(Streetlight streetlight) {
+        if (!contains(streetlight)) {
             streetlights.add(streetlight);
-        }else{
+        } else {
             throw new RuntimeException("already contains light");
         }
     }
@@ -33,14 +33,14 @@ public class StreetlightLogic extends Thread{
     public void removeStreetlight(Streetlight streetlight) {
         if (contains(streetlight)) {
             streetlights.remove(streetlight);
-        }else{
+        } else {
             throw new RuntimeException("NOTHING TO REMOVE LOGIC 30");
         }
     }
 
-    public boolean contains(Streetlight streetlight){
-        for (Streetlight light:streetlights) {
-            if(streetlight.equals(light)){
+    public boolean contains(Streetlight streetlight) {
+        for (Streetlight light : streetlights) {
+            if (streetlight.equals(light)) {
                 return true;
             }
         }

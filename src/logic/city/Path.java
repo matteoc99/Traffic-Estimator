@@ -56,6 +56,7 @@ public class Path {
 
     /**
      * returns the next Node id on this Path that we want to reach
+     *
      * @return the next nOde
      */
     public String getGoal() {
@@ -68,6 +69,7 @@ public class Path {
     /**
      * returns the next Node id on this Path that we want to reach
      * also increments the progress on this path
+     *
      * @return the next node
      */
     public String getGoalAndIncrement() {
@@ -138,6 +140,7 @@ public class Path {
 
     /**
      * transforms the path to a String compatible with a *.pth file
+     *
      * @return a string for this path
      */
     @Override
@@ -162,6 +165,7 @@ public class Path {
 
     /**
      * checks if the path is valid
+     *
      * @return true if the path is valid, otherwise false
      */
     public boolean isValid() {
@@ -181,6 +185,7 @@ public class Path {
 
     /**
      * Ceates a Path from a string and returns it
+     *
      * @param path the string with which we want to create
      * @return a new Path
      */
@@ -205,7 +210,8 @@ public class Path {
 
     /**
      * searches for the requested attribute in all the properties
-     * @param attr teh requested attribute
+     *
+     * @param attr  teh requested attribute
      * @param props the properties of a path use extractProps on a path to get the props
      * @return the value of the attribute
      */
@@ -218,6 +224,7 @@ public class Path {
 
     /**
      * extracts the properties of a path string
+     *
      * @param pth the path to string
      * @return the properties of the path
      */
@@ -227,6 +234,7 @@ public class Path {
 
     /**
      * extracts the properties of a path
+     *
      * @param pth the path
      * @return the properties of the path
      */
@@ -242,19 +250,20 @@ public class Path {
      * resets the progress to zero
      */
     public void resetProgress() {
-        progress=0;
+        progress = 0;
     }
 
     /**
      * checks if this path equals to another path
+     *
      * @param path the path to check
      * @return true if the paths equal each other, otherwise false
      */
     public boolean equals(Path path) {
-        if(path.ids.size()!=this.ids.size())
+        if (path.ids.size() != this.ids.size())
             return false;
         for (int i = 0; i < ids.size(); i++) {
-            if(!path.ids.get(i).equals(this.ids.get(i)))
+            if (!path.ids.get(i).equals(this.ids.get(i)))
                 return false;
         }
         return true;

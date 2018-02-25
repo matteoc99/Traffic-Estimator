@@ -20,8 +20,8 @@ public class SumoToJSonParser {
     private static ArrayList<Type> types = new ArrayList<>();
 
     public static void main(String[] args) {
-        parse(new File(System.getProperty("user.dir")+"\\src\\parsing\\map.net.xml"),
-                System.getProperty("user.dir")+"\\src\\parsing\\sumo.json");
+        parse(new File(System.getProperty("user.dir") + "\\src\\parsing\\map.net.xml"),
+                System.getProperty("user.dir") + "\\src\\parsing\\sumo.json");
     }
 
     private static void parse(File fXmlFile, String jsonPath) {
@@ -90,7 +90,7 @@ public class SumoToJSonParser {
                     continue;
 
                 if (!Type.useful(eElement.getAttribute("type"))) {
-                    System.out.println("cut:"+eElement.getAttribute("type"));
+                    System.out.println("cut:" + eElement.getAttribute("type"));
                     continue;
                 }
 
@@ -244,7 +244,7 @@ public class SumoToJSonParser {
                 case "railway.tram":
                     return false;
                 default:
-                    System.out.println("unknown:"+id);
+                    System.out.println("unknown:" + id);
                     return true;
             }
         }

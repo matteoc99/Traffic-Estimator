@@ -1,6 +1,8 @@
 package gui.city;
 
-import logic.city.*;
+import logic.city.City;
+import logic.city.Lane;
+import logic.city.Street;
 import logic.vehicles.Vehicle;
 
 import javax.swing.*;
@@ -8,8 +10,9 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import static main.Main.zoom;
 import static main.Main.preciseZoom;
+import static main.Main.zoom;
+
 /**
  * @author Matteo Cosi
  * @since 15.12.2017

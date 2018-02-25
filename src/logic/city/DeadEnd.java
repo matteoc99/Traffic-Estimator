@@ -1,7 +1,6 @@
 package logic.city;
 
 import java.awt.*;
-import java.util.ArrayList;
 
 /**
  * @author Matteo Cosi

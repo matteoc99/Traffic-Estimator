@@ -4,7 +4,7 @@
       "id": "0",
       "x": 100,
       "y": 100,
-      "fame":  0.01,
+      "fame": 0.01,
       "type": "MultiConnection"
     },
     {
@@ -167,7 +167,7 @@
       "id": "9to2",
       "from": "9",
       "to": "2",
-       "maxSpeed": 2,
+      "maxSpeed": 2,
       "prominence": 1
     },
     {
@@ -332,6 +332,5 @@
     }
   ],
   "streetlight": [
-
   ]
 }

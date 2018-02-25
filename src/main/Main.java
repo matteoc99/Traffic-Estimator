@@ -3,8 +3,6 @@ package main;
 import gui.ControlPanel;
 import gui.MySlider;
 import gui.city.JCity;
-import logic.vehicles.driving.VehicleDriving;
-import utils.PathUtils;
 import logic.city.City;
 import logic.city.Node;
 import logic.vehicles.Vehicle;
@@ -136,10 +134,10 @@ public class Main extends JFrame {
                         fineZoom = true;
                         break;
                     case KeyEvent.VK_H:
-                        if(hoverpoint==null) {
+                        if (hoverpoint == null) {
                             hovermode = true;
                             hoverpoint = MouseInfo.getPointerInfo().getLocation();
-                        }else{
+                        } else {
                             int xoff = hoverpoint.x - MouseInfo.getPointerInfo().getLocation().x;
                             int yoff = hoverpoint.y - MouseInfo.getPointerInfo().getLocation().y;
                             xoff /= 4;
@@ -223,11 +221,11 @@ public class Main extends JFrame {
 
             @Override
             public void mouseClicked(MouseEvent e) {
-                double x=e.getX()-jCity.getX();
-                double y=e.getY()-jCity.getY();
-                x/=zoom;
-                y/=zoom;
-                System.out.println(city.getStreetByPoint(new Point((int)x,(int)y)));
+                double x = e.getX() - jCity.getX();
+                double y = e.getY() - jCity.getY();
+                x /= zoom;
+                y /= zoom;
+                System.out.println(city.getStreetByPoint(new Point((int) x, (int) y)));
             }
 
             @Override
@@ -294,7 +292,7 @@ public class Main extends JFrame {
         MySlider traffic = new MySlider(JSlider.HORIZONTAL, 0, 1000, VEHICLE_AMOUNT);
 
 
-        int xOff = ret.getWidth()/4;
+        int xOff = ret.getWidth() / 4;
 
         JLabel[] labels = new JLabel[4];
         for (int i = 0; i < labels.length; i++) {
@@ -328,7 +326,7 @@ public class Main extends JFrame {
         traffic.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
-                VEHICLE_AMOUNT= traffic.getValue() + 1;
+                VEHICLE_AMOUNT = traffic.getValue() + 1;
                 requestFocus();
             }
         });
@@ -351,7 +349,7 @@ public class Main extends JFrame {
             if (city.getVehicles().size() < VEHICLE_AMOUNT) {
                 Vehicle vehicle = new Vehicle();
 
-                vehicle.setColor(new Color((int) ((Math.random()*200)+50),(int) (Math.random()*200)+50,(int) (Math.random()*200)+50));
+                vehicle.setColor(new Color((int) ((Math.random() * 200) + 50), (int) (Math.random() * 200) + 50, (int) (Math.random() * 200) + 50));
             }
             long zeitvergangen = (long) (System.currentTimeMillis() - zeitvorsleep);
             if (zeitvergangen < 1000.0 / FPS) {

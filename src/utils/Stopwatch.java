@@ -10,7 +10,7 @@ public class Stopwatch {
     public static boolean dbg = false;
 
     public Stopwatch() {
-        startTime =  System.nanoTime();
+        startTime = System.nanoTime();
     }
 
     public Stopwatch start() {

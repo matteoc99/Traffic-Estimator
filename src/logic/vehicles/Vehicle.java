@@ -1,6 +1,8 @@
 package logic.vehicles;
 
-import logic.city.*;
+import logic.city.Lane;
+import logic.city.Node;
+import logic.city.Path;
 import logic.vehicles.driving.VehicleDriving;
 
 import java.awt.*;
@@ -35,7 +37,7 @@ public class Vehicle {
     /**
      * the actual speed right now
      */
-    private int currentSpeed=0;
+    private int currentSpeed = 0;
 
 
     /**
@@ -45,9 +47,8 @@ public class Vehicle {
 
     /**
      * how much the car has driven on this lane
-     *
      */
-    private double progressInLane=0;
+    private double progressInLane = 0;
 
     /**
      * where I want to
@@ -61,7 +62,7 @@ public class Vehicle {
     /**
      * paintwork of the car
      */
-    private Color color=Color.RED;
+    private Color color = Color.RED;
 
     /**
      * driving behaviour of the car
@@ -74,15 +75,13 @@ public class Vehicle {
     }
 
 
-
     /**
      * move method called every frame
      */
-    public void move()
-    {
-        if(vehicleDriving == null)
+    public void move() {
+        if (vehicleDriving == null)
             throw new RuntimeException("NO DRIVING BEHAVIOUR");
-       vehicleDriving.performMove();
+        vehicleDriving.performMove();
     }
 
 
@@ -109,6 +108,7 @@ public class Vehicle {
 
     /**
      * Get the Point relative to the progressInLane and lane position
+     *
      * @return the point where to draw the car
      */
     public Point currentPointOnLane() {
@@ -162,7 +162,6 @@ public class Vehicle {
     public void setCurrentSpeed(int currentSpeed) {
         this.currentSpeed = currentSpeed;
     }
-
 
     public Path getPath() {
         return path;

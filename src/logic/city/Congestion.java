@@ -29,17 +29,17 @@ public class Congestion {
     private int progressInLane;
 
 
-    public Congestion(Street affectedStreet, int flowAmount, int clearanceTime,int progressInLane) {
+    public Congestion(Street affectedStreet, int flowAmount, int clearanceTime, int progressInLane) {
         this.affectedStreet = affectedStreet;
         this.flowAmount = flowAmount;
         this.clearanceTime = clearanceTime;
-        this.progressInLane=progressInLane;
+        this.progressInLane = progressInLane;
         affectedStreet.addCongestion(this);
         //TODO affected lanes???
     }
 
 
-    public void kill(){
+    public void kill() {
         affectedStreet.removeCongestion(this);
     }
 

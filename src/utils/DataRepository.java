@@ -33,7 +33,7 @@ public class DataRepository {
         } catch (DataException e) {
             System.out.println(e.getMessage());
         } catch (ClassCastException e) {
-            System.out.println("ERROR: can't resolve repositoryFiles on given path ("+path+")" +
+            System.out.println("ERROR: can't resolve repositoryFiles on given path (" + path + ")" +
                     " as an HaspMap<String, ArrayList<String>>");
         }
     }
@@ -54,14 +54,14 @@ public class DataRepository {
     }
 
     public void print(String fileName, Serializable obj) throws DataException {
-        DataIOs.print(repositoryPath+"\\"+fileName, obj);
+        DataIOs.print(repositoryPath + "\\" + fileName, obj);
 
         if (!repositoryFiles.get(repositoryPath).contains(fileName))
             repositoryFiles.get(repositoryPath).add(fileName);
     }
 
     public Object read(String fileName) throws DataException {
-        return DataIOs.read(repositoryPath+"\\"+fileName);
+        return DataIOs.read(repositoryPath + "\\" + fileName);
     }
 
     /**
@@ -94,8 +94,8 @@ public class DataRepository {
      * @throws DataException when deletion fails
      */
     public void deleteFile(String fileName) throws DataException {
-        if (!new File(repositoryPath+"\\"+fileName).delete())
-            throw new DataException("Can't delete File: "+fileName);
+        if (!new File(repositoryPath + "\\" + fileName).delete())
+            throw new DataException("Can't delete File: " + fileName);
         else
             repositoryFiles.get(repositoryPath).remove(fileName);
     }

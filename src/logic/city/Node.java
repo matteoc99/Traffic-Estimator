@@ -1,7 +1,7 @@
 package logic.city;
 
-import utils.Utils;
 import logic.vehicles.Vehicle;
+import utils.Utils;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -68,6 +68,7 @@ public class Node {
 
     /**
      * returns a street based on the Id
+     *
      * @param id the needed id
      * @return the requested street, otherwise null
      */
@@ -217,7 +218,8 @@ public class Node {
 
     /**
      * This method is called when a Vehicle wants to drive over this node to another Node
-     * @param vehicle the vehicle that does the request
+     *
+     * @param vehicle  the vehicle that does the request
      * @param nextNode the desiered goal
      * @return true if the vehicle can drive, otherwise false
      */

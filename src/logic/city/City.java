@@ -81,6 +81,7 @@ public class City {
     /**
      * Creates a CityObject from the given JSonFile
      * The JsonFile contains nodes, streets, lanes and Streetlights, all with their attributes.
+     *
      * @param jsonFile to read from
      * @return created City
      */
@@ -150,11 +151,12 @@ public class City {
 
     /**
      * Created the right NodeObject depending on the nodes type
+     *
      * @param className type of the node
-     * @param city reference to the city it will be part of
-     * @param point position of the node
-     * @param fame how of the node, higher fame causes more cars to start or end their path on this node
-     * @param id of the node
+     * @param city      reference to the city it will be part of
+     * @param point     position of the node
+     * @param fame      how of the node, higher fame causes more cars to start or end their path on this node
+     * @param id        of the node
      */
     private static void createNodeByClassName(String className,
                                               City city,
@@ -177,8 +179,9 @@ public class City {
 
     /**
      * Performs the A*-Algorithm to find a path between two nodes.
-     * @param from startNode
-     * @param to endNode
+     *
+     * @param from    startNode
+     * @param to      endNode
      * @param vehicle that will take this path, not all vehicles may drive on all streets
      * @return the path
      */
@@ -257,7 +260,8 @@ public class City {
     }
 
     /**
-     * creates a Path from a random start and end. The probability depends on the fame of the nodes.
+     * Creates a Path from a random start and end. The probability depends on the fame of the nodes.
+     *
      * @param breaking to avoid StackOverflowExceptions
      * @return a Path
      */
@@ -280,6 +284,7 @@ public class City {
 
     /**
      * Picks a random Node depending on the nodes fame.
+     *
      * @return a Node
      */
     public Node getRandomNode() {
@@ -464,6 +469,7 @@ public class City {
     /**
      * Method returns the Street which is closest to the given Point.
      * Currently used for debugging
+     *
      * @param point to check
      * @return closest Street
      */
@@ -482,7 +488,7 @@ public class City {
             val = Math.abs(val);
             if (val < bestVal) {
                 bestVal = val;
-                bestIndex=i;
+                bestIndex = i;
             }
         }
         if (bestIndex == -1)
@@ -500,7 +506,7 @@ public class City {
             // TODO: 20.02.2018 calc by ordered lane.priority. higher priority = first evaluation
             street.calcStreet();
         }
-        for (Node node: nodes) {
+        for (Node node : nodes) {
             node.reset();
         }
     }
@@ -538,8 +544,8 @@ public class City {
     }
 
     public Rectangle getBounds() {
-        if(bounds==null)
-        return bounds = new Rectangle(0, 0, getMaxWidth(), getMaxHeight());
+        if (bounds == null)
+            return bounds = new Rectangle(0, 0, getMaxWidth(), getMaxHeight());
         else
             return bounds;
     }

@@ -1,8 +1,8 @@
 package tests;
 
-import utils.PathUtils;
 import logic.city.City;
 import logic.city.Path;
+import utils.PathUtils;
 
 /**
  * @author Matteo Cosi

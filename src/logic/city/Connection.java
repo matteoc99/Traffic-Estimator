@@ -19,11 +19,12 @@ public class Connection extends Node {
     /**
      * can add only two streets, because this node is a connection
      * connections are used to implement turns
+     *
      * @param street the two streets that are connected together
      */
     @Override
     public void addStreet(Street street) {
-        if(getStreetSize() < 2)
+        if (getStreetSize() < 2)
             super.addStreet(street);
         else
             throw new RuntimeException("TO MANY ADDED");

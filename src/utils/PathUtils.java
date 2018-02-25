@@ -6,9 +6,6 @@ import logic.city.Path;
 import java.io.*;
 import java.util.ArrayList;
 
-import static logic.city.Path.ATTR_MIN_KNOWLEGE;
-import static logic.city.Path.ATTR_NODE;
-
 /**
  * @author Matteo Cosi
  * @since 16.02.2018
@@ -34,7 +31,7 @@ public class PathUtils {
         for (int i = 0; i < count; i++) {
             Path path = city.getRandomPath(0);
             try {
-                if (path != null && path.isValid()&&!contains(path)) {
+                if (path != null && path.isValid() && !contains(path)) {
                     bw.write(path.toString());
                     bw.newLine();
                     paths.add(path);
@@ -52,7 +49,7 @@ public class PathUtils {
 
     private static boolean contains(Path path) {
         for (Path p : paths) {
-            if(p.equals(path)) {
+            if (p.equals(path)) {
                 return true;
             }
         }

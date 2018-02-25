@@ -1,7 +1,5 @@
 package logic.vehicles.driving;
 
-import logic.city.Connection;
-import logic.city.Lane;
 import logic.vehicles.Vehicle;
 
 /**
