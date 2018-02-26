@@ -4,24 +4,16 @@ import logic.city.City;
 import logic.city.Path;
 import utils.PathUtils;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * @author Matteo Cosi
  * @since 24.12.2017
  */
 public class Tester {
-    public static void main(String[] args) {
-        City city = City.createCityFromJson(new java.io.File("C:\\Users\\matte\\IdeaProjects\\Traffic-Estimator\\src\\parsing\\lana.json"));
+    public static void main(String[] args) throws InterruptedException {
+        for (int i = 0; i < 100; i++) {
 
-        Path path = PathUtils.getRandomPath(city);
-        System.out.println(path.toString());
-
-/*
-        Vehicle test = new Vehicle(1000, 50, PathUtils.getRandomPath(city), 1, 1);
-
-        while (true) {
-            city.calcCity();
         }
-
-  */
     }
 }

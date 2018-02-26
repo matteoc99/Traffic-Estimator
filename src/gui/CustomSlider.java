@@ -7,9 +7,9 @@ import java.awt.*;
  * @author Matteo Cosi
  * @since 06.08.2017
  */
-public class MySlider extends JSlider {
+public class CustomSlider extends JSlider {
 
-    public MySlider(int orientation, int min, int max, int value) {
+    public CustomSlider(int orientation, int min, int max, int value) {
         super(orientation, min, max, value);
         setPaintLabels(true);
         setBackground(Color.white);

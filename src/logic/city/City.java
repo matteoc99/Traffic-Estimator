@@ -568,6 +568,23 @@ public class City {
         return ret;
     }
 
+    /**
+     * a method work in progress
+     */
+    public ArrayList<Node> getVisibleNodes(double zoom, int xOff, int yOff, int maxWidth, int maxHeight) {
+        ArrayList<Node> ret = new ArrayList<>();
+        for (Node node : nodes) {
+            if (node.getX() / zoom + xOff < maxWidth
+                    && node.getX() / zoom + xOff > 0
+                    && node.getY() / zoom + yOff < maxHeight
+                    && node.getY() / zoom + yOff > 0) {
+                ret.add(node);
+            }
+        }
+
+        return ret;
+    }
+
     public ArrayList<Node> getNodes() {
         return nodes;
     }

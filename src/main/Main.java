@@ -1,7 +1,7 @@
 package main;
 
 import gui.ControlPanel;
-import gui.MySlider;
+import gui.CustomSlider;
 import gui.city.JCity;
 import logic.city.City;
 import logic.city.Node;
@@ -47,7 +47,7 @@ public class Main extends JFrame {
 
 
     //Slider controlls
-    public static int VEHICLE_AMOUNT = 15;
+    public static int VEHICLE_AMOUNT = 0;
 
 
     /**
@@ -288,8 +288,8 @@ public class Main extends JFrame {
         ret.setBackground(new Color(86, 90, 200));
         ret.setBounds(getWidth() - getWidth() / 6, 0, getWidth() / 6, getHeight());
 
-        MySlider fps = new MySlider(JSlider.HORIZONTAL, 0, 1000, FPS);
-        MySlider traffic = new MySlider(JSlider.HORIZONTAL, 0, 1000, VEHICLE_AMOUNT);
+        CustomSlider fps = new CustomSlider(JSlider.HORIZONTAL, 0, 1000, FPS);
+        CustomSlider traffic = new CustomSlider(JSlider.HORIZONTAL, 0, 1000, VEHICLE_AMOUNT);
 
 
         int xOff = ret.getWidth() / 4;

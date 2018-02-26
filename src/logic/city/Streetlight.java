@@ -6,11 +6,15 @@ package logic.city;
  */
 public class Streetlight {
 
+    public enum state{
+        RED,GREEN,YELLOW
+    }
+
     /**
      * 0:Red
      * 1:Green
      */
-    private int state;
+    private state currentState;
 
     /**
      * Reference to the Lane this Streetlight is part of
@@ -28,34 +32,27 @@ public class Streetlight {
     private Direction direction;
 
 
-    public Streetlight(int state, Lane parentLane, StreetlightLogic parentLogic, Direction direction) {
-        this.state = state;
-        this.parentLane = parentLane;
+    public Streetlight(state currentState, Lane parentLane, StreetlightLogic parentLogic, Direction direction) {
+        this.currentState = currentState;    this.parentLane = parentLane;
         this.parentLogic = parentLogic;
         this.direction = direction;
     }
 
     public Streetlight(Lane parentLane, StreetlightLogic parentLogic, Direction direction) {
-        this(0, parentLane, parentLogic, direction);
+        this(Streetlight.state.RED,parentLane,parentLogic,direction);
     }
 
     public enum Direction {
         STRAIGHT, RIGHT, LEFT
     }
 
-    /**
-     * Change state
-     */
-    public void toggle() {
-        state = (state == 1) ? 0 : 1;
+
+    public Streetlight.state getState() {
+        return currentState;
     }
 
-    public void setState(int state) {
-        this.state = state;
-    }
-
-    public int getState() {
-        return state;
+    public void setState(Streetlight.state currentState) {
+        this.currentState = currentState;
     }
 
     public Lane getParentLane() {

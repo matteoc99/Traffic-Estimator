@@ -7,6 +7,9 @@ import javax.swing.*;
  * @since 25.12.2017
  */
 public class ControlPanel extends JPanel {
+    /**
+     * contains all the controls
+     */
     public ControlPanel() {
         setLayout(null);
     }

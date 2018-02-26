@@ -75,7 +75,6 @@ public class JCity extends JPanel {
         int newWidth = (int) (city.getBounds().width * zoom);
         int newHeight = (int) (city.getBounds().height * zoom);
         if (preciseZoom) {
-
             setLocation(getX() + (getWidth() - newWidth) / 2, getY() + (getHeight() - newHeight) / 2);
         }
         setSize(newWidth, newHeight);
