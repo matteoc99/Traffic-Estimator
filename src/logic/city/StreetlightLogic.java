@@ -29,7 +29,6 @@ public class StreetlightLogic extends Thread {
         getFirstGreenStreetLight().toggle();
 
 
-
         try {
             Thread.sleep(cycle * 1000 / streetlights.size());
         } catch (Exception e) {
@@ -38,20 +37,17 @@ public class StreetlightLogic extends Thread {
     }
 
     private Streetlight getNextGreen() {
-        for (int i = 0; i < streetlights.size(); i++) {
-            int gIndex = streetlights.indexOf(getFirstGreenStreetLight());
-            if (gIndex == -1)
-                return null;
-            if (gIndex < streetlights.size() - 1) {
-                return streetlights.get(gIndex + 1);
-            } else {
-                if (gIndex == streetlights.size() - 1)
-                    return streetlights.get(0);
-                else
-                    throw new RuntimeException("WTF?? should not be happening");
-            }
+        int gIndex = streetlights.indexOf(getFirstGreenStreetLight());
+        if (gIndex == -1)
+            return null;
+        if (gIndex < streetlights.size() - 1) {
+            return streetlights.get(gIndex + 1);
+        } else {
+            if (gIndex == streetlights.size() - 1)
+                return streetlights.get(0);
+            else
+                throw new RuntimeException("WTF?? should not be happening");
         }
-        return null;
     }
 
     public Streetlight getFirstGreenStreetLight() {
