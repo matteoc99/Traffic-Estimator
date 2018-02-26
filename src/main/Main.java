@@ -66,7 +66,7 @@ public class Main extends JFrame {
         c.add(jCity);
         setResizable(false);
 
-        //getNodesPos durchschnitt
+        //getNodesPos average
         while (getAvgNodePosition() > getHeight() / 2) {
             zoom /= 1.5;
         }
@@ -203,7 +203,7 @@ public class Main extends JFrame {
                 } else {
                     //zoom--
                     if (preciseZoom) {
-                        //// TODO: 17.02.2018 kp wie
+                        // TODO: 17.02.2018 kp wie
                     }
                     if (fineZoom) {
                         if (zoom > 0.01)

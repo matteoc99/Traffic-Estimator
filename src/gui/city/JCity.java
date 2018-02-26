@@ -24,7 +24,9 @@ public class JCity extends JPanel {
      */
     private City city;
 
-    boolean firsttime = true;
+    private boolean firstPaint = true;
+
+    private boolean pslFlag = true;
 
     public JCity(City city) {
         this.city = city;
@@ -43,14 +45,20 @@ public class JCity extends JPanel {
 
     @Override
     protected void paintComponent(Graphics g) {
+        if (pslFlag)
+            paintStreetLines((Graphics2D) g);
 
+
+    }
+
+    private void paintStreetLines(Graphics2D g) {
         //drawNodes
       /*  for (Node node : nodes) {
             g.setColor(Color.BLUE);
             g.drawOval(node.getX(),node.getY(),8,8);
         }*/
 
-        Graphics2D g2 = (Graphics2D) g;
+        Graphics2D g2 = g;
         RenderingHints rh = new RenderingHints(
                 RenderingHints.KEY_TEXT_ANTIALIASING,
                 RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
@@ -78,8 +86,8 @@ public class JCity extends JPanel {
             setLocation(getX() + (getWidth() - newWidth) / 2, getY() + (getHeight() - newHeight) / 2);
         }
         setSize(newWidth, newHeight);
-        if (firsttime) {
-            firsttime = false;
+        if (firstPaint) {
+            firstPaint = false;
             System.out.println("painting done");
         }
     }
@@ -117,5 +125,14 @@ public class JCity extends JPanel {
                     4 * (int) (zoom), 4 * (int) (zoom));
 
         }
+    }
+
+    public void setPSLFlag(boolean bool) {
+        this.pslFlag = bool;
+    }
+
+    public boolean tooglePSLFlag() {
+        pslFlag = !pslFlag;
+        return pslFlag;
     }
 }
