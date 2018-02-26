@@ -10,7 +10,9 @@ public class StreetlightLogic extends Thread {
     private MultiConnection parent;
     private ArrayList<Streetlight> streetlights;
 
+    //circular selection
     private static final int cycle = 10;
+
 
     public StreetlightLogic(String name, MultiConnection parent) {
         super(name);
@@ -19,49 +21,60 @@ public class StreetlightLogic extends Thread {
 
     @Override
     public void run() {
-        //setGreen -> Yellow
-        ArrayList<Streetlight> green=getGreenStreetLights();
-        for (int i = 0; i < green.size(); i++) {
-            green.get(i).setState(Streetlight.state.YELLOW);
-        }
 
-        //setYellow -> Red
-        ArrayList<Streetlight> yellow=getYellowStreetLights();
-        for (int i = 0; i < green.size(); i++) {
-            green.get(i).setState(Streetlight.state.YELLOW);
-        }
+        //set one red -> green
+        getNextGreen().toggle();
 
-        // TODO: 23.02.2018
+        //setGreen -> Red
+        getFirstGreenStreetLight().toggle();
+
 
 
         try {
-            Thread.sleep(cycle*1000/streetlights.size());
+            Thread.sleep(cycle * 1000 / streetlights.size());
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+    private Streetlight getNextGreen() {
+        for (int i = 0; i < streetlights.size(); i++) {
+            int gIndex = streetlights.indexOf(getFirstGreenStreetLight());
+            if (gIndex == -1)
+                return null;
+            if (gIndex < streetlights.size() - 1) {
+                return streetlights.get(gIndex + 1);
+            } else {
+                if (gIndex == streetlights.size() - 1)
+                    return streetlights.get(0);
+                else
+                    throw new RuntimeException("WTF?? should not be happening");
+            }
+        }
+        return null;
+    }
 
-    public ArrayList<Streetlight> getGreenStreetLights(){
+    public Streetlight getFirstGreenStreetLight() {
+        for (Streetlight streetlight : streetlights) {
+            if (streetlight.getState() == 1)
+                return streetlight;
+        }
+        return null;
+    }
+
+    public ArrayList<Streetlight> getGreenStreetLights() {
         ArrayList<Streetlight> ret = new ArrayList<>();
-        for (Streetlight streetlight: streetlights) {
-            if(streetlight.getState()== Streetlight.state.GREEN)
+        for (Streetlight streetlight : streetlights) {
+            if (streetlight.getState() == 1)
                 ret.add(streetlight);
         }
         return ret;
     }
-    public ArrayList<Streetlight> getRedStreetLights(){
+
+    public ArrayList<Streetlight> getRedStreetLights() {
         ArrayList<Streetlight> ret = new ArrayList<>();
-        for (Streetlight streetlight: streetlights) {
-            if(streetlight.getState()== Streetlight.state.RED)
-                ret.add(streetlight);
-        }
-        return ret;
-    }
-    public ArrayList<Streetlight> getYellowStreetLights(){
-        ArrayList<Streetlight> ret = new ArrayList<>();
-        for (Streetlight streetlight: streetlights) {
-            if(streetlight.getState()== Streetlight.state.YELLOW)
+        for (Streetlight streetlight : streetlights) {
+            if (streetlight.getState() == 0)
                 ret.add(streetlight);
         }
         return ret;
