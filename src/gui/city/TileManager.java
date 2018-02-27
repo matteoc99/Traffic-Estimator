@@ -61,12 +61,18 @@ public class TileManager {
      * Returns the image from OpenStreetMap on the given position and zoom
      * Creates a black image if it can't find the right one
      *
-     * @param lat  latitude
-     * @param lon  longitude
+     * @param point position (index-like)
      * @param zoom 1-19
      * @return BufferedImage
      */
     public static BufferedImage getTileImage(Point point, int zoom) {
+        /*
+        if (true) { // testing
+            BufferedImage bufferedImage = new BufferedImage(256, 256, BufferedImage.TYPE_INT_RGB);
+            bufferedImage.getGraphics().drawString(point.toString(), 10, 128);
+            return bufferedImage;
+        }
+        */
         try {
             return ImageIO.read(new URL(getTileLink(point, zoom)));
         } catch (IOException e) {
