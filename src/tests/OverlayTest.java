@@ -2,6 +2,7 @@ package tests;
 
 import gui.city.Overlay;
 import gui.city.TileManager;
+import utils.Stopwatch;
 
 import javax.swing.*;
 import java.awt.*;
@@ -19,7 +20,6 @@ public class OverlayTest {
     static Overlay overlay;
     public static void main(String[] args) {
         overlay = new Overlay(46.6138900, 11.1524583, 19);
-        System.out.println(overlay.test());
 
         JFrame frame = new JFrame();
         frame.getContentPane().setLayout(new GridLayout());

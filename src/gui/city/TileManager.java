@@ -7,12 +7,11 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.net.URL;
 import java.security.GeneralSecurityException;
 import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Maximilian Estfeller
@@ -21,9 +20,9 @@ import java.util.ArrayList;
 public class TileManager {
 
     /*
-  Handshake for https files
-  https://stackoverflow.com/a/18576728
- */
+    Handshake for https files
+    https://stackoverflow.com/a/18576728
+    */
     static {
         final TrustManager[] trustAllCertificates = new TrustManager[]{
                 new X509TrustManager() {
@@ -53,40 +52,38 @@ public class TileManager {
         }
     }
 
-    public ArrayList<BufferedImage> getTiles(int x, int y, int width, int height, int zoomLevel) {
-        return null;
-    }
+    // Images are stored in Maps, keyOrder: zoom, x, y
+    private Map<Integer, Map<Integer, Map<Integer, BufferedImage>>> images = new HashMap<>();
 
+    public TileBuffer tileBuffer = new TileBuffer(this);
+
+    public Overlay overlay;
+
+    public TileManager(Overlay overlay) {
+        this.overlay = overlay;
+    }
     /**
      * Returns the image from OpenStreetMap on the given position and zoom
-     * Creates a black image if it can't find the right one
      *
      * @param point position (index-like)
      * @param zoom 1-19
-     * @return BufferedImage
+     * @return BufferedImage or null if it isn't stored yet
      */
-    public static BufferedImage getTileImage(Point point, int zoom) {
-        /*
-        if (true) { // testing
-            BufferedImage bufferedImage = new BufferedImage(256, 256, BufferedImage.TYPE_INT_RGB);
-            bufferedImage.getGraphics().drawString(point.toString(), 10, 128);
-            return bufferedImage;
-        }
-        */
+    public synchronized BufferedImage getTileImage(Point point, int zoom) {
         try {
-            return ImageIO.read(new URL(getTileLink(point, zoom)));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return new BufferedImage(256, 256,
-                BufferedImage.TYPE_INT_RGB);
+            BufferedImage image = images.get(zoom).get(point.x).get(point.y);
+            if (image != null)
+                return image;
+        } catch (Exception ignored) {}
+
+        return null;
     }
 
-    public static String getTileLink(Point point, int zoom) {
+    public String getTileLink(Point point, int zoom) {
         return "https://tile.openstreetmap.org/" + zoom + "/" + point.x + "/" + point.y + ".png";
     }
 
-    public static Point getTilePoint(double lat, double lon, int zoom) {
+    public Point getTilePoint(double lat, double lon, int zoom) {
         int xTile = (int) Math.floor((lon + 180) / 360 * (1 << zoom));
         int yTile = (int) Math.floor((1 - Math.log(Math.tan(Math.toRadians(lat)) + 1 / Math.cos(Math.toRadians(lat))) / Math.PI) / 2 * (1 << zoom));
         if (xTile < 0)
@@ -99,5 +96,11 @@ public class TileManager {
             yTile = ((1 << zoom) - 1);
 
         return new Point(xTile, yTile);
+    }
+
+    public synchronized void addImage(BufferedImage image, int zoom, Point point) {
+        images.putIfAbsent(zoom, new HashMap<>());
+        images.get(zoom).putIfAbsent(point.x, new HashMap<>());
+        images.get(zoom).get(point.x).putIfAbsent(point.y, image);
     }
 }

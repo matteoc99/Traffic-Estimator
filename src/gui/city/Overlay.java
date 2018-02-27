@@ -1,5 +1,7 @@
 package gui.city;
 
+import utils.Stopwatch;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -26,6 +28,8 @@ public class Overlay extends JPanel {
 
     private ArrayList<ArrayList<JLabel>> labels = new ArrayList<>();
 
+    TileManager tileManager = new TileManager(this);
+
     public Overlay(double initialLat, double initialLon, int zoom) {
         this.initialLat = initialLat;
         this.initialLon = initialLon;
@@ -35,10 +39,8 @@ public class Overlay extends JPanel {
         this.setLayout(null);
 
         setCurrentZoomLevel(zoom);
-        //arrangeLabelArray();
-        //layoutLabels();
-
-        this.removeAll();
+        arrangeLabelArray();
+        fillLabels();
     }
 
     private void layoutLabels() {
@@ -47,7 +49,7 @@ public class Overlay extends JPanel {
             ArrayList<JLabel> labelRow = labels.get(x);
             for (int y = 0; y < labelRow.size(); y++) {
                 JLabel label = labelRow.get(y);
-                label.setBounds(x*256, y*256, 256, 256);
+                label.setBounds((x-1)*256, (y-1)*256, 256, 256);
                 this.add(label);
             }
         }
@@ -56,7 +58,7 @@ public class Overlay extends JPanel {
     private void setCurrentZoomLevel(int zoom) {
         if (zoom <= 19 && zoom > 5) {
             if (!initialList.containsKey(zoom))
-                initialList.put(zoom, TileManager.getTilePoint(initialLat, initialLon, zoom));
+                initialList.put(zoom, tileManager.getTilePoint(initialLat, initialLon, zoom));
             this.currentZoomLevel = zoom;
         }
     }
@@ -98,10 +100,21 @@ public class Overlay extends JPanel {
             ArrayList<JLabel> labelRow = labels.get(x);
             for (int y = 0; y < labelRow.size(); y++) {
                 JLabel label = labelRow.get(y);
-                label.setIcon(new ImageIcon(getTileWithExtraOffset(x, y)));
+
+                trySettingIcon(x, y, label);
             }
         }
-        repaint();
+    }
+
+    public void fillLabel (JLabel label) {
+        for (int x = 0; x < labels.size(); x++) {
+            ArrayList<JLabel> labelRow = labels.get(x);
+            for (int y = 0; y < labelRow.size(); y++) {
+                JLabel l = labelRow.get(y);
+                if (label.equals(l))
+                    trySettingIcon(x, y, l);
+            }
+        }
     }
 
     private void arrangeLabelArray() {
@@ -130,7 +143,7 @@ public class Overlay extends JPanel {
                 } catch (Exception e) {
                     label = new JLabel();
                 }
-                label.setIcon(new ImageIcon(getTileWithExtraOffset(xIndex, yIndex)));
+                trySettingIcon(xIndex, yIndex, label);
                 newRow.add(yIndex, label);
             }
 
@@ -145,25 +158,32 @@ public class Overlay extends JPanel {
         System.out.println(labels.size() + "*" + labels.get(0).size());
     }
 
+    private void trySettingIcon(int xIndex, int yIndex, JLabel label) {
+        BufferedImage bi = getTileWithExtraOffset(xIndex, yIndex);
+        if (bi != null)
+            label.setIcon(new ImageIcon(bi));
+        else {
+            Point p = getTilePointWithExtraOffset(xIndex, yIndex);
+            tileManager.tileBuffer.putLabelToBuffer(label, currentZoomLevel, p);
+            BufferedImage tempBI = new BufferedImage(256, 256, BufferedImage.TYPE_INT_RGB);
+            tempBI.getGraphics().drawString(p.toString(), 10, 128);
+            label.setIcon(new ImageIcon(tempBI));
+        }
+        label.repaint();
+    }
+
     public BufferedImage getTileWithExtraOffset(int extraX, int extraY) {
+        Point point = getTilePointWithExtraOffset(extraX, extraY);
+        return tileManager.getTileImage(point, currentZoomLevel);
+    }
+
+    public Point getTilePointWithExtraOffset(int extraX, int extraY) {
         int power = (19 - currentZoomLevel);
         Point point = ((Point) initialList.get(currentZoomLevel).clone());
         point.setLocation(
                 point.getX()+(xOffset/Math.pow(2, power))+extraX,
                 point.getY()+(yOffset/Math.pow(2, power))+extraY
         );
-        return TileManager.getTileImage(point, currentZoomLevel);
-    }
-
-    public Point test() {
-        int power = (19 - currentZoomLevel);
-        Point point = ((Point) initialList.get(currentZoomLevel).clone());
-        point.setLocation(
-                point.getX()+(xOffset/Math.pow(2, power)),
-                point.getY()+(yOffset/Math.pow(2, power))
-        );
-        System.out.println(point);
-        System.out.println("Offset:"+xOffset+" "+yOffset);
         return point;
     }
 

@@ -367,13 +367,8 @@ public class Main extends JFrame {
     }
 
     private void calcCity() {
-        Stopwatch timer = new Stopwatch().start();
-
         city.calcCity();
-        timer.printAndReset("Main_BDG_ME: 1: ");
         repaint();
-        timer.printAndReset("Main_BDG_ME: 2: ");
         jCity.repaint();
-        timer.printAndReset("Main_BDG_ME: 3: ");
     }
 }
