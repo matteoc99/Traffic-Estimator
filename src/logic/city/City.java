@@ -235,12 +235,10 @@ public class City {
                 }
                 if (closed.contains(neighbour))
                     isReachable = false;
-                if (vehicle == null)
-                    vehicle = new Vehicle();
                 if (isReachable) {
                     if (!(open.contains(neighbour)) ||
-                            current.getWalkedCost() + currentStreet.getTotalCost(vehicle.getVehicleMaxSpeed()) < neighbour.getWalkedCost()) {
-                        neighbour.setWalkedCost(current.getWalkedCost() + currentStreet.getTotalCost(vehicle.getVehicleMaxSpeed()));
+                            current.getWalkedCost() + currentStreet.getTotalCost(vehicle==null?currentStreet.getMaxSpeed():vehicle.getVehicleMaxSpeed()) < neighbour.getWalkedCost()) {
+                        neighbour.setWalkedCost(current.getWalkedCost() + currentStreet.getTotalCost(vehicle==null?currentStreet.getMaxSpeed():vehicle.getVehicleMaxSpeed()));
                         neighbour.setPreviousNode(current);
                         if (!(open.contains(neighbour))) {
                             open.add(neighbour);

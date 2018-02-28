@@ -663,9 +663,9 @@ public class Network {
             for (DataSets.DataSet data :
                     dataset) {
                 double[] y = processData(data.getInputs());
-                double[] error = new double[data.inputs.size()];
+                double[] error = new double[data.outputs.size()];
                 for (int i = 0; i < y.length; i++) {
-                    error[i]= data.outputs.get(i)-y[i];
+                    error[i] = data.outputs.get(i) - y[i];
                 }
                 propagateBack(rate, error);
             }

@@ -1,8 +1,10 @@
 package logic.vehicles;
 
+import logic.city.City;
 import logic.city.Lane;
 import logic.city.Node;
 import logic.city.Path;
+import logic.vehicles.driving.Character;
 import logic.vehicles.driving.VehicleDriving;
 
 import java.awt.*;
@@ -69,9 +71,14 @@ public class Vehicle {
      */
     private VehicleDriving vehicleDriving;
 
+    /**
+     * The city I drive into
+     */
+    private City city;
 
-    public Vehicle() {
-
+    public Vehicle(City city) {
+        this.city= city;
+        vehicleDriving = new VehicleDriving(this, Character.BUDDHA);
     }
 
 
@@ -209,5 +216,19 @@ public class Vehicle {
 
     public void setVehicleDriving(VehicleDriving vehicleDriving) {
         this.vehicleDriving = vehicleDriving;
+    }
+
+    public void incrementCurrentSpeed(double v) {
+        currentSpeed+=v;
+        if(currentSpeed<0)
+            currentSpeed=0;
+    }
+
+    public void incrementProgressInLane(double currentSpeed) {
+        progressInLane+=currentSpeed/10; // TODO: 28.02.2018 trimm
+    }
+
+    public City getCity() {
+        return city;
     }
 }

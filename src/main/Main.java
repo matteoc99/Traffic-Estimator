@@ -47,7 +47,7 @@ public class Main extends JFrame {
 
 
     //Slider controlls
-    public static int VEHICLE_AMOUNT = 0;
+    public static int VEHICLE_AMOUNT = 1;
 
 
     /**
@@ -338,7 +338,7 @@ public class Main extends JFrame {
     public static void main(String[] args) {
         System.out.println("Main:" + new Timestamp(System.currentTimeMillis()) + " Creating City from .json...");
         City city = City.createCityFromJson(
-                new File(System.getProperty("user.dir") + "\\src\\parsing\\res\\bozenLarge.json"));
+                new File(System.getProperty("user.dir") + "\\src\\parsing\\res\\testCity.json"));
 
         System.out.println("Main:" + new Timestamp(System.currentTimeMillis()) + " Starting GUI...");
         Main main = new Main(city);
@@ -347,8 +347,7 @@ public class Main extends JFrame {
             zeitvorsleep = System.currentTimeMillis();
             main.calcCity();
             if (city.getVehicles().size() < VEHICLE_AMOUNT) {
-                Vehicle vehicle = new Vehicle();
-
+                Vehicle vehicle = new Vehicle(city);
                 vehicle.setColor(new Color((int) ((Math.random() * 200) + 50), (int) (Math.random() * 200) + 50, (int) (Math.random() * 200) + 50));
             }
             long zeitvergangen = (long) (System.currentTimeMillis() - zeitvorsleep);

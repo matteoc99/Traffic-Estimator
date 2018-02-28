@@ -1,9 +1,12 @@
 package logic.vehicles.driving;
 
 import NeuralNetworkLibrary.src.network.Network;
+import logic.city.Connection;
 import logic.city.Lane;
+import logic.city.Path;
 import logic.city.Streetlight;
 import logic.vehicles.Vehicle;
+import utils.PathUtils;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -12,7 +15,7 @@ import java.util.ArrayList;
  * @author Matteo Cosi
  * @since 21.02.2018
  */
-public abstract class VehicleDriving implements DrivingInterface {
+public class VehicleDriving implements DrivingInterface {
 
     private Action currentAction = Action.NO_ACTION;
     private Vehicle vehicle = null;
@@ -47,6 +50,7 @@ public abstract class VehicleDriving implements DrivingInterface {
      * frames until the driver reacts to not expected or sudden things
      */
     private int reactionTime;
+    private int reactionTimePassed = 0;
 
 
     /**
@@ -73,6 +77,8 @@ public abstract class VehicleDriving implements DrivingInterface {
 
     public VehicleDriving(Vehicle vehicle) {
         this.vehicle = vehicle;
+        setUp();
+        generateRandomBehaviour();
     }
 
     public VehicleDriving(Vehicle vehicle, Character character) {
@@ -123,10 +129,12 @@ public abstract class VehicleDriving implements DrivingInterface {
 
     @Override
     public Action getNextAction() {
+        System.out.println("get next");
         if (network == null) {
             DataSets dataSets = new DataSets();
             dataSets.generateDataSets();
-            network = new Network(7, 4, 1, new int[]{400});
+            network = new Network(7, 4, 1, new int[]{300});
+            System.out.println("started training");
             network.train(dataSets.getDataset());
         }
         double[] data = new double[network.getLayerByIndex(0).getNeuronCount()];
@@ -156,7 +164,8 @@ public abstract class VehicleDriving implements DrivingInterface {
 
     @Override
     public Action evaluateAction(Action action) {
-        return null;
+        // TODO: 28.02.2018 evaluate
+        return action;
     }
 
     @Override
@@ -164,13 +173,16 @@ public abstract class VehicleDriving implements DrivingInterface {
         if (currentAction == Action.NO_ACTION) {
             currentAction = getNextAction();
         }
+
+        System.out.println(currentAction);
+        // TODO: 28.02.2018 check if I need to step aside
         currentAction = evaluateAction(currentAction);
         switch (currentAction) {
             case ABORT:
                 abortAction();
                 break;
             case SURPASS:
-                surpassAction();
+                    surpassAction();
                 break;
             case STEP_ASIDE:
                 stepAsideAction();
@@ -179,7 +191,7 @@ public abstract class VehicleDriving implements DrivingInterface {
                 followLaneAction();
                 break;
             case SWITCH_LANE:
-                switchLaneAction();
+                    switchLaneAction();
                 break;
             case ADJUST_SPEED:
                 adjustSpeedAction();
@@ -187,7 +199,12 @@ public abstract class VehicleDriving implements DrivingInterface {
         }
     }
 
-    public abstract void generateBehaviour();
+    public void generateRandomBehaviour() {
+        considerative = Math.random();
+        agressivity = Math.random();
+        desiredSpeed = Math.random();
+        // TODO: 28.02.2018 make better
+    }
 
     @Override
     public void actionCompleted() {
@@ -195,31 +212,42 @@ public abstract class VehicleDriving implements DrivingInterface {
     }
 
     public void setUp() {
-        // TODO: 21.02.2018 setup variables, create path for vehicle
-        /*
-        old get path
-        if (path != null && path.isValid()) {
-            path.resetProgress();
-            prevGoal = city.getNodeById(path.getGoalAndIncrement());
-            currentGoal = city.getNodeById(path.getGoalAndIncrement());
+        vehicle.setProgressInLane(0);
+        Path path = PathUtils.getRandomPath(vehicle.getCity());
 
-            if (currentGoal != null && prevGoal != null) {
-                Lane lane = prevGoal.getLaneTo(currentGoal);
-                changeLane(lane);
+        vehicle.setPath(path);
+        if (vehicle.getPath() != null && vehicle.getPath().isValid()) {
+            vehicle.getPath().resetProgress();
+            vehicle.setPrevGoal(vehicle.getCity().getNodeById(vehicle.getPath().getGoalAndIncrement()));
+            vehicle.setCurrentGoal(vehicle.getCity().getNodeById(vehicle.getPath().getGoalAndIncrement()));
+
+            if (vehicle.getCurrentGoal() != null && vehicle.getPrevGoal() != null) {
+                Lane lane = vehicle.getPrevGoal().getLaneTo(vehicle.getCurrentGoal());
+                vehicle.changeLane(lane);
             } else {
                 System.out.println("BAD PATH");
             }
         } else
             System.out.println("DIE2");
-         */
+
+
     }
 
     private void abortAction() {
-
+        currentAction = getNextAction();
     }
 
     private void surpassAction() {
-
+        ArrayList<Lane> neighbourLanes = vehicle.getLane().getNeighbourLanes();
+        if (neighbourLanes.size() == 2) {
+            if (neighbourLanes.get(0).getIndex() < vehicle.getLane().getIndex())
+                vehicle.changeLane(neighbourLanes.get(0));
+            else
+                vehicle.changeLane(neighbourLanes.get(1));
+        } else {
+            vehicle.changeLane(neighbourLanes.get(0));
+        }
+        setCurrentAction(Action.FOLLOW_LANE);
     }
 
     private void stepAsideAction() {
@@ -228,16 +256,69 @@ public abstract class VehicleDriving implements DrivingInterface {
 
     private void followLaneAction() {
 
+        //todo from time to time evaluate other actions because --> once follow lane u are stuck until lane change
+        if (vehicle.getProgressInLane() / vehicle.getLane().getLength() > 0.98) {
+            //change lane or die if path end is reached
+            if (vehicle.getLane().equals(vehicle.getPrevGoal().getLaneTo(vehicle.getCurrentGoal()))) {
+                vehicle.setPrevGoal(vehicle.getCurrentGoal());
+                vehicle.setCurrentGoal(vehicle.getCity().getNodeById(vehicle.getPath().getGoalAndIncrement()));
+            }
+            if (vehicle.getCurrentGoal() == null) {
+                vehicle.getLane().removeVehicle(vehicle);
+            } else {
+                setCurrentAction(Action.NO_ACTION);
+                boolean canGo = vehicle.getPrevGoal().register(vehicle, vehicle.getCurrentGoal());
+                if (canGo) {
+                    Lane lane = vehicle.getPrevGoal().getLaneTo(vehicle.getCurrentGoal());
+                    vehicle.changeLane(lane);
+                    vehicle.setProgressInLane(0);
+                   // // TODO: 28.02.2018 find bug why car stops at every node and not only at cconnections. even without the code below
+                    // if (!(vehicle.getPrevGoal() instanceof Connection))
+                   //     vehicle.setCurrentSpeed(vehicle.getVehicleMaxSpeed() / 8);
+                } else {
+                    // me have to wait :(
+                }
+            }
+        } else {
+            if (vehicle.getProgressInLane() / vehicle.getLane().getLength() > 0.80) {
+                //goto better lane for dir change
+            }
+            adjustSpeedAction(); // always adjust speed a bit
+            vehicle.incrementProgressInLane(vehicle.getCurrentSpeed());
+            if (vehicle.getProgressInLane() > vehicle.getLane().getLength())
+                vehicle.setProgressInLane(vehicle.getLane().getLength());
+
+        }
     }
 
     private void switchLaneAction() {
-
+        System.out.println("swich");
+        ArrayList<Lane> neighbourLanes = vehicle.getLane().getNeighbourLanes();
+        if (neighbourLanes.size() == 2) {
+            // TODO: 28.02.2018 well, which one? I chose right one
+            if (neighbourLanes.get(0).getIndex() > vehicle.getLane().getIndex())
+                vehicle.changeLane(neighbourLanes.get(0));
+            else
+                vehicle.changeLane(neighbourLanes.get(1));
+        } else {
+            if (!neighbourLanes.isEmpty())
+                vehicle.changeLane(neighbourLanes.get(0));
+        }
+        setCurrentAction(Action.FOLLOW_LANE);
     }
 
     private void adjustSpeedAction() {
-
+        if (desiredSpeed <= 0.1)
+            desiredSpeed = 0.1;
+        double goalSpeed = desiredSpeed * vehicle.getLane().getParent().getMaxSpeed() * 2;
+        Vehicle nextVehicle = vehicle.getLane().getNextVehicle((int) vehicle.getProgressInLane());
+        if (vehicle.getCurrentSpeed() > goalSpeed&& !(nextVehicle.getProgressInLane() - vehicle.getCurrentSpeed() - safetyDistance > vehicle.getProgressInLane())) {
+            vehicle.incrementCurrentSpeed(-Math.log(goalSpeed));
+        } else {
+            vehicle.incrementCurrentSpeed(Math.log(goalSpeed));
+        }
+        currentAction= Action.FOLLOW_LANE;
     }
-
 
     public void setVehicle(Vehicle vehicle) {
         this.vehicle = vehicle;
