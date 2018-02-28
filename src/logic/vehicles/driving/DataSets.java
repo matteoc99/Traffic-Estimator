@@ -160,7 +160,7 @@ public class DataSets {
         dataSet.inputs.add(0.8);//desiredSpeed
         dataSet.inputs.add(0.7);//agressivity
         dataSet.inputs.add(0.1);//distance car behinde(0-1) 0--> close
-        dataSet.inputs.add(0.1);//distance car infront(0-1) 0--> close
+        dataSet.inputs.add(0.2);//distance car infront(0-1) 0--> close
         dataSet.inputs.add(0.4);//isLeftlaneFree 0 oder 1
         dataSet.inputs.add(0.8);//isRightLaneFree 0 oder 1
         dataSet.outputs.add(0.4);//SURPASS
@@ -238,9 +238,47 @@ public class DataSets {
         dataSet.outputs.add(1.0);//SWITCH_LANE
         dataSet.outputs.add(0.2);//ADJUST_SPEED
         dataset.add(dataSet);
-
-
-
-
+//1 ADJUST_SPEED
+        dataSet = new DataSets.DataSet();
+        dataSet.inputs.add(0.5);//considerative
+        dataSet.inputs.add(0.5);//desiredSpeed
+        dataSet.inputs.add(0.5);//agressivity
+        dataSet.inputs.add(0.5);//distance car behinde(0-1) 0--> close
+        dataSet.inputs.add(0.9);//distance car infront(0-1) 0--> close
+        dataSet.inputs.add(0.5);//isLeftlaneFree 0 oder 1
+        dataSet.inputs.add(0.5);//isRightLaneFree 0 oder 1
+        dataSet.outputs.add(0.1);//SURPASS
+        dataSet.outputs.add(1.0);//FOLLOW_LANE
+        dataSet.outputs.add(0.4);//SWITCH_LANE
+        dataSet.outputs.add(0.1);//ADJUST_SPEED
+        dataset.add(dataSet);
+//2 ADJUST_SPEED
+        dataSet = new DataSets.DataSet();
+        dataSet.inputs.add(0.8);//considerative
+        dataSet.inputs.add(0.1);//desiredSpeed
+        dataSet.inputs.add(0.1);//agressivity
+        dataSet.inputs.add(0.2);//distance car behinde(0-1) 0--> close
+        dataSet.inputs.add(0.9);//distance car infront(0-1) 0--> close
+        dataSet.inputs.add(0.0);//isLeftlaneFree 0 oder 1
+        dataSet.inputs.add(1.0);//isRightLaneFree 0 oder 1
+        dataSet.outputs.add(0.0);//SURPASS
+        dataSet.outputs.add(0.4);//FOLLOW_LANE
+        dataSet.outputs.add(0.9);//SWITCH_LANE
+        dataSet.outputs.add(0.9);//ADJUST_SPEED
+        dataset.add(dataSet);
+//3 ADJUST_SPEED
+        dataSet = new DataSets.DataSet();
+        dataSet.inputs.add(0.6);//considerative
+        dataSet.inputs.add(0.5);//desiredSpeed
+        dataSet.inputs.add(0.3);//agressivity
+        dataSet.inputs.add(0.9);//distance car behinde(0-1) 0--> close
+        dataSet.inputs.add(0.1);//distance car infront(0-1) 0--> close
+        dataSet.inputs.add(0.5);//isLeftlaneFree 0 oder 1
+        dataSet.inputs.add(0.5);//isRightLaneFree 0 oder 1
+        dataSet.outputs.add(0.3);//SURPASS
+        dataSet.outputs.add(0.5);//FOLLOW_LANE
+        dataSet.outputs.add(0.6);//SWITCH_LANE
+        dataSet.outputs.add(0.9);//ADJUST_SPEED
+        dataset.add(dataSet);
     }
 }
