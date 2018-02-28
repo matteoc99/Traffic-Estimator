@@ -304,4 +304,12 @@ public class Lane {
     public void setPriority(int priority) {
         this.priority = priority;
     }
+
+    public ArrayList<Streetlight> getStreetlights() {
+        return streetlights;
+    }
+
+    public void setStreetlights(ArrayList<Streetlight> streetlights) {
+        this.streetlights = streetlights;
+    }
 }

@@ -1,7 +1,12 @@
 package logic.vehicles.driving;
 
 import NeuralNetworkLibrary.src.network.Network;
+import logic.city.Lane;
+import logic.city.Streetlight;
 import logic.vehicles.Vehicle;
+
+import javax.swing.*;
+import java.util.ArrayList;
 
 /**
  * @author Matteo Cosi
@@ -32,17 +37,6 @@ public abstract class VehicleDriving implements DrivingInterface {
     private double desiredSpeed;
 
     /**
-     * cautiousness 0-1
-     * 0-->  very slow and respective
-     * 1--> reckless
-     *
-     * Difference to considerative: Affects behavior when no other vehicles around
-     * Difference to agressivity: Currently none
-     */
-    @Deprecated
-    private double cautiousness;
-
-    /**
      * knowledge of the city 0-1
      * 0--> tourist
      * 1--> taxi driver that knows every street
@@ -65,28 +59,99 @@ public abstract class VehicleDriving implements DrivingInterface {
      * isLeftlaneFree 0 oder 1
      * isRightLaneFree 0 oder 1
      * ampel state 0->red  1-> green
-     *
-     *
+     * <p>
+     * <p>
      * hidden: 400
-     *
-     * output: 5
-     * pro action one(except for ABORT and NO ACTION)
+     * <p>
+     * output: 4
+     * pro action one(except for ABORT ,STEP_ASIDE and NO ACTION)
      */
     Network network;
 
+
+    double safetyDistance = 0;
 
     public VehicleDriving(Vehicle vehicle) {
         this.vehicle = vehicle;
     }
 
+    public VehicleDriving(Vehicle vehicle, Character character) {
+        this(vehicle);
+        setParamsForCharacter(character);
+    }
+
+    private void setParamsForCharacter(Character character) {
+        switch (character) {
+            case OLD:
+                considerative = 0.4;
+                agressivity = 0.2;
+                desiredSpeed = 0.2;
+                reactionTime = 20;
+                break;
+            case YOUNG:
+                considerative = 0.1;
+                agressivity = 0.3;
+                desiredSpeed = 0.5;
+                reactionTime = 5;
+                break;
+            case KIND:
+                considerative = 1.0;
+                agressivity = 0.1;
+                desiredSpeed = 0.6;
+                reactionTime = 10;
+                break;
+            case STRESSED:
+                considerative = 0.0;
+                agressivity = 1.0;
+                desiredSpeed = 1;
+                reactionTime = 10;
+                break;
+            case SPEERER:
+                considerative = 0.2;
+                agressivity = 0.5;
+                desiredSpeed = 1;
+                reactionTime = 13;
+                break;
+            case BUDDHA:
+                considerative = 1;
+                agressivity = 0;
+                desiredSpeed = 0.5;
+                reactionTime = 2;
+                break;
+        }
+    }
+
     @Override
     public Action getNextAction() {
-       if(network == null) {
-           DataSets dataSets = new DataSets();
-           dataSets.generateDataSets();
-           network = new Network(8,5,1,new int[]{400});
-           network.train(dataSets.getDataset());
-       }
+        if (network == null) {
+            DataSets dataSets = new DataSets();
+            dataSets.generateDataSets();
+            network = new Network(7, 4, 1, new int[]{400});
+            network.train(dataSets.getDataset());
+        }
+        double[] data = new double[network.getLayerByIndex(0).getNeuronCount()];
+        data[0] = considerative;
+        data[1] = desiredSpeed;
+        data[2] = agressivity;
+        data[3] = getDistanceCarBehind();
+        data[4] = getDistanceCarInfront();
+        data[5] = isLeftLaneFree() ? 1 : 0;
+        data[6] = isRightLaneFree() ? 1 : 0;
+        double[] result = network.processData(data);
+        double max = Double.MIN_VALUE;
+        int indexMax = 0;
+        for (int i = 0; i < result.length; i++) {
+            if (result[i] > max) {
+                indexMax = i;
+                max = result[i];
+            }
+        }
+        ArrayList<Action> actions = new ArrayList<>();
+        actions.add(Action.SURPASS);
+        actions.add(Action.FOLLOW_LANE);
+        actions.add(Action.SWITCH_LANE);
+        actions.add(Action.ADJUST_SPEED);
+        return actions.get(indexMax);
     }
 
     @Override
@@ -173,66 +238,6 @@ public abstract class VehicleDriving implements DrivingInterface {
 
     }
 
-    /**
-     * Method returns a specific value, fitting the drivers traits, for this action
-     * Range: 0 to 3
-     * @return a value to multiply the points with
-     */
-    private double getSurpassMultiplier() {
-        double ret = 0;
-
-        double specificDesiredSpeed = vehicle.getLane().getParent().getMaxSpeed()*desiredSpeed;
-        double differenceFactor = specificDesiredSpeed / vehicle.getCurrentSpeed();
-
-        if (differenceFactor <= 1) // no need to surpass as we are fine with the speed
-            return 0;
-        if (differenceFactor <= 1.1)
-            ret += 0.33;
-        else if (differenceFactor <= 1.5)
-            ret += 0.8;
-        else
-            ret += 1.5;
-
-        ret += agressivity*0.5;
-
-        return ret;
-    }
-
-    /**
-     * Method returns a specific value, fitting the drivers traits, for this action
-     * Range: 0 to 3
-     * @return a value to multiply the points with
-     */
-    private double getStepAsideMultiplier() {
-        return 0;
-    }
-
-    /**
-     * Method returns a specific value, fitting the drivers traits, for this action
-     * Range: 0 to 3
-     * @return a value to multiply the points with
-     */
-    private double getFollowLaneMultiplier() {
-        return 0;
-    }
-
-    /**
-     * Method returns a specific value, fitting the drivers traits, for this action
-     * Range: 0 to 3
-     * @return a value to multiply the points with
-     */
-    private double getSwitchLaneMultiplier() {
-        return 0;
-    }
-
-    /**
-     * Method returns a specific value, fitting the drivers traits, for this action
-     * Range: 0 to 3
-     * @return a value to multiply the points with
-     */
-    private double getAdjustSpeedMultiplier() {
-        return 0;
-    }
 
     public void setVehicle(Vehicle vehicle) {
         this.vehicle = vehicle;
@@ -263,47 +268,81 @@ public abstract class VehicleDriving implements DrivingInterface {
         return this;
     }
 
-    public VehicleDriving setCautiousness(double cautiousness) {
-        this.cautiousness = cautiousness;
-        return this;
-    }
 
     public VehicleDriving setReactionTime(int reactionTime) {
         this.reactionTime = reactionTime;
         return this;
     }
 
-    public Action getCurrentAction() {
-        return currentAction;
+
+    private double getDistanceCarBehind() {
+        Vehicle prevCar = vehicle.getLane().getPrevVehicle((int) vehicle.getProgressInLane());
+        if (prevCar == null)
+            return 1;
+        else {
+            double dist = Math.abs(vehicle.getProgressInLane() - prevCar.getProgressInLane());
+            return dist / vehicle.getLane().getLength();
+        }
     }
 
-    public Vehicle getVehicle() {
-        return vehicle;
+    private double getDistanceCarInfront() {
+        Vehicle nextVehicle = vehicle.getLane().getNextVehicle((int) vehicle.getProgressInLane());
+        if (nextVehicle == null)
+            return 1;
+        else {
+            double dist = Math.abs(vehicle.getProgressInLane() - nextVehicle.getProgressInLane());
+            return dist / vehicle.getLane().getLength();
+        }
     }
 
-    public double getConsiderative() {
-        return considerative;
+    private boolean isLeftLaneFree() {
+        ArrayList<Lane> lanes = vehicle.getLane().getNeighbourLanes();
+        if (lanes.isEmpty())
+            return false;
+        for (Lane lane : lanes) {
+            if (lane.getIndex() < vehicle.getLane().getIndex())//left lane exists
+            {
+                if (isLaneFree(lane)) return true;
+            }
+        }
+        return false;
     }
 
-    public double getAgressivity() {
-        return agressivity;
+    private boolean isRightLaneFree() {
+        ArrayList<Lane> lanes = vehicle.getLane().getNeighbourLanes();
+        if (lanes.isEmpty())
+            return false;
+        for (Lane lane : lanes) {
+            if (lane.getIndex() > vehicle.getLane().getIndex())//right lane exists
+            {
+                if (isLaneFree(lane)) return true;
+            }
+        }
+        return false;
     }
 
-    public double getDesiredSpeed() {
-        return desiredSpeed;
+    private boolean isLaneFree(Lane lane) {
+        Vehicle prev = lane.getPrevVehicle((int) vehicle.getProgressInLane());
+        Vehicle next = lane.getNextVehicle((int) vehicle.getProgressInLane());
+        if (prev.getProgressInLane() + vehicle.getCurrentSpeed() + safetyDistance < vehicle.getProgressInLane()
+                && next.getProgressInLane() - vehicle.getCurrentSpeed() - safetyDistance > vehicle.getProgressInLane()) {
+            return true;
+        }
+        return false;
     }
 
-    public double getKnowledge() {
-        return knowledge;
+    public double getAmpelState() {
+        if (vehicle.getLane().getStreetlights().isEmpty()) {
+            return 1;
+        } else {
+            for (Streetlight streetlight : vehicle.getLane().getStreetlights()) {
+                if (streetlight.getState() == 1)
+                    return 1;
+            }
+        }
+        return 0;
     }
 
-    public double getCautiousness() {
-        return cautiousness;
-    }
-
-    public int getReactionTime() {
-        return reactionTime;
-    }
 
     //old move
     /*
