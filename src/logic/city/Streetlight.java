@@ -14,6 +14,10 @@ public class Streetlight {
      */
     private int state;
 
+    public static final int RED =0;
+    public static final int GREEN=1;
+
+
     /**
      * Reference to the Lane this Streetlight is part of
      */

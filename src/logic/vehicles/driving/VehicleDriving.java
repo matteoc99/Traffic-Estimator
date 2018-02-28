@@ -1,5 +1,6 @@
 package logic.vehicles.driving;
 
+import NeuralNetworkLibrary.src.network.Network;
 import logic.vehicles.Vehicle;
 
 /**
@@ -23,10 +24,10 @@ public abstract class VehicleDriving implements DrivingInterface {
     private double agressivity;
 
     /**
-     * desired speed 0-2
-     * 1--> respect the limits
-     * <1 drive slower
-     * >1 drive faster
+     * desired speed 0-1
+     * 0.5--> respect the limits
+     * <0.5 drive slower
+     * >0.5 drive faster
      */
     private double desiredSpeed;
 
@@ -54,63 +55,36 @@ public abstract class VehicleDriving implements DrivingInterface {
     private int reactionTime;
 
 
+    /**
+     * inputs: 8
+     * considerative
+     * desiredSpeed
+     * agressivity
+     * distance car behinde(0-1) 0--> close
+     * distance car infront(0-1) 0--> close
+     * isLeftlaneFree 0 oder 1
+     * isRightLaneFree 0 oder 1
+     * ampel state 0->red  1-> green
+     *
+     *
+     * hidden: 400
+     *
+     * output: 5
+     * pro action one(except for ABORT and NO ACTION)
+     */
+    Network network;
+
+
     public VehicleDriving(Vehicle vehicle) {
         this.vehicle = vehicle;
     }
 
     @Override
     public Action getNextAction() {
-        // evaluate all actions (0 points each)
-        // evaluate possible moves (+1 point)
-        // multiply each point with a number given by the character traits
-        // Note: Abort can never be a regular nextAction
-
-        double surpassPoints = 0;
-        double stepAsidePoints = 0;
-        double followLanePoints = 0;
-        double switchLanePoints = 0;
-        double adjustSpeedPoints = 0;
-
-        surpassPoints = (evaluateAction(Action.SURPASS) == Action.SURPASS)? 1:0;
-        stepAsidePoints = (evaluateAction(Action.STEP_ASIDE) == Action.STEP_ASIDE)? 1:0;
-        followLanePoints = (evaluateAction(Action.FOLLOW_LANE) == Action.FOLLOW_LANE)? 1:0;
-        switchLanePoints = (evaluateAction(Action.SWITCH_LANE) == Action.SWITCH_LANE)? 1:0;
-        adjustSpeedPoints = (evaluateAction(Action.ADJUST_SPEED) == Action.ADJUST_SPEED)? 1:0;
-
-        // Surpass: for each
-        if (surpassPoints != 0) surpassPoints *= getSurpassMultiplier();
-        if (stepAsidePoints != 0) stepAsidePoints *= getStepAsideMultiplier();
-        if (followLanePoints != 0) followLanePoints *= getFollowLaneMultiplier();
-        if (switchLanePoints != 0) switchLanePoints *= getSwitchLaneMultiplier();
-        if (adjustSpeedPoints != 0) adjustSpeedPoints *= getAdjustSpeedMultiplier();
-
-        Action nextAction = null;
-        double highestPoints = 0;
-
-        if (surpassPoints > highestPoints) {
-            nextAction = Action.SURPASS;
-            highestPoints = surpassPoints;
-        }
-        if (stepAsidePoints > highestPoints) {
-            nextAction = Action.STEP_ASIDE;
-            highestPoints = stepAsidePoints;
-        }
-        if (followLanePoints > highestPoints) {
-            nextAction = Action.FOLLOW_LANE;
-            highestPoints = followLanePoints;
-        }
-        if (switchLanePoints > highestPoints) {
-            nextAction = Action.SWITCH_LANE;
-            highestPoints = switchLanePoints;
-        }
-        if (adjustSpeedPoints > highestPoints) {
-            nextAction = Action.ADJUST_SPEED;
-        }
-
-        if (nextAction == null)
-            throw new RuntimeException("No nextAction possible!");
-        else
-            return nextAction;
+       if(network == null) {
+           network = new Network(8,5,1,new int[]{400});
+           network.train(DataSets.getDataSet());
+       }
     }
 
     @Override
