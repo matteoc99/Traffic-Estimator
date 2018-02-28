@@ -1,6 +1,7 @@
 package NeuralNetworkLibrary.src.network;
 
 import com.sun.istack.internal.NotNull;
+import logic.vehicles.driving.DataSets;
 
 import java.util.ArrayList;
 
@@ -655,4 +656,21 @@ public class Network {
 
     }
 
+    public void train(ArrayList<DataSets.DataSet> dataset) {
+        int iterations = 1;
+        double rate = 0.005;
+        while (iterations < 200) {
+            for (DataSets.DataSet data :
+                    dataset) {
+                double[] y = processData(data.getInputs());
+                double[] error = new double[data.inputs.size()];
+                for (int i = 0; i < y.length; i++) {
+                    error[i]= data.outputs.get(i)-y[i];
+                }
+                propagateBack(rate, error);
+            }
+            iterations++;
+        }
+        System.out.println("done");
+    }
 }

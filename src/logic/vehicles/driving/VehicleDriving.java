@@ -82,8 +82,10 @@ public abstract class VehicleDriving implements DrivingInterface {
     @Override
     public Action getNextAction() {
        if(network == null) {
+           DataSets dataSets = new DataSets();
+           dataSets.generateDataSets();
            network = new Network(8,5,1,new int[]{400});
-           network.train(DataSets.getDataSet());
+           network.train(dataSets.getDataset());
        }
     }
 
