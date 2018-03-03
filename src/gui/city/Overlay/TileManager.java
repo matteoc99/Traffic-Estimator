@@ -1,6 +1,5 @@
-package gui.city;
+package gui.city.Overlay;
 
-import javax.imageio.ImageIO;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
@@ -52,10 +51,11 @@ public class TileManager {
         }
     }
 
+    // TODO: 03.03.2018 Theoretically infinite RAM-usage;
     // Images are stored in Maps, keyOrder: zoom, x, y
     private Map<Integer, Map<Integer, Map<Integer, BufferedImage>>> images = new HashMap<>();
 
-    public TileBuffer tileBuffer = new TileBuffer(this);
+    public TileBuffer tileBuffer = new TileBuffer(this, 3);
 
     public Overlay overlay;
 
@@ -71,9 +71,7 @@ public class TileManager {
      */
     public synchronized BufferedImage getTileImage(Point point, int zoom) {
         try {
-            BufferedImage image = images.get(zoom).get(point.x).get(point.y);
-            if (image != null)
-                return image;
+            return images.get(zoom).get(point.x).get(point.y);
         } catch (Exception ignored) {}
 
         return null;

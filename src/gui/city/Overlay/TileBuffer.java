@@ -1,6 +1,7 @@
-package gui.city;
+package gui.city.Overlay;
 
 import javafx.util.Pair;
+import utils.Stopwatch;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -8,8 +9,6 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.net.URL;
 import java.util.Vector;
-
-import static gui.city.TileManager.*;
 
 /**
  * @author Maximilian Estfeller
@@ -26,9 +25,17 @@ public class TileBuffer implements Runnable {
 
     private TileManager tileManager;
 
-    TileBuffer(TileManager tileManager) {
+    /**
+     * More threads do not increase bandwidth, however a second thread might have some influence.
+     * More than 3 threads are not recommended
+     * @param tileManager reference
+     * @param threadCount amount of threads working
+     */
+    TileBuffer(TileManager tileManager, int threadCount) {
         this.tileManager = tileManager;
-        new Thread(this).start();
+        for (int i = 0; i < threadCount; i++) {
+            new Thread(this).start();
+        }
     }
 
     @Override
@@ -41,8 +48,9 @@ public class TileBuffer implements Runnable {
                     } catch (InterruptedException ignored) {}
             }
             Pair<JLabel, Pair<Integer, Point>> lB = getNextLabelToBuffer();
-            if (lB != null)
+            if (lB != null) {
                 bufferLabel(lB);
+            }
             else {
                 Pair<Integer, Point> tB = getNextTileToBuffer();
                 if (tB != null)
@@ -56,8 +64,6 @@ public class TileBuffer implements Runnable {
             int zoom = input.getValue().getKey();
             Point point = input.getValue().getValue();
             BufferedImage bufferedImage = ImageIO.read(new URL(tileManager.getTileLink(point, zoom)));
-            // FIXME: 27.02.2018 This shouldn't set the image of the jlabel to the new one;
-            // FIXME: 27.02.2018 Better tell the jlabel to retry getting the right image
             tileManager.addImage(bufferedImage, zoom, point);
             tileManager.overlay.fillLabel(input.getKey());
         } catch (Exception e) {
@@ -77,13 +83,28 @@ public class TileBuffer implements Runnable {
     }
 
     public synchronized void putLabelToBuffer(JLabel label, int zoom, Point point) {
-        // TODO: 27.02.2018 Maybe remove old entry when a new one with the same label gets in
+        for (Pair<JLabel, Pair<Integer, Point>> jLabelPairPair : labelsToBuffer) {
+            if (jLabelPairPair.getKey().equals(label)) {
+                labelsToBuffer.removeElement(jLabelPairPair);
+                break;
+            }
+        }
+
         labelsToBuffer.add(new Pair<>(label, new Pair<>(zoom, point)));
         notifyAll();
     }
 
     public synchronized void putTileToBuffer(int zoom, Point point) {
-        // TODO: 27.02.2018 Remove old entry when a new one, with the same Tile comes in
+        // Job already listed
+        for (Pair<Integer, Point> pair : tilesToBuffer) {
+            if (pair.getValue().equals(point) && pair.getKey() == zoom)
+                return;
+        }
+
+        // Tile already buffered
+        if (tileManager.getTileImage(point, zoom) != null)
+            return;
+
         tilesToBuffer.add(new Pair<>(zoom, point));
         notifyAll();
     }
@@ -96,12 +117,13 @@ public class TileBuffer implements Runnable {
         tilesToBuffer.clear();
     }
 
+
     private synchronized Pair<JLabel, Pair<Integer, Point>> getNextLabelToBuffer() {
         if (labelsToBuffer.size() == 0)
             return null;
 
-        Pair<JLabel, Pair<Integer, Point>> ret = labelsToBuffer.get(0);
-        labelsToBuffer.remove(0);
+        Pair<JLabel, Pair<Integer, Point>> ret = labelsToBuffer.lastElement();
+        labelsToBuffer.removeElement(ret);
         return ret;
     }
 
