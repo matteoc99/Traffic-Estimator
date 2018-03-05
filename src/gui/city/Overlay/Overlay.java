@@ -272,7 +272,7 @@ public class Overlay extends JPanel {
         if (!validateZoom(zoom))
             return;
 
-        Point centerPoint = getTilePointWithExtraOffset(labels.size()/2, labels.get(0).size()/2, zoom);
+        Point centerPoint = getTilePointWithExtraOffset(labels.size() / 2, labels.get(0).size() / 2, zoom);
 
         for (int x = -radius; x < radius; x++) {
             for (int y = -radius; y < radius; y++) {

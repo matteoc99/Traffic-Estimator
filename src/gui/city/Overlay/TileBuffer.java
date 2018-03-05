@@ -27,8 +27,9 @@ public class TileBuffer implements Runnable {
     /**
      * More threads do not increase bandwidth, however a second thread might have some influence.
      * More than 3 threads are not recommended
+     *
      * @param OSMTileManager reference
-     * @param threadCount amount of threads working
+     * @param threadCount    amount of threads working
      */
     TileBuffer(OSMTileManager OSMTileManager, int threadCount) {
         this.OSMTileManager = OSMTileManager;
@@ -44,13 +45,13 @@ public class TileBuffer implements Runnable {
                 if (labelsToBuffer.size() == 0 && tilesToBuffer.size() == 0)
                     try {
                         wait();
-                    } catch (InterruptedException ignored) {}
+                    } catch (InterruptedException ignored) {
+                    }
             }
             Pair<JLabel, Pair<Integer, Point>> lB = getNextLabelToBuffer();
             if (lB != null) {
                 bufferLabel(lB);
-            }
-            else {
+            } else {
                 Pair<Integer, Point> tB = getNextTileToBuffer();
                 if (tB != null)
                     bufferTile(tB);

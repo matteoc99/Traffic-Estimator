@@ -64,6 +64,7 @@ public class OSMTileManager implements TileManager {
     public OSMTileManager(Overlay overlay) {
         this.overlay = overlay;
     }
+
     public String getTileLink(Point point, int zoom) {
         return "https://tile.openstreetmap.org/" + zoom + "/" + point.x + "/" + point.y + ".png";
     }
@@ -78,14 +79,15 @@ public class OSMTileManager implements TileManager {
      * Returns the image from OpenStreetMap on the given position and zoom
      *
      * @param point position (index-like)
-     * @param zoom 1-19
+     * @param zoom  1-19
      * @return BufferedImage or null if it isn't stored yet
      */
     @Override
     public synchronized BufferedImage getTileImage(Point point, int zoom) {
         try {
             return images.get(zoom).get(point.x).get(point.y);
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+        }
 
         return null;
     }
