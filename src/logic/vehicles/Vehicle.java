@@ -1,5 +1,6 @@
 package logic.vehicles;
 
+import NeuralNetworkLibrary.src.network.Network;
 import logic.city.City;
 import logic.city.Lane;
 import logic.city.Node;
@@ -77,7 +78,7 @@ public class Vehicle {
     private City city;
 
     public Vehicle(City city) {
-        this.city= city;
+        this.city = city;
         vehicleDriving = new VehicleDriving(this, Character.BUDDHA);
     }
 
@@ -219,16 +220,20 @@ public class Vehicle {
     }
 
     public void incrementCurrentSpeed(double v) {
-        currentSpeed+=v;
-        if(currentSpeed<0)
-            currentSpeed=0;
+        currentSpeed += v;
+        if (currentSpeed < 0)
+            currentSpeed = 0;
     }
 
     public void incrementProgressInLane(double currentSpeed) {
-        progressInLane+=currentSpeed/10; // TODO: 28.02.2018 trimm
+        progressInLane += currentSpeed / 10; // TODO: 28.02.2018 trimm
     }
 
     public City getCity() {
         return city;
+    }
+
+    public Network getNetwork() {
+        return vehicleDriving.getNetwork();
     }
 }

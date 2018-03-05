@@ -28,7 +28,7 @@ public class Street extends StreetComponent {
     /**
      * The maximum speed allowed on this Street, actual speed of the car might be higher
      */
-    private double maxSpeed;
+    private double maxSpeed=50;
 
     /**
      * The higher the less known a street is. 0 very known
@@ -55,6 +55,8 @@ public class Street extends StreetComponent {
         this.from = from;
         this.to = to;
         this.maxSpeed = maxSpeed;
+        // TODO: 01.03.2018 why is maxspeed == 2.0
+        this.maxSpeed=50;
         this.unProminence = unProminence;
 
 
@@ -181,7 +183,9 @@ public class Street extends StreetComponent {
         return maxSpeed;
     }
 
-    public void setMaxSpeed(double maxSpeed) {
+    public void setMaxSpeed(double maxSpeed)
+    {
+        System.out.println("setMaxSpeed()");
         this.maxSpeed = maxSpeed;
     }
 

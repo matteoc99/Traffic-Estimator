@@ -287,7 +287,7 @@ public class City {
      */
     public Node getRandomNode() {
         Node ret = null;
-        ArrayList<Double> fames = new ArrayList<>(); // TODO: 30.01.2018 nicht immer neu rechnen
+        ArrayList<Double> fames = new ArrayList<>();
         double sum = 0;
         for (int i = 0; i < nodes.size(); i++) {
             fames.add(nodes.get(i).getFame());

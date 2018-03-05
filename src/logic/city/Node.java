@@ -50,9 +50,6 @@ public class Node {
      */
     private Node previousNode;
 
-    //provisory
-    int letCarTrough = 10;
-
 
     /**
      * creates a node and adds it to the city
@@ -225,21 +222,13 @@ public class Node {
      */
     public boolean register(Vehicle vehicle, Node nextNode) {
         // TODO: 17.02.2018 für maxi ret true wenn er fahren darf
-        if (letCarTrough == 10) {
-            letCarTrough = 0;
-            return true;
-        } else {
-            return false;
-        }
+      return true;
     }
 
     /**
      * sets default
      */
     public void reset() {
-        if (letCarTrough > 10)
-            letCarTrough = 0;
-        else letCarTrough++;
     }
 
 

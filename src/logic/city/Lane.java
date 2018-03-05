@@ -102,14 +102,13 @@ public class Lane {
      *
      * @param position the position to check
      * @return the previous vehicle
-     * // TODO: 22.02.2018 test, because well ick nickt schlau
      */
     public Vehicle getPrevVehicle(int position) {
         double biggest = -1;
         int index = -1;
         int i = 0;
         for (Vehicle vehicle : vehicles) {
-            if (vehicle.getProgressInLane() > position && vehicle.getProgressInLane() > biggest) {
+            if (vehicle.getProgressInLane() < position && vehicle.getProgressInLane() > biggest) {
                 index = i;
                 biggest = vehicle.getProgressInLane();
             }

@@ -28,8 +28,8 @@ public final class OsmToJsonParser {
     private static Map<String, Integer> streetsOnNode = new HashMap<>();
 
     public static void main(String[] args) {
-        parse(System.getProperty("user.dir") + "\\src\\parsing\\res\\bozenLarge.osm",
-                System.getProperty("user.dir") + "\\src\\parsing\\res\\bozenLarge.json");
+        parse(System.getProperty("user.dir") + "\\src\\parsing\\res\\rom.osm",
+                System.getProperty("user.dir") + "\\src\\parsing\\res\\rom.json");
     }
 
     /**
@@ -39,7 +39,7 @@ public final class OsmToJsonParser {
      * @param osmFilePath  File to read from
      * @param jsonFilePath File to print to
      */
-    private static void parse(String osmFilePath, String jsonFilePath) {
+    public static void parse(String osmFilePath, String jsonFilePath) {
 
         System.out.println("OsmToJsonParser:" + new Timestamp(System.currentTimeMillis()) + " Parsing from .osm to .json:\n    " +
                 osmFilePath + "\n    " + jsonFilePath);
