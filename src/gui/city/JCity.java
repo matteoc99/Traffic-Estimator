@@ -10,6 +10,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import static java.lang.Integer.max;
 import static main.Main.preciseZoom;
 import static main.Main.zoom;
 
@@ -85,7 +86,8 @@ public class JCity extends JPanel {
         if (preciseZoom) {
             setLocation(getX() + (getWidth() - newWidth) / 2, getY() + (getHeight() - newHeight) / 2);
         }
-        setSize(newWidth, newHeight);
+
+        setSize(newHeight,newWidth);
         if (firstPaint) {
             firstPaint = false;
             System.out.println("painting done");
@@ -120,9 +122,15 @@ public class JCity extends JPanel {
             Vehicle vehicle = vehicles.get(j);
             g2.setColor(vehicle.getColor());
             // draw cars
-            g2.fillOval((int) ((int) ((vehicle.currentPointOnLane().x) * zoom) - (4 * (int) (zoom)) / 2 - (zoom + i * zoom * 2) * dir),
-                    (int) ((int) ((vehicle.currentPointOnLane().y) * zoom) - (4 * (int) (zoom)) / 2 - (zoom + i * zoom * 2) * dir),
-                    4 * (int) (zoom), 4 * (int) (zoom));
+            if(zoom < 1){
+                g2.fillOval((int) ((int) ((vehicle.currentPointOnLane().x)) - (4) / 2 - (1 + i * 2) * dir),
+                        (int) ((int) ((vehicle.currentPointOnLane().y)) - (4) / 2 - (1 + i * 2) * dir),
+                        4, 4);
+            }else{
+                g2.fillOval((int) ((int) ((vehicle.currentPointOnLane().x) * zoom) - (4 * (int) (zoom)) / 2 - (zoom + i * zoom * 2) * dir),
+                        (int) ((int) ((vehicle.currentPointOnLane().y) * zoom) - (4 * (int) (zoom)) / 2 - (zoom + i * zoom * 2) * dir),
+                        4 * (int) (zoom), 4 * (int) (zoom));
+            }
 
         }
     }

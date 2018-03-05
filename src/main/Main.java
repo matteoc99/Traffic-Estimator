@@ -1,5 +1,6 @@
 package main;
 
+import NeuralNetworkLibrary.src.network_gui.NetworkGUI;
 import gui.ControlPanel;
 import gui.CustomSlider;
 import gui.city.JCity;
@@ -66,6 +67,7 @@ public class Main extends JFrame {
         c.add(jCity);
         setResizable(false);
 
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         //getNodesPos average
         while (getAvgNodePosition() > getHeight() / 2) {
             zoom /= 1.5;
@@ -189,9 +191,6 @@ public class Main extends JFrame {
             public void mouseWheelMoved(MouseWheelEvent e) {
                 if (e.getWheelRotation() < 0) {
                     //zoom++
-                    if (preciseZoom) {
-                        //// TODO: 17.02.2018 kp wie
-                    }
                     if (fineZoom) {
                         zoom += 0.01;
                     } else if (superFineZoom) {
@@ -202,9 +201,6 @@ public class Main extends JFrame {
 
                 } else {
                     //zoom--
-                    if (preciseZoom) {
-                        // TODO: 17.02.2018 kp wie
-                    }
                     if (fineZoom) {
                         if (zoom > 0.01)
                             zoom -= 0.01;
@@ -249,6 +245,25 @@ public class Main extends JFrame {
 
         addMouseListener(mouseAdapter);
 
+
+        requestFocus();
+
+        while (true) {
+            zeitvorsleep = System.currentTimeMillis();
+            calcCity();
+            if (city.getVehicles().size() < VEHICLE_AMOUNT) {
+                Vehicle vehicle = new Vehicle(city);
+                vehicle.setColor(new Color((int) ((Math.random() * 200) + 50), (int) (Math.random() * 200) + 50, (int) (Math.random() * 200) + 50));
+            }
+            long zeitvergangen = (long) (System.currentTimeMillis() - zeitvorsleep);
+            if (zeitvergangen < 1000.0 / FPS) {
+                try {
+                    Thread.sleep((long) (1000.0 / FPS - zeitvergangen));
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
 
@@ -302,7 +317,7 @@ public class Main extends JFrame {
             ret.add(labels[i]);
         }
 
-        labels[0].setText("FPS");
+        labels[0].setText("SPEED");
         labels[1].setText("Traffic");
 
 
@@ -338,30 +353,10 @@ public class Main extends JFrame {
     public static void main(String[] args) {
         System.out.println("Main:" + new Timestamp(System.currentTimeMillis()) + " Creating City from .json...");
         City city = City.createCityFromJson(
-                new File(System.getProperty("user.dir") + "\\src\\parsing\\res\\testCity.json"));
+                new File(System.getProperty("user.dir") + "\\src\\parsing\\res\\testcity.json"));
 
         System.out.println("Main:" + new Timestamp(System.currentTimeMillis()) + " Starting GUI...");
         Main main = new Main(city);
-
-        while (true) {
-            zeitvorsleep = System.currentTimeMillis();
-            main.calcCity();
-            if (city.getVehicles().size() < VEHICLE_AMOUNT) {
-                Vehicle vehicle = new Vehicle(city);
-                vehicle.setColor(new Color((int) ((Math.random() * 200) + 50), (int) (Math.random() * 200) + 50, (int) (Math.random() * 200) + 50));
-            }
-            long zeitvergangen = (long) (System.currentTimeMillis() - zeitvorsleep);
-            if (zeitvergangen < 1000.0 / FPS) {
-                try {
-                    Thread.sleep((long) (1000.0 / FPS - zeitvergangen));
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-            // System.out.println("FPS:"+(long) (1000.0/FPS - zeitvergangen));
-
-
-        }
 
     }
 

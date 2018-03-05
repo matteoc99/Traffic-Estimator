@@ -15,7 +15,7 @@ public class PathUtils {
     private static ArrayList<Path> paths = new ArrayList<>();
 
     private static void generatePaths(City city) {
-        generatePaths(city, 500);
+        generatePaths(city, 1000);
     }
 
     private static void generatePaths(City city, int count) {
@@ -75,6 +75,10 @@ public class PathUtils {
                 }
             }
             int randIndex = (int) (Math.random() * paths.size());
+            if(paths.size()==0){
+                System.out.println("ALARM");
+                getRandomPath(city);
+            }
             return paths.get(randIndex);
         } else {
             generatePaths(city);

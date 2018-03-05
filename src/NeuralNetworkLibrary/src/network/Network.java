@@ -658,8 +658,8 @@ public class Network {
 
     public void train(ArrayList<DataSets.DataSet> dataset) {
         int iterations = 1;
-        double rate = 0.005;
-        while (iterations < 200) {
+        double rate = 0.0005;
+        while (iterations < 2000) {
             for (DataSets.DataSet data :
                     dataset) {
                 double[] y = processData(data.getInputs());
@@ -671,6 +671,5 @@ public class Network {
             }
             iterations++;
         }
-        System.out.println("done");
     }
 }
