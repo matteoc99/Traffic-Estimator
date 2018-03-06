@@ -31,7 +31,6 @@ public class JCity extends JPanel {
 
     public JCity(City city) {
         this.city = city;
-
         setLayout(null);
         setBounds(city.getBounds());
     }
@@ -48,7 +47,6 @@ public class JCity extends JPanel {
     protected void paintComponent(Graphics g) {
         if (pslFlag)
             paintStreetLines((Graphics2D) g);
-
 
     }
 
@@ -123,9 +121,12 @@ public class JCity extends JPanel {
             g2.setColor(vehicle.getColor());
             // draw cars
             if(zoom < 1){
-                g2.fillOval((int) ((int) ((vehicle.currentPointOnLane().x)) - (4) / 2 - (1 + i * 2) * dir),
-                        (int) ((int) ((vehicle.currentPointOnLane().y)) - (4) / 2 - (1 + i * 2) * dir),
-                        4, 4);
+                double temp = zoom;
+                zoom=1;
+                g2.fillOval((int) ((int) ((vehicle.currentPointOnLane().x) * temp) - (4 * (int) (zoom)) / 2 - (zoom + i * zoom * 2) * dir),
+                        (int) ((int) ((vehicle.currentPointOnLane().y) * temp) - (4 * (int) (zoom)) / 2 - (zoom + i * zoom * 2) * dir),
+                        8 * (int) (zoom), 8 * (int) (zoom));
+            zoom= temp;
             }else{
                 g2.fillOval((int) ((int) ((vehicle.currentPointOnLane().x) * zoom) - (4 * (int) (zoom)) / 2 - (zoom + i * zoom * 2) * dir),
                         (int) ((int) ((vehicle.currentPointOnLane().y) * zoom) - (4 * (int) (zoom)) / 2 - (zoom + i * zoom * 2) * dir),

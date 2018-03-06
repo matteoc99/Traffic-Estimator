@@ -62,7 +62,6 @@ public class Main extends JFrame {
         c = getContentPane();
         controlPanel = setUpControlPanel();
         jCity = setUpCity(city);
-        jCity.setBackground(Color.RED);
         c.add(controlPanel);
         c.add(jCity);
         setResizable(false);
@@ -294,7 +293,6 @@ public class Main extends JFrame {
 
     private JCity setUpCity(City city) {
         JCity ret = new JCity(city);
-        ret.setBackground(new Color(123, 200, 126));
         return ret;
     }
 
@@ -363,6 +361,5 @@ public class Main extends JFrame {
     private void calcCity() {
         city.calcCity();
         repaint();
-        jCity.repaint();
     }
 }

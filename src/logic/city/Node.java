@@ -221,8 +221,9 @@ public class Node {
      * @return true if the vehicle can drive, otherwise false
      */
     public boolean register(Vehicle vehicle, Node nextNode) {
-        // TODO: 17.02.2018 für maxi ret true wenn er fahren darf
-      return true;
+        if (vehicle.getLane().getStreetlight() == null)
+            return true;
+        return vehicle.getLane().getStreetlight().getState() != 0;
     }
 
     /**

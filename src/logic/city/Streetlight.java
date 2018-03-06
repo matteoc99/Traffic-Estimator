@@ -39,6 +39,7 @@ public class Streetlight {
         this.parentLane = parentLane;
         this.parentLogic = parentLogic;
         this.direction = direction;
+        parentLane.setStreetlight(this);
     }
 
     public Streetlight(Lane parentLane, StreetlightLogic parentLogic, Direction direction) {

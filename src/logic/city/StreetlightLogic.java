@@ -8,10 +8,10 @@ import java.util.ArrayList;
  */
 public class StreetlightLogic extends Thread {
     private MultiConnection parent;
-    private ArrayList<Streetlight> streetlights;
+    private ArrayList<Streetlight> streetlights = new ArrayList<>();
 
     //circular selection
-    private static final int cycle = 10;
+    private static final int cycle = 5;
 
 
     public StreetlightLogic(String name, MultiConnection parent) {
@@ -22,31 +22,44 @@ public class StreetlightLogic extends Thread {
     @Override
     public void run() {
 
-        //set one red -> green
-        getNextGreen().toggle();
+        while (true) {
+            if (streetlights.size() > 0) {
+                //set one red -> green and green -> red
+                getNextGreen().toggle();
 
-        //setGreen -> Red
-        getFirstGreenStreetLight().toggle();
-
-
-        try {
-            Thread.sleep(cycle * 1000 / streetlights.size());
-        } catch (Exception e) {
-            e.printStackTrace();
+                try {
+                    Thread.sleep(cycle * 1000 / streetlights.size());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            // TODO: 06.03.2018 effizienter mit wait & notify
+            try {
+                Thread.sleep(10);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
     private Streetlight getNextGreen() {
         int gIndex = streetlights.indexOf(getFirstGreenStreetLight());
-        if (gIndex == -1)
-            return null;
-        if (gIndex < streetlights.size() - 1) {
-            return streetlights.get(gIndex + 1);
-        } else {
-            if (gIndex == streetlights.size() - 1)
+        if (gIndex == -1) {
+            if (streetlights.size() > 0) {
                 return streetlights.get(0);
-            else
-                throw new RuntimeException("WTF?? should not be happening");
+            } else {
+                return null;
+            }
+        }else {
+            streetlights.get(gIndex).setState(0);
+            if (gIndex < streetlights.size() - 1) {
+                return streetlights.get(gIndex + 1);
+            } else {
+                if (gIndex == streetlights.size() - 1)
+                    return streetlights.get(0);
+                else
+                    throw new RuntimeException("WTF?? should not be happening");
+            }
         }
     }
 

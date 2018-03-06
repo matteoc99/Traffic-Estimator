@@ -31,9 +31,9 @@ public class Lane {
     private int index;
 
     /**
-     * all streetlights on this lane
+     * the streetlight on this lane
      */
-    private ArrayList<Streetlight> streetlights;
+    private Streetlight streetlight;
     /**
      * all vehicles driving on this lane
      */
@@ -61,7 +61,6 @@ public class Lane {
         this.index = index;
         parent.addLane(this);
         vehicles = new ArrayList<>();
-        streetlights = new ArrayList<>();
     }
 
     /**
@@ -80,7 +79,7 @@ public class Lane {
      * @param position the position to check
      * @return the next vehicle
      */
-    public Vehicle getNextVehicle(int position) {
+    public Vehicle getNextVehicle(double position) {
         double smallest = Integer.MAX_VALUE;
         int index = -1;
         int i = 0;
@@ -103,7 +102,7 @@ public class Lane {
      * @param position the position to check
      * @return the previous vehicle
      */
-    public Vehicle getPrevVehicle(int position) {
+    public Vehicle getPrevVehicle(double position) {
         double biggest = -1;
         int index = -1;
         int i = 0;
@@ -121,29 +120,7 @@ public class Lane {
     }
 
 
-    public void addStreetlight(Streetlight streetlight) {
-        if (!contains(streetlight))
-            streetlights.add(streetlight);
-        else
-            throw new RuntimeException("ALREADY CONTAINS STREET LIGHT 44");
 
-    }
-
-    public void removeStreetlight(Streetlight streetlight) {
-        if (contains(streetlight))
-            streetlights.remove(streetlight);
-        else
-            throw new RuntimeException("NO THING TO REMOVE");
-    }
-
-    public boolean contains(Streetlight streetlight) {
-        for (Streetlight streetlight1 : streetlights) {
-            if (streetlight1.equals(streetlight)) {
-                return true;
-            }
-        }
-        return false;
-    }
 
     public void addVehicle(Vehicle vehicle) {
         if (!contains(vehicle))
@@ -304,11 +281,11 @@ public class Lane {
         this.priority = priority;
     }
 
-    public ArrayList<Streetlight> getStreetlights() {
-        return streetlights;
+    public Streetlight getStreetlight() {
+        return streetlight;
     }
 
-    public void setStreetlights(ArrayList<Streetlight> streetlights) {
-        this.streetlights = streetlights;
+    public void setStreetlight(Streetlight streetlight) {
+        this.streetlight = streetlight;
     }
 }

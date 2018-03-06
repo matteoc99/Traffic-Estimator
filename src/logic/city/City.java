@@ -67,6 +67,9 @@ public class City {
      */
     private Rectangle bounds;
 
+
+    private ArrayList<Vehicle> vehicles = new ArrayList<>();
+
     private City() {
         nodes = new ArrayList<>();
         streets = new ArrayList<>();
@@ -237,8 +240,8 @@ public class City {
                     isReachable = false;
                 if (isReachable) {
                     if (!(open.contains(neighbour)) ||
-                            current.getWalkedCost() + currentStreet.getTotalCost(vehicle==null?currentStreet.getMaxSpeed():vehicle.getVehicleMaxSpeed()) < neighbour.getWalkedCost()) {
-                        neighbour.setWalkedCost(current.getWalkedCost() + currentStreet.getTotalCost(vehicle==null?currentStreet.getMaxSpeed():vehicle.getVehicleMaxSpeed()));
+                            current.getWalkedCost() + currentStreet.getTotalCost(vehicle == null ? currentStreet.getMaxSpeed() : vehicle.getVehicleMaxSpeed()) < neighbour.getWalkedCost()) {
+                        neighbour.setWalkedCost(current.getWalkedCost() + currentStreet.getTotalCost(vehicle == null ? currentStreet.getMaxSpeed() : vehicle.getVehicleMaxSpeed()));
                         neighbour.setPreviousNode(current);
                         if (!(open.contains(neighbour))) {
                             open.add(neighbour);
@@ -436,32 +439,9 @@ public class City {
             lanes.remove(lane);
     }
 
-    public ArrayList<Vehicle> getVehicles() {
-        ArrayList<Vehicle> ret = new ArrayList<>();
-        for (Node node : nodes) {
-            Iterator<Street> streets = node.getStreetIterator();
-            while (streets.hasNext()) {
-                Street street = streets.next();
-                Iterator<Lane> bLanes = street.getBackwardLanesIterator();
-                while (bLanes.hasNext()) {
-                    Lane lane = bLanes.next();
-                    extractVehicles(ret, lane);
-                }
-                Iterator<Lane> fLanes = street.getForwardLanesIterator();
-                while (fLanes.hasNext()) {
-                    Lane lane = fLanes.next();
-                    extractVehicles(ret, lane);
-                }
-            }
-        }
-        return ret;
-    }
 
-    private void extractVehicles(ArrayList<Vehicle> ret, Lane lane) {
-        for (Vehicle vehicle : lane.getVehicles()) {
-            if (!ret.contains(vehicle))
-                ret.add(vehicle);
-        }
+    public ArrayList<Vehicle> getVehicles() {
+        return vehicles;
     }
 
     /**
@@ -500,12 +480,10 @@ public class City {
      * Sends the calcCommand down the Line to the Vehicle
      */
     public void calcCity() {
-        for (Street street : streets) {
+        ArrayList<Vehicle> vehicleList = new ArrayList<>(vehicles);
+        for (Vehicle vehicle : vehicleList) {
             // TODO: 20.02.2018 calc by ordered lane.priority. higher priority = first evaluation
-            street.calcStreet();
-        }
-        for (Node node : nodes) {
-            node.reset();
+            vehicle.move();
         }
     }
 

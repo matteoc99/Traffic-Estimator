@@ -868,6 +868,29 @@ public class oldSnippets {
         dataSet.outputs.add(0.0);//ADJUST_SPEED
         dataset.add(dataSet);
 
+double[] data = new double[network.getLayerByIndex(0).getNeuronCount()];
+        data[0] = considerative;
+        data[1] = desiredSpeed;
+        data[2] = agressivity;
+        data[3] = getDistanceCarBehind();
+        data[4] = getDistanceCarInfront();
+        data[5] = isLeftLaneFree() ? 1 : 0;
+        data[6] = isRightLaneFree() ? 1 : 0;
+        double[] result = network.processData(data);
+        double max = Double.MIN_VALUE;
+        int indexMax = 0;
+        for (int i = 0; i < result.length; i++) {
+            if (result[i] > max) {
+                indexMax = i;
+                max = result[i];
+            }
+        }
+        ArrayList<Action> actions = new ArrayList<>();
+        actions.add(Action.SURPASS);
+        actions.add(Action.FOLLOW_LANE);
+        actions.add(Action.SWITCH_LANE);
+        actions.add(Action.ADJUST_SPEED);
+
  */
     }
 }

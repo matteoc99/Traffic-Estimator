@@ -113,6 +113,11 @@ public class Street extends StreetComponent {
                 backwardLanes.add(lane);
             } else {
                 forwardLanes.add(lane);
+                if(getTo() instanceof MultiConnection){
+                    // TODO: 06.03.2018 from lane direction get the direction of the light direction is ignored for now
+                    Streetlight streetlight = new Streetlight(lane, ((MultiConnection) getTo()).getLogic(), Streetlight.Direction.STRAIGHT);
+                    ((MultiConnection) getTo()).getLogic().addStreetlight(streetlight);
+                }
             }
         } else {
             throw new RuntimeException("CONTAINS LANE 2");
@@ -312,4 +317,6 @@ public class Street extends StreetComponent {
                 "id='" + id + '\'' +
                 '}';
     }
+
+
 }

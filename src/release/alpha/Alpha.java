@@ -9,8 +9,10 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -22,6 +24,8 @@ public class Alpha extends JFrame {
 
     Container c;
 
+    // TODO: 05.03.2018 All the files should be replaced with directories that exist on every pc! not vehicles/driving. etc 
+    
     public Alpha() {
         setTitle("Traffic-Estimator");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -33,7 +37,9 @@ public class Alpha extends JFrame {
         c = getContentPane();
         c.setLayout(null);
 
-        JLabel background = new JLabel(new ImageIcon(System.getProperty("user.dir") + "/src/release/alpha/res/rom.PNG"));
+
+
+        JLabel background = new JLabel(new ImageIcon(Toolkit.getDefaultToolkit().getImage(getClass().getResource("res/rom.PNG"))));
         background.setLocation(0, 0);
         background.setSize(getSize());
 

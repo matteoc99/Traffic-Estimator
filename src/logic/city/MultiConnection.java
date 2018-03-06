@@ -17,6 +17,7 @@ public class MultiConnection extends Node {
     public MultiConnection(City parent, Point position, double fame, String id, StreetlightLogic logic) {
         this(parent, position, fame, id);
         this.logic = logic;
+
     }
 
     public MultiConnection(Node node, StreetlightLogic logic) {
@@ -26,6 +27,9 @@ public class MultiConnection extends Node {
 
     public MultiConnection(City parent, Point position, double fame, String id) {
         super(parent, position, fame, id);
+        if (getLogic() == null)
+            logic = new StreetlightLogic(getId(), this);
+    logic.start();
     }
 
     public void setLogic(StreetlightLogic logic) {
@@ -35,4 +39,5 @@ public class MultiConnection extends Node {
     public StreetlightLogic getLogic() {
         return logic;
     }
+
 }
