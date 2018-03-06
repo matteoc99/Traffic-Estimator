@@ -1,7 +1,6 @@
 package gui.city.Overlay;
 
 import javafx.util.Pair;
-import utils.Stopwatch;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -23,16 +22,17 @@ public class TileBuffer implements Runnable {
 
     private Vector<Pair<Integer, Point>> tilesToBuffer = new Vector<>();
 
-    private TileManager tileManager;
+    private OSMTileManager osmTileManager;
 
     /**
      * More threads do not increase bandwidth, however a second thread might have some influence.
      * More than 3 threads are not recommended
-     * @param tileManager reference
-     * @param threadCount amount of threads working
+     *
+     * @param osmTileManager reference
+     * @param threadCount    amount of threads working
      */
-    TileBuffer(TileManager tileManager, int threadCount) {
-        this.tileManager = tileManager;
+    TileBuffer(OSMTileManager osmTileManager, int threadCount) {
+        this.osmTileManager = osmTileManager;
         for (int i = 0; i < threadCount; i++) {
             new Thread(this).start();
         }
@@ -45,13 +45,13 @@ public class TileBuffer implements Runnable {
                 if (labelsToBuffer.size() == 0 && tilesToBuffer.size() == 0)
                     try {
                         wait();
-                    } catch (InterruptedException ignored) {}
+                    } catch (InterruptedException ignored) {
+                    }
             }
             Pair<JLabel, Pair<Integer, Point>> lB = getNextLabelToBuffer();
             if (lB != null) {
                 bufferLabel(lB);
-            }
-            else {
+            } else {
                 Pair<Integer, Point> tB = getNextTileToBuffer();
                 if (tB != null)
                     bufferTile(tB);
@@ -63,9 +63,11 @@ public class TileBuffer implements Runnable {
         try {
             int zoom = input.getValue().getKey();
             Point point = input.getValue().getValue();
-            BufferedImage bufferedImage = ImageIO.read(new URL(tileManager.getTileLink(point, zoom)));
-            tileManager.addImage(bufferedImage, zoom, point);
-            tileManager.overlay.fillLabel(input.getKey());
+            BufferedImage bufferedImage = ImageIO.read(new URL(osmTileManager.getTileLink(point, zoom)));
+            osmTileManager.addImage(bufferedImage, zoom, point);
+            // TODO: 06.03.2018 Filling a single label does not work, instead all labels need to be repainted
+            //osmTileManager.overlay.fillLabel(input.getKey());
+            osmTileManager.overlay.fillLabels();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -75,8 +77,8 @@ public class TileBuffer implements Runnable {
         try {
             int zoom = input.getKey();
             Point point = input.getValue();
-            BufferedImage bufferedImage = ImageIO.read(new URL(tileManager.getTileLink(point, zoom)));
-            tileManager.addImage(bufferedImage, zoom, point);
+            BufferedImage bufferedImage = ImageIO.read(new URL(osmTileManager.getTileLink(point, zoom)));
+            osmTileManager.addImage(bufferedImage, zoom, point);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -102,7 +104,7 @@ public class TileBuffer implements Runnable {
         }
 
         // Tile already buffered
-        if (tileManager.getTileImage(point, zoom) != null)
+        if (osmTileManager.getTileImage(point, zoom) != null)
             return;
 
         tilesToBuffer.add(new Pair<>(zoom, point));
