@@ -1,6 +1,9 @@
 package gui.city.Overlay;
 
+import com.sun.java.swing.SwingUtilities3;
+
 import javax.swing.*;
+import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
@@ -143,7 +146,7 @@ public class Overlay extends JPanel {
         bufferRequest();
     }
 
-    private void fillLabels() {
+    public void fillLabels() {
         for (int x = 0; x < labels.size(); x++) {
             ArrayList<JLabel> labelRow = labels.get(x);
             for (int y = 0; y < labelRow.size(); y++) {
@@ -166,6 +169,9 @@ public class Overlay extends JPanel {
     }
 
     private void arrangeLabelArray() {
+        tileManager.clearLabelsToBuffer();
+        tileManager.clearTilesToBuffer();
+
         int visibleX = (int) Math.ceil(this.getWidth() / 256.0);
         int visibleY = (int) Math.ceil(this.getHeight() / 256.0);
 
@@ -190,6 +196,7 @@ public class Overlay extends JPanel {
                     label = row.get(yIndex);
                 } catch (Exception e) {
                     label = new JLabel();
+                    label.setBorder(BorderFactory.createLineBorder(Color.RED, 1));
                 }
                 trySettingIcon(xIndex, yIndex, label);
                 newRow.add(yIndex, label);
@@ -203,7 +210,7 @@ public class Overlay extends JPanel {
         layoutLabels();
     }
 
-    private void trySettingIcon(int xIndex, int yIndex, JLabel label) {
+    private synchronized void trySettingIcon(int xIndex, int yIndex, JLabel label) {
         BufferedImage bi = getTileWithExtraOffset(xIndex, yIndex);
         if (bi != null) {
             label.setIcon(new ImageIcon(bi));
@@ -245,13 +252,6 @@ public class Overlay extends JPanel {
                 jFrame = ((JFrame) parent);
             currentComponent = parent;
         }
-    }
-
-    @Override
-    public void paint(Graphics g) {
-        // TODO: 05.03.2018 smooth translate currently deactivated 
-        //g.translate(xPaintOffset, yPaintOffset);
-        super.paint(g);
     }
 
     public void setXPaintOffset(int xPaintOffset) {
@@ -300,6 +300,14 @@ public class Overlay extends JPanel {
         return new Point(xTile, yTile);
     }
 
+    @Override
+    public void paint(Graphics g) {
+        synchronized (this) {
+            g.translate(xPaintOffset, yPaintOffset);
+            super.paint(g);
+        }
+    }
+
     private class OverlayComponentAdapter extends ComponentAdapter {
         @Override
         public void componentResized(ComponentEvent e) {
@@ -346,37 +354,32 @@ public class Overlay extends JPanel {
             int yDiff = (int) (raw.getY() - onClickP.y);
 
             if (Math.abs(xDiff) <= 1 && Math.abs(yDiff) <= 1) {
-                System.out.println("returned");
                 return;
             }
 
             xPaintOffset += xDiff;
             yPaintOffset += yDiff;
 
-            // TODO: 05.03.2018 Bug could be caused because we move the OverlayPanel while it's components are still repainting
+                if (xPaintOffset > 256) {
+                    int c = xPaintOffset / 256;
+                    xPaintOffset -= 256 * c;
+                    moveHorizontal(-c);
+                } else if (xPaintOffset < -256) {
+                    int c = xPaintOffset / -256;
+                    xPaintOffset += 256 * c;
+                    moveHorizontal(c);
+                } else if (yPaintOffset > 256) {
+                    int c = yPaintOffset / 256;
+                    yPaintOffset -= 256 * c;
+                    moveVertical(-c);
+                } else if (yPaintOffset < -256) {
+                    int c = yPaintOffset / -256;
+                    yPaintOffset += 256 * c;
+                    moveVertical(c);
+                } else {
+                    repaint();
+                }
 
-            if (xPaintOffset > 256) {
-                int c = xPaintOffset / 256;
-                xPaintOffset -= 256 * c;
-                moveHorizontal(-c);
-            } else if (xPaintOffset < -256) {
-                int c = xPaintOffset / -256;
-                xPaintOffset += 256 * c;
-                moveHorizontal(c);
-            } else if (yPaintOffset > 256) {
-                int c = yPaintOffset / 256;
-                yPaintOffset -= 256 * c;
-                moveVertical(-c);
-            } else if (yPaintOffset < -256) {
-                int c = yPaintOffset / -256;
-                yPaintOffset += 256 * c;
-                moveVertical(c);
-            } else {
-                repaint();
-            }
-
-            // TODO: 05.03.2018 Might(!!) cause the uncompleted repaint of some tile
-            System.out.println("Robot:");
             robot.mouseMove(onClickP.x, onClickP.y);
         }
     }
