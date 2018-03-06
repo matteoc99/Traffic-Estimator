@@ -288,4 +288,14 @@ public class Lane {
     public void setStreetlight(Streetlight streetlight) {
         this.streetlight = streetlight;
     }
+
+    public Point getPointByProgress(double progressInLane) {
+        Point ret = new Point();
+        int deltay = getFromNode().getY() - getToNode().getY();
+        int deltax = getFromNode().getX() - getToNode().getX();
+        double x = getFromNode().getX() - deltax * (progressInLane / getLength());
+        double y = getFromNode().getY() - deltay * (progressInLane / getLength());
+        ret.setLocation(x, y);
+        return ret;
+    }
 }

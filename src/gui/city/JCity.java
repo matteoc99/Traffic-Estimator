@@ -85,7 +85,7 @@ public class JCity extends JPanel {
             setLocation(getX() + (getWidth() - newWidth) / 2, getY() + (getHeight() - newHeight) / 2);
         }
 
-        setSize(newHeight,newWidth);
+        setSize(newHeight, newWidth);
         if (firstPaint) {
             firstPaint = false;
             System.out.println("painting done");
@@ -103,7 +103,6 @@ public class JCity extends JPanel {
         stroke = 1;
         g2.setStroke(new BasicStroke((float) (stroke * zoom >= 1 ? stroke * zoom : 1), BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
         if (zoom >= 1) {
-
             g2.drawLine((int) ((int) (lane.getParent().getxFrom() * zoom) - (zoom + i * zoom * 2) * dir),
                     (int) ((int) (lane.getParent().getyFrom() * zoom) - (zoom + i * zoom * 2) * dir),
                     (int) ((int) (lane.getParent().getxTo() * zoom) - (zoom + i * zoom * 2) * dir),
@@ -113,6 +112,7 @@ public class JCity extends JPanel {
                     (int) ((int) (lane.getParent().getyFrom() * zoom) - (1 + i * 2) * dir),
                     (int) ((int) (lane.getParent().getxTo() * zoom) - (1 + i * 2) * dir),
                     (int) ((int) (lane.getParent().getyTo() * zoom) - (1 + i * 2) * dir));
+
         }
         ArrayList<Vehicle> vehicles = lane.getVehicles();
         //anti duplicate
@@ -120,19 +120,38 @@ public class JCity extends JPanel {
             Vehicle vehicle = vehicles.get(j);
             g2.setColor(vehicle.getColor());
             // draw cars
-            if(zoom < 1){
-                double temp = zoom;
-                zoom=1;
-                g2.fillOval((int) ((int) ((vehicle.currentPointOnLane().x) * temp) - (4 * (int) (zoom)) / 2 - (zoom + i * zoom * 2) * dir),
-                        (int) ((int) ((vehicle.currentPointOnLane().y) * temp) - (4 * (int) (zoom)) / 2 - (zoom + i * zoom * 2) * dir),
-                        8 * (int) (zoom), 8 * (int) (zoom));
-            zoom= temp;
-            }else{
+            if (zoom < 1) {
+                g2.fillOval((int) ((int) ((vehicle.currentPointOnLane().x) * zoom) - (4) / 2 - (1 + i * 2) * dir),
+                        (int) ((int) ((vehicle.currentPointOnLane().y) * zoom) - (4) / 2 - (1 + i * 2) * dir),
+                        4, 4);
+            } else {
                 g2.fillOval((int) ((int) ((vehicle.currentPointOnLane().x) * zoom) - (4 * (int) (zoom)) / 2 - (zoom + i * zoom * 2) * dir),
                         (int) ((int) ((vehicle.currentPointOnLane().y) * zoom) - (4 * (int) (zoom)) / 2 - (zoom + i * zoom * 2) * dir),
                         4 * (int) (zoom), 4 * (int) (zoom));
             }
 
+        }
+        //draw streetlights
+        if (zoom < 1) {
+            if (lane.getStreetlight() != null) {
+                if (lane.getStreetlight().getState() == 0)
+                    g2.setColor(Color.RED);
+                else
+                    g2.setColor(Color.GREEN);
+                g2.fillRect((int) (lane.getPointByProgress(lane.getLength() - 5).x * zoom) - (4) / 2 - (1 + i * 2) * dir,
+                        (int) (lane.getPointByProgress(lane.getLength() - 5).y * zoom) - (4) / 2 - (1 + i * 2) * dir,
+                        4, 4);
+            }
+        } else {
+            if (lane.getStreetlight() != null) {
+                if (lane.getStreetlight().getState() == 0)
+                    g2.setColor(Color.RED);
+                else
+                    g2.setColor(Color.GREEN);
+                g2.fillOval((int) ((lane.getPointByProgress(lane.getLength() - 5).x * zoom) - (4 * (int) (zoom)) / 2 - (zoom + i * zoom * 2) * dir),
+                        (int) ((lane.getPointByProgress(lane.getLength() - 5).y * zoom) - (4 * (int) (zoom)) / 2 - (zoom + i * zoom * 2) * dir),
+                        4 * (int) (zoom), 4 * (int) (zoom));
+            }
         }
     }
 

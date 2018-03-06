@@ -269,7 +269,7 @@ public class VehicleDriving implements DrivingInterface {
     private void followLaneAction() {
 
         //todo from time to time evaluate other actions because --> once follow lane u are stuck until lane change
-        if (vehicle.getProgressInLane() / vehicle.getLane().getLength() > 0.98) {
+        if (vehicle.getProgressInLane() / vehicle.getLane().getLength() > 0.95) {
             //change lane or die if path end is reached
             if (vehicle.getLane().equals(vehicle.getPrevGoal().getLaneTo(vehicle.getCurrentGoal()))) {
                 vehicle.setPrevGoal(vehicle.getCurrentGoal());
@@ -446,7 +446,7 @@ public class VehicleDriving implements DrivingInterface {
     }
 
     public int getSafetyDist(){
-        int ret= (int) (vehicle.getCurrentSpeed()/6)+1;
+        int ret= (int) (vehicle.getCurrentSpeed()/6)+2;
         return ret;
     }
 }
