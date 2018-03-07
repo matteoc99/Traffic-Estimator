@@ -39,6 +39,8 @@ public class PathUtils {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            if(i%(count/10)==0)
+                System.out.println(i+"von"+count);
         }
         try {
             bw.close();

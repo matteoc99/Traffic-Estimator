@@ -4,6 +4,7 @@ import logic.vehicles.Vehicle;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
+import utils.PathUtils;
 import utils.Utils;
 
 import java.awt.*;
@@ -155,6 +156,7 @@ public class City extends Thread {
         }
         city.sortLanes();
 
+        PathUtils.getRandomPath(city);
         return city;
     }
 
