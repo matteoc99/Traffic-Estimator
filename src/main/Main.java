@@ -172,6 +172,9 @@ public class Main extends JFrame {
                     case KeyEvent.VK_P:
                         preciseZoom = !preciseZoom;
                         break;
+                    case KeyEvent.VK_L:
+                        jCity.toggleShowLights();
+                        break;
                     case KeyEvent.VK_R:
                         while (getAvgNodePosition() > getHeight() / 2) {
                             zoom /= 1.5;
@@ -351,7 +354,7 @@ public class Main extends JFrame {
     public static void main(String[] args) {
         System.out.println("Main:" + new Timestamp(System.currentTimeMillis()) + " Creating City from .json...");
         City city = City.createCityFromJson(
-                new File(System.getProperty("user.dir") + "\\src\\parsing\\res\\testcity.json"));
+                new File(System.getProperty("user.dir") + "\\src\\parsing\\res\\rom.json"));
 
         System.out.println("Main:" + new Timestamp(System.currentTimeMillis()) + " Starting GUI...");
         Main main = new Main(city);

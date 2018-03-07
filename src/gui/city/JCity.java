@@ -27,7 +27,9 @@ public class JCity extends JPanel {
 
     private boolean firstPaint = true;
 
+
     private boolean pslFlag = true;
+    private boolean showLights= true;
 
     public JCity(City city) {
         this.city = city;
@@ -121,36 +123,38 @@ public class JCity extends JPanel {
             g2.setColor(vehicle.getColor());
             // draw cars
             if (zoom < 1) {
-                g2.fillOval((int) ((int) ((vehicle.currentPointOnLane().x) * zoom) - (4) / 2 - (1 + i * 2) * dir),
-                        (int) ((int) ((vehicle.currentPointOnLane().y) * zoom) - (4) / 2 - (1 + i * 2) * dir),
-                        4, 4);
+                g2.fillOval((int) ((int) ((vehicle.currentPointOnLane().x) * zoom) - (8) / 2 - (1 + i * 2) * dir),
+                        (int) ((int) ((vehicle.currentPointOnLane().y) * zoom) - (8) / 2 - (1 + i * 2) * dir),
+                        8, 8);
             } else {
-                g2.fillOval((int) ((int) ((vehicle.currentPointOnLane().x) * zoom) - (4 * (int) (zoom)) / 2 - (zoom + i * zoom * 2) * dir),
-                        (int) ((int) ((vehicle.currentPointOnLane().y) * zoom) - (4 * (int) (zoom)) / 2 - (zoom + i * zoom * 2) * dir),
-                        4 * (int) (zoom), 4 * (int) (zoom));
+                g2.fillOval((int) ((int) ((vehicle.currentPointOnLane().x) * zoom) - (8 * (int) (zoom)) / 2 - (zoom + i * zoom * 2) * dir),
+                        (int) ((int) ((vehicle.currentPointOnLane().y) * zoom) - (8 * (int) (zoom)) / 2 - (zoom + i * zoom * 2) * dir),
+                        8 * (int) (zoom), 8 * (int) (zoom));
             }
 
         }
         //draw streetlights
-        if (zoom < 1) {
-            if (lane.getStreetlight() != null) {
-                if (lane.getStreetlight().getState() == 0)
-                    g2.setColor(Color.RED);
-                else
-                    g2.setColor(Color.GREEN);
-                g2.fillRect((int) (lane.getPointByProgress(lane.getLength() - 5).x * zoom) - (4) / 2 - (1 + i * 2) * dir,
-                        (int) (lane.getPointByProgress(lane.getLength() - 5).y * zoom) - (4) / 2 - (1 + i * 2) * dir,
-                        4, 4);
-            }
-        } else {
-            if (lane.getStreetlight() != null) {
-                if (lane.getStreetlight().getState() == 0)
-                    g2.setColor(Color.RED);
-                else
-                    g2.setColor(Color.GREEN);
-                g2.fillOval((int) ((lane.getPointByProgress(lane.getLength() - 5).x * zoom) - (4 * (int) (zoom)) / 2 - (zoom + i * zoom * 2) * dir),
-                        (int) ((lane.getPointByProgress(lane.getLength() - 5).y * zoom) - (4 * (int) (zoom)) / 2 - (zoom + i * zoom * 2) * dir),
-                        4 * (int) (zoom), 4 * (int) (zoom));
+        if(showLights) {
+            if (zoom < 1) {
+                if (lane.getStreetlight() != null) {
+                    if (lane.getStreetlight().getState() == 0)
+                        g2.setColor(Color.RED);
+                    else
+                        g2.setColor(Color.GREEN);
+                    g2.fillRect((int) (lane.getPointByProgress(lane.getLength() - 5).x * zoom) - (8) / 2 - (1 + i * 2) * dir,
+                            (int) (lane.getPointByProgress(lane.getLength() - 5).y * zoom) - (8) / 2 - (1 + i * 2) * dir,
+                            8, 8);
+                }
+            } else {
+                if (lane.getStreetlight() != null) {
+                    if (lane.getStreetlight().getState() == 0)
+                        g2.setColor(Color.RED);
+                    else
+                        g2.setColor(Color.GREEN);
+                    g2.fillOval((int) ((lane.getPointByProgress(lane.getLength() - 5).x * zoom) - (8 * (int) (zoom)) / 2 - (zoom + i * zoom * 2) * dir),
+                            (int) ((lane.getPointByProgress(lane.getLength() - 5).y * zoom) - (8 * (int) (zoom)) / 2 - (zoom + i * zoom * 2) * dir),
+                            8 * (int) (zoom), 8 * (int) (zoom));
+                }
             }
         }
     }
@@ -162,5 +166,18 @@ public class JCity extends JPanel {
     public boolean tooglePSLFlag() {
         pslFlag = !pslFlag;
         return pslFlag;
+    }
+
+    public boolean toggleShowLights() {
+        showLights = !showLights;
+        return showLights;
+    }
+
+    public boolean isShowLights() {
+        return showLights;
+    }
+
+    public void setShowLights(boolean showLights) {
+        this.showLights = showLights;
     }
 }

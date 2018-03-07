@@ -111,6 +111,11 @@ public class Street extends StreetComponent {
         if (!contains(lane)) {
             if (lane.isReversed()) {
                 backwardLanes.add(lane);
+                if(getFrom() instanceof MultiConnection){
+                    // TODO: 06.03.2018 from lane direction get the direction of the light direction is ignored for now
+                    Streetlight streetlight = new Streetlight(lane, ((MultiConnection) getFrom()).getLogic(), Streetlight.Direction.STRAIGHT);
+                    ((MultiConnection) getFrom()).getLogic().addStreetlight(streetlight);
+                }
             } else {
                 forwardLanes.add(lane);
                 if(getTo() instanceof MultiConnection){

@@ -11,7 +11,7 @@ public class StreetlightLogic extends Thread {
     private ArrayList<Streetlight> streetlights = new ArrayList<>();
 
     //circular selection
-    private static final int cycle = 5;
+    private static final int cycle = 10;
 
 
     public StreetlightLogic(String name, MultiConnection parent) {
@@ -32,12 +32,13 @@ public class StreetlightLogic extends Thread {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-            }
-            // TODO: 06.03.2018 effizienter mit wait & notify
-            try {
-                Thread.sleep(10);
-            } catch (Exception e) {
-                e.printStackTrace();
+            }else {
+                // TODO: 06.03.2018 effizienter mit wait & notify
+                try {
+                    Thread.sleep(1000);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         }
     }

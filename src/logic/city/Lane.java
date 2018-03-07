@@ -225,7 +225,8 @@ public class Lane {
     public double getTraffic() {
         double traffic = 0;
         double avgSpeed = 0;
-        for (Vehicle vehicle : getVehicles()) {
+        ArrayList<Vehicle>vehiclesList = new ArrayList<>(getVehicles());
+        for (Vehicle vehicle : vehiclesList) {
             avgSpeed += vehicle.getCurrentSpeed();
         }
         if (getVehicles().size() > 0) {
