@@ -237,7 +237,9 @@ public class VehicleDriving implements DrivingInterface {
                 Lane lane = vehicle.getPrevGoal().getLaneTo(vehicle.getCurrentGoal());
                 vehicle.changeLane(lane);
             } else {
-                System.out.println("BAD PATH");
+                System.out.println("BAD PATH:");
+                System.out.println("\t"+path);
+                System.out.println();
             }
         } else
             System.out.println("DIE2");

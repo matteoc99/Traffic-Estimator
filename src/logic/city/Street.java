@@ -195,7 +195,6 @@ public class Street extends StreetComponent {
 
     public void setMaxSpeed(double maxSpeed)
     {
-        System.out.println("setMaxSpeed()");
         this.maxSpeed = maxSpeed;
     }
 

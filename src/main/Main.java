@@ -1,13 +1,11 @@
 package main;
 
-import NeuralNetworkLibrary.src.network_gui.NetworkGUI;
 import gui.ControlPanel;
 import gui.CustomSlider;
 import gui.city.JCity;
 import logic.city.City;
 import logic.city.Node;
 import logic.vehicles.Vehicle;
-import utils.Stopwatch;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -24,6 +22,11 @@ import java.util.Iterator;
  */
 public class Main extends JFrame {
 
+    //fps stuff
+    public static int FPS = 20;
+    public static long zeitvorsleep;
+
+
     private static JCity jCity;
     private ControlPanel controlPanel;
     private Container c;
@@ -31,24 +34,9 @@ public class Main extends JFrame {
 
     int effizienz = 0;
 
-
-    public static double zoom = 1;
-    //zoom modes
-    public static boolean fineZoom = false;
-    public static boolean superFineZoom = false;
-    public static boolean preciseZoom = true; //zoom to mouse point
-
     //moving modes
     public static boolean hovermode = false;
     public static Point hoverpoint = null;
-
-    //fps stuff
-    public static int FPS = 25;
-    public static long zeitvorsleep;
-
-
-    //Slider controlls
-    public static int VEHICLE_AMOUNT = 1;
 
 
     /**
@@ -69,10 +57,10 @@ public class Main extends JFrame {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         //getNodesPos average
         while (getAvgNodePosition() > getHeight() / 2) {
-            zoom /= 1.5;
+            jCity.zoomOut();
         }
         while (getAvgNodePosition() < getHeight() / 4) {
-            zoom *= 1.5;
+            jCity.zoomIn();
         }
         jCity.setLocation(0, 0);
 
@@ -90,27 +78,12 @@ public class Main extends JFrame {
                 switch (e.getKeyCode()) {
                     case KeyEvent.VK_PLUS:
                         //zoom++
-                        if (fineZoom) {
-                            zoom += 0.01;
-                        } else if (superFineZoom) {
-                            zoom += 0.0005;
-                        } else {
-                            zoom += 0.5;
-                        }
+                        jCity.zoomIn();
                         recalc = true;
                         break;
                     case KeyEvent.VK_MINUS:
-                        if (fineZoom) {
-                            if (zoom > 0.01)
-                                zoom -= 0.01;
-                        } else if (superFineZoom) {
-                            if (zoom > 0.0005)
-                                zoom -= 0.0005;
-                        } else {
-                            if (zoom > 0.5)
-                                zoom -= 0.5;
+                        jCity.zoomOut();
 
-                        }
                         recalc = true;
                         break;
                     case KeyEvent.VK_LEFT:
@@ -131,9 +104,7 @@ public class Main extends JFrame {
                         recalc = true;
                         jCity.setLocation(jCity.getX(), jCity.getY() - 10);
                         break;
-                    case KeyEvent.VK_F:
-                        fineZoom = true;
-                        break;
+
                     case KeyEvent.VK_H:
                         if (hoverpoint == null) {
                             hovermode = true;
@@ -146,9 +117,6 @@ public class Main extends JFrame {
                             jCity.setLocation(jCity.getX() - xoff, jCity.getY() - yoff);
                         }
                         break;
-                    case KeyEvent.VK_S:
-                        superFineZoom = true;
-                        break;
                 }
                 if (recalc) {
                     jCity.repaint();
@@ -159,28 +127,26 @@ public class Main extends JFrame {
             @Override
             public void keyReleased(KeyEvent e) {
                 switch (e.getKeyCode()) {
-                    case KeyEvent.VK_F:
-                        fineZoom = false;
-                        break;
+
                     case KeyEvent.VK_H:
                         hovermode = false;
                         hoverpoint = null;
                         break;
-                    case KeyEvent.VK_S:
-                        superFineZoom = false;
-                        break;
-                    case KeyEvent.VK_P:
-                        preciseZoom = !preciseZoom;
-                        break;
                     case KeyEvent.VK_L:
                         jCity.toggleShowLights();
                         break;
+                    case KeyEvent.VK_S:
+                        jCity.toggleShowStreets();
+                        break;
+                    case KeyEvent.VK_V:
+                        jCity.toggleShowCars();
+                        break;
                     case KeyEvent.VK_R:
                         while (getAvgNodePosition() > getHeight() / 2) {
-                            zoom /= 1.5;
+                            jCity.zoomOut();
                         }
                         while (getAvgNodePosition() < getHeight() / 4) {
-                            zoom *= 1.5;
+                            jCity.zoomIn();
                         }
                         jCity.setLocation(0, 0);
                         repaint();
@@ -193,27 +159,10 @@ public class Main extends JFrame {
             public void mouseWheelMoved(MouseWheelEvent e) {
                 if (e.getWheelRotation() < 0) {
                     //zoom++
-                    if (fineZoom) {
-                        zoom += 0.01;
-                    } else if (superFineZoom) {
-                        zoom += 0.0005;
-                    } else {
-                        zoom += 0.5;
-                    }
-
+                    jCity.zoomIn();
                 } else {
                     //zoom--
-                    if (fineZoom) {
-                        if (zoom > 0.01)
-                            zoom -= 0.01;
-                    } else if (superFineZoom) {
-                        if (zoom > 0.0005)
-                            zoom -= 0.0005;
-                    } else {
-                        if (zoom > 0.5)
-                            zoom -= 0.5;
-
-                    }
+                    jCity.zoomOut();
                 }
             }
 
@@ -221,8 +170,8 @@ public class Main extends JFrame {
             public void mouseClicked(MouseEvent e) {
                 double x = e.getX() - jCity.getX();
                 double y = e.getY() - jCity.getY();
-                x /= zoom;
-                y /= zoom;
+                x /= JCity.getZoom();
+                y /= JCity.getZoom();
                 System.out.println(city.getStreetByPoint(new Point((int) x, (int) y)));
             }
 
@@ -250,13 +199,11 @@ public class Main extends JFrame {
 
         requestFocus();
 
+        city.start();
+
         while (true) {
             zeitvorsleep = System.currentTimeMillis();
-            calcCity();
-            if (city.getVehicles().size() < VEHICLE_AMOUNT) {
-                Vehicle vehicle = new Vehicle(city);
-                vehicle.setColor(new Color((int) ((Math.random() * 200) + 50), (int) (Math.random() * 200) + 50, (int) (Math.random() * 200) + 50));
-            }
+            repaint();
             long zeitvergangen = (long) (System.currentTimeMillis() - zeitvorsleep);
             if (zeitvergangen < 1000.0 / FPS) {
                 try {
@@ -277,8 +224,8 @@ public class Main extends JFrame {
         Iterator<Node> nodes = city.getNodeIterator();
         while (nodes.hasNext()) {
             Node node = nodes.next();
-            sumX += node.getX() * zoom;
-            sumY += node.getY() * zoom;
+            sumX += node.getX() * JCity.getZoom();
+            sumY += node.getY() * JCity.getZoom();
         }
 
         return Integer.min(sumX / city.getNodeSize(), sumY / city.getNodeSize());
@@ -304,13 +251,14 @@ public class Main extends JFrame {
         ret.setBackground(new Color(86, 90, 200));
         ret.setBounds(getWidth() - getWidth() / 6, 0, getWidth() / 6, getHeight());
 
-        CustomSlider fps = new CustomSlider(JSlider.HORIZONTAL, 0, 1000, FPS);
-        CustomSlider traffic = new CustomSlider(JSlider.HORIZONTAL, 0, 1000, VEHICLE_AMOUNT);
+        CustomSlider speed = new CustomSlider(JSlider.HORIZONTAL, 0, 1500, City.SPEED);
+        CustomSlider traffic = new CustomSlider(JSlider.HORIZONTAL, 0, 10000, City.VEHICLE_AMOUNT);
+        CustomSlider fps = new CustomSlider(JSlider.HORIZONTAL, 0, 80, FPS);
 
 
         int xOff = ret.getWidth() / 4;
 
-        JLabel[] labels = new JLabel[4];
+        JLabel[] labels = new JLabel[3];
         for (int i = 0; i < labels.length; i++) {
             labels[i] = new JLabel();
             labels[i].setBounds(20, (ret.getHeight() / 12) * i, xOff - 10, ret.getHeight() / 10);
@@ -320,21 +268,24 @@ public class Main extends JFrame {
 
         labels[0].setText("SPEED");
         labels[1].setText("Traffic");
+        labels[2].setText("FPS");
 
 
-        fps.setBounds(xOff, 10 + (ret.getHeight() / 12) * 0, ret.getWidth() - xOff - 20, ret.getHeight() / 10);
+        speed.setBounds(xOff, 10 + (ret.getHeight() / 12) * 0, ret.getWidth() - xOff - 20, ret.getHeight() / 10);
         traffic.setBounds(xOff, 10 + (ret.getHeight() / 12) * 1, ret.getWidth() - xOff - 20, ret.getHeight() / 10);
+        fps.setBounds(xOff, 10 + (ret.getHeight() / 12) * 2, ret.getWidth() - xOff - 20, ret.getHeight() / 10);
 
-        System.out.println(fps.getBounds());
-        fps.setMajorTickSpacing(500);
-        traffic.setMajorTickSpacing(500);
+        speed.setMajorTickSpacing(500);
+        traffic.setMajorTickSpacing(5000);
+        fps.setMajorTickSpacing(20);
 
-        fps.setMinorTickSpacing(100);
-        traffic.setMinorTickSpacing(100);
-        fps.addChangeListener(new ChangeListener() {
+        speed.setMinorTickSpacing(250);
+        traffic.setMinorTickSpacing(1000);
+        fps.setMinorTickSpacing(5);
+        speed.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
-                FPS = fps.getValue() + 1;
+                City.SPEED = speed.getValue() + 1;
                 requestFocus();
             }
         });
@@ -342,11 +293,19 @@ public class Main extends JFrame {
         traffic.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
-                VEHICLE_AMOUNT = traffic.getValue() + 1;
+                City.VEHICLE_AMOUNT = traffic.getValue() + 1;
+                requestFocus();
+            }
+        });
+        fps.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                FPS = fps.getValue() + 1;
                 requestFocus();
             }
         });
         ret.add(traffic);
+        ret.add(speed);
         ret.add(fps);
         return ret;
     }
@@ -361,8 +320,4 @@ public class Main extends JFrame {
 
     }
 
-    private void calcCity() {
-        city.calcCity();
-        repaint();
-    }
 }

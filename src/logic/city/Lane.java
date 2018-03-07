@@ -227,7 +227,10 @@ public class Lane {
         double avgSpeed = 0;
         ArrayList<Vehicle>vehiclesList = new ArrayList<>(getVehicles());
         for (Vehicle vehicle : vehiclesList) {
-            avgSpeed += vehicle.getCurrentSpeed();
+            if(vehicle!=null)
+                avgSpeed += vehicle.getCurrentSpeed();
+        else
+            getVehicles().remove(vehicle);
         }
         if (getVehicles().size() > 0) {
             avgSpeed = avgSpeed / getVehicles().size();

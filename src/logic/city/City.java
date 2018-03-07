@@ -19,7 +19,7 @@ import java.util.Iterator;
  * @author Matteo Cosi
  * @since 15.12.2017
  */
-public class City {
+public class City extends Thread {
 
     /**
      * A List containing all Nodes within the city. The List will always be ordered by the Id when
@@ -57,10 +57,7 @@ public class City {
      */
     private boolean lanesSorted = false;
 
-    /**
-     * name of the city
-     */
-    private String name;
+
 
     /**
      * bounds of the city
@@ -70,6 +67,15 @@ public class City {
 
     private ArrayList<Vehicle> vehicles = new ArrayList<>();
 
+    //fps stuff
+    public static int SPEED = 300;
+    public static long zeitvorsleep;
+
+
+    //Slider controlls
+    public static int VEHICLE_AMOUNT = 10;
+
+
     private City() {
         nodes = new ArrayList<>();
         streets = new ArrayList<>();
@@ -78,7 +84,7 @@ public class City {
 
     public City(String name) {
         this();
-        this.name = name;
+        setName(name);
     }
 
     /**
@@ -487,12 +493,27 @@ public class City {
         }
     }
 
-    public String getName() {
-        return name;
-    }
+    @Override
+    public void run() {
+        while (true) {
+            zeitvorsleep = System.currentTimeMillis();
+            calcCity();
+            int i = 0;
 
-    public void setName(String name) {
-        this.name = name;
+            while (getVehicles().size() < VEHICLE_AMOUNT && i < 10) {
+                Vehicle vehicle = new Vehicle(this);
+                vehicle.setColor(new Color((int) ((Math.random() * 200) + 50), (int) (Math.random() * 200) + 50, (int) (Math.random() * 200) + 50));
+                i++;
+            }
+            long zeitvergangen = (long) (System.currentTimeMillis() - zeitvorsleep);
+            if (zeitvergangen < 1000.0 / SPEED) {
+                try {
+                    Thread.sleep((long) (1000.0 / SPEED - zeitvergangen));
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     public int getNodeSize() {

@@ -10,9 +10,6 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import static java.lang.Integer.max;
-import static main.Main.preciseZoom;
-import static main.Main.zoom;
 
 /**
  * @author Matteo Cosi
@@ -29,7 +26,13 @@ public class JCity extends JPanel {
 
 
     private boolean pslFlag = true;
-    private boolean showLights= true;
+    private boolean showLights = true;
+    private boolean showStreets = true;
+    private boolean showCars = true;
+
+    //zoom
+    public static double zoom = 1;
+
 
     public JCity(City city) {
         this.city = city;
@@ -83,14 +86,10 @@ public class JCity extends JPanel {
 
         int newWidth = (int) (city.getBounds().width * zoom);
         int newHeight = (int) (city.getBounds().height * zoom);
-        if (preciseZoom) {
-            setLocation(getX() + (getWidth() - newWidth) / 2, getY() + (getHeight() - newHeight) / 2);
-        }
 
         setSize(newHeight, newWidth);
         if (firstPaint) {
             firstPaint = false;
-            System.out.println("painting done");
         }
     }
 
@@ -104,37 +103,39 @@ public class JCity extends JPanel {
         // if(stroke<1)
         stroke = 1;
         g2.setStroke(new BasicStroke((float) (stroke * zoom >= 1 ? stroke * zoom : 1), BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
-        if (zoom >= 1) {
-            g2.drawLine((int) ((int) (lane.getParent().getxFrom() * zoom) - (zoom + i * zoom * 2) * dir),
-                    (int) ((int) (lane.getParent().getyFrom() * zoom) - (zoom + i * zoom * 2) * dir),
-                    (int) ((int) (lane.getParent().getxTo() * zoom) - (zoom + i * zoom * 2) * dir),
-                    (int) ((int) (lane.getParent().getyTo() * zoom) - (zoom + i * zoom * 2) * dir));
-        } else {
-            g2.drawLine((int) ((int) (lane.getParent().getxFrom() * zoom) - (1 + i * 2) * dir),
-                    (int) ((int) (lane.getParent().getyFrom() * zoom) - (1 + i * 2) * dir),
-                    (int) ((int) (lane.getParent().getxTo() * zoom) - (1 + i * 2) * dir),
-                    (int) ((int) (lane.getParent().getyTo() * zoom) - (1 + i * 2) * dir));
+        if (showStreets)
+            if (zoom >= 1) {
+                g2.drawLine((int) ((int) (lane.getParent().getxFrom() * zoom) - (zoom + i * zoom * 2) * dir),
+                        (int) ((int) (lane.getParent().getyFrom() * zoom) - (zoom + i * zoom * 2) * dir),
+                        (int) ((int) (lane.getParent().getxTo() * zoom) - (zoom + i * zoom * 2) * dir),
+                        (int) ((int) (lane.getParent().getyTo() * zoom) - (zoom + i * zoom * 2) * dir));
+            } else {
+                g2.drawLine((int) ((int) (lane.getParent().getxFrom() * zoom) - (1 + i * 2) * dir),
+                        (int) ((int) (lane.getParent().getyFrom() * zoom) - (1 + i * 2) * dir),
+                        (int) ((int) (lane.getParent().getxTo() * zoom) - (1 + i * 2) * dir),
+                        (int) ((int) (lane.getParent().getyTo() * zoom) - (1 + i * 2) * dir));
 
-        }
+            }
         ArrayList<Vehicle> vehicles = lane.getVehicles();
         //anti duplicate
-        for (int j = 0; j < vehicles.size(); j++) {
-            Vehicle vehicle = vehicles.get(j);
-            g2.setColor(vehicle.getColor());
-            // draw cars
-            if (zoom < 1) {
-                g2.fillOval((int) ((int) ((vehicle.currentPointOnLane().x) * zoom) - (8) / 2 - (1 + i * 2) * dir),
-                        (int) ((int) ((vehicle.currentPointOnLane().y) * zoom) - (8) / 2 - (1 + i * 2) * dir),
-                        8, 8);
-            } else {
-                g2.fillOval((int) ((int) ((vehicle.currentPointOnLane().x) * zoom) - (8 * (int) (zoom)) / 2 - (zoom + i * zoom * 2) * dir),
-                        (int) ((int) ((vehicle.currentPointOnLane().y) * zoom) - (8 * (int) (zoom)) / 2 - (zoom + i * zoom * 2) * dir),
-                        8 * (int) (zoom), 8 * (int) (zoom));
-            }
+        if (showCars)
+            for (int j = 0; j < vehicles.size(); j++) {
+                Vehicle vehicle = vehicles.get(j);
+                g2.setColor(vehicle.getColor());
+                // draw cars
+                if (zoom < 1) {
+                    g2.fillOval((int) ((int) ((vehicle.currentPointOnLane().x) * zoom) - (8) / 2 - (1 + i * 2) * dir),
+                            (int) ((int) ((vehicle.currentPointOnLane().y) * zoom) - (8) / 2 - (1 + i * 2) * dir),
+                            8, 8);
+                } else {
+                    g2.fillOval((int) ((int) ((vehicle.currentPointOnLane().x) * zoom) - (8 * (int) (zoom)) / 2 - (zoom + i * zoom * 2) * dir),
+                            (int) ((int) ((vehicle.currentPointOnLane().y) * zoom) - (8 * (int) (zoom)) / 2 - (zoom + i * zoom * 2) * dir),
+                            8 * (int) (zoom), 8 * (int) (zoom));
+                }
 
-        }
+            }
         //draw streetlights
-        if(showLights) {
+        if (showLights) {
             if (zoom < 1) {
                 if (lane.getStreetlight() != null) {
                     if (lane.getStreetlight().getState() == 0)
@@ -173,11 +174,59 @@ public class JCity extends JPanel {
         return showLights;
     }
 
+    public boolean toggleShowStreets() {
+        showStreets = !showStreets;
+        return showStreets;
+    }
+
+    public boolean toggleShowCars() {
+        showCars = !showCars;
+        return showCars;
+    }
+
+
+    public boolean isShowStreets() {
+        return showStreets;
+    }
+
+    public void setShowStreets(boolean showStreets) {
+        this.showStreets = showStreets;
+    }
+
     public boolean isShowLights() {
         return showLights;
     }
 
     public void setShowLights(boolean showLights) {
         this.showLights = showLights;
+    }
+
+
+    public boolean isShowCars() {
+        return showCars;
+    }
+
+    public void setShowCars(boolean showCars) {
+        this.showCars = showCars;
+    }
+
+    public boolean isFirstPaint() {
+        return firstPaint;
+    }
+
+    public void setFirstPaint(boolean firstPaint) {
+        this.firstPaint = firstPaint;
+    }
+
+    public void zoomIn() {
+        zoom *= 2;
+    }
+
+    public void zoomOut() {
+        zoom /= 2;
+    }
+
+    public static double getZoom() {
+        return zoom;
     }
 }
