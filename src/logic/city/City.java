@@ -66,23 +66,37 @@ public class City extends Thread {
     private Rectangle bounds;
 
 
+    /**
+     * contains all the vehicles of a city
+     */
     private ArrayList<Vehicle> vehicles = new ArrayList<>();
 
-    //fps stuff
+    /**
+     * These two variables are used to determine the speed of the city calculation
+     */
     public static int SPEED = 300;
     public static long zeitvorsleep;
 
 
-    //Slider controlls
+    /**
+     * The amount of cars that should drive in this city
+     */
     public static int VEHICLE_AMOUNT = 10;
 
 
+    /**
+     * crete a basic city and set up the lists
+     */
     private City() {
         nodes = new ArrayList<>();
         streets = new ArrayList<>();
         lanes = new ArrayList<>();
     }
 
+    /**
+     * gives the city a name, then calls the basic constructor
+     * @param name the name for the city
+     */
     public City(String name) {
         this();
         setName(name);
@@ -316,6 +330,11 @@ public class City extends Thread {
     }
 
 
+    /**
+     * Adds a node to the city
+     * <b>DO NOT ADD THE SAME NODE TWICE</b>
+     * @param node the node to add
+     */
     public void add(Node node) {
         if (!contains(node)) {
             nodes.add(node);
@@ -325,6 +344,11 @@ public class City extends Thread {
         }
     }
 
+    /**
+     * Adds a node to the city
+     * <b>DO NOT REMOVE A NODE THAT DOES NOT EXIST</b>
+     * @param node the node to add
+     */
     public void remove(Node node) {
         if (contains(node)) {
             nodes.remove(node);
@@ -333,6 +357,11 @@ public class City extends Thread {
         }
     }
 
+    /**
+     * Checks weathrt a node is already in the city
+     * @param node the node to check
+     * @return true if the node is in the city, otherwise false
+     */
     public boolean contains(Node node) {
         if (nodesSorted)
             return getNodeById(node.getId()) != null;
@@ -340,11 +369,18 @@ public class City extends Thread {
             return nodes.contains(node);
     }
 
+
+    // TODO: 07.03.2018 @maxi kommentieren
     public void sortNodes() {
         nodes.sort(Comparator.comparing(Node::getId));
         nodesSorted = true;
     }
 
+    /**
+     * searches for a node with the requested id
+     * @param id the id of the wanted node
+     * @return the wanted node, otherwise false
+     */
     public Node getNodeById(String id) {
         if (id == null) return null;
         if (!nodesSorted)
@@ -352,6 +388,7 @@ public class City extends Thread {
         return getNodeById(id, 0, nodes.size() - 1);
     }
 
+    // TODO: 07.03.2018 @maxi kommentieren
     private Node getNodeById(String id, int left, int right) {
         if (left > right)
             return null;
@@ -363,6 +400,7 @@ public class City extends Thread {
                     getNodeById(id, left, mid - 1) :
                     getNodeById(id, mid + 1, right);
     }
+
 
     public void add(Street street) {
         if (!contains(street)) {
@@ -395,6 +433,7 @@ public class City extends Thread {
         return getStreetById(id, 0, streets.size() - 1);
     }
 
+    // TODO: 07.03.2018 @maxi kommentieren
     public Street getStreetById(String id, int left, int right) {
         if (left > right)
             return null;
@@ -406,6 +445,7 @@ public class City extends Thread {
                     getStreetById(id, left, mid - 1) :
                     getStreetById(id, mid + 1, right);
     }
+
 
     public void sortLanes() {
         lanes.sort(Comparator.comparing(Lane::getId));
@@ -495,6 +535,10 @@ public class City extends Thread {
         }
     }
 
+
+    /**
+     * the thread that calculates the city over and over
+     */
     @Override
     public void run() {
         while (true) {
@@ -542,6 +586,10 @@ public class City extends Thread {
         return lanes.iterator();
     }
 
+    /**
+     * returns the bounds of the city, determined with the position of the nodes
+     * @return the bounds of the city
+     */
     public Rectangle getBounds() {
         if (bounds == null)
             return bounds = new Rectangle(0, 0, getMaxWidth(), getMaxHeight());
@@ -549,16 +597,12 @@ public class City extends Thread {
             return bounds;
     }
 
+    /**
+     * searches for the node with the greatest y coordinate
+     * used to get the bounds of the city
+     * @return the greatest y coordinate
+     */
     private int getMaxHeight() {
-        int ret = 0;
-        for (Node node : nodes) {
-            if (node.getX() > ret)
-                ret = node.getX();
-        }
-        return ret;
-    }
-
-    private int getMaxWidth() {
         int ret = 0;
         for (Node node : nodes) {
             if (node.getY() > ret)
@@ -567,8 +611,24 @@ public class City extends Thread {
         return ret;
     }
 
+
+    /**
+     * searches for the node with the greatest x coordinate
+     * used to get the bounds of the city
+     * @return the greatest x coordinate
+     */
+    private int getMaxWidth() {
+        int ret = 0;
+        for (Node node : nodes) {
+            if (node.getX() > ret)
+                ret = node.getX();
+        }
+        return ret;
+    }
+
     /**
      * a method work in progress
+     * should be used for performance increase
      */
     public ArrayList<Node> getVisibleNodes(double zoom, int xOff, int yOff, int maxWidth, int maxHeight) {
         ArrayList<Node> ret = new ArrayList<>();

@@ -10,6 +10,8 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import static java.lang.Integer.min;
+
 
 /**
  * @author Matteo Cosi
@@ -33,9 +35,11 @@ public class JCity extends JPanel {
     //zoom
     public static double zoom = 1;
 
+    JFrame container;
 
-    public JCity(City city) {
+    public JCity(City city, JFrame container) {
         this.city = city;
+        this.container = container;
         setLayout(null);
         setBounds(city.getBounds());
     }
@@ -87,7 +91,7 @@ public class JCity extends JPanel {
         int newWidth = (int) (city.getBounds().width * zoom);
         int newHeight = (int) (city.getBounds().height * zoom);
 
-        setSize(newHeight, newWidth);
+        setSize(newWidth, newHeight);
         if (firstPaint) {
             firstPaint = false;
         }
@@ -219,11 +223,46 @@ public class JCity extends JPanel {
     }
 
     public void zoomIn() {
+        Point mousePoint = MouseInfo.getPointerInfo().getLocation();
+        mousePoint.x = mousePoint.x - container.getX() - getX();
+        mousePoint.y = mousePoint.y - container.getY() - getY();
         zoom *= 2;
+        repositionAfterZoom(mousePoint, true);
     }
 
     public void zoomOut() {
+
+        Point mousePoint = MouseInfo.getPointerInfo().getLocation();
+        mousePoint.x -= container.getX() + getX();
+        mousePoint.y -= container.getY() + getY();
+
         zoom /= 2;
+        repositionAfterZoom(mousePoint, false);
+    }
+
+    private void repositionAfterZoom(Point mousePoint, boolean zoomin) {
+        if (mousePoint.x > 0 && mousePoint.y > 0) {
+            int newWidth = (int) (city.getBounds().width * zoom);
+            int newHeight = (int) (city.getBounds().height * zoom);
+            setSize(newWidth, newHeight);
+
+            if (zoomin) {
+                mousePoint.x *= 2;
+                mousePoint.y *= 2;
+            } else {
+                mousePoint.x /= 2;
+                mousePoint.y /= 2;
+            }
+            setLocation(container.getWidth()/2-mousePoint.x,container.getHeight()/2-mousePoint.y);
+            try {
+                Robot r = new Robot();
+                r.mouseMove(container.getX()+container.getWidth()/2,container.getY()+container.getHeight()/2);
+            } catch (AWTException e) {
+                e.printStackTrace();
+            }
+        } else {
+            System.out.println("no mouse pointed");
+        }
     }
 
     public static double getZoom() {

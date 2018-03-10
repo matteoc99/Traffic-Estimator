@@ -28,8 +28,8 @@ public final class OsmToJsonParser {
     private static Map<String, Integer> streetsOnNode = new HashMap<>();
 
     public static void main(String[] args) {
-        parse(System.getProperty("user.dir") + "\\src\\parsing\\res\\rom.osm",
-                System.getProperty("user.dir") + "\\src\\parsing\\res\\rom.json");
+        parse(System.getProperty("user.dir") + "\\src\\parsing\\res\\san.osm",
+                System.getProperty("user.dir") + "\\src\\parsing\\res\\san.json");
     }
 
     /**

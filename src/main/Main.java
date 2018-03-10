@@ -74,37 +74,27 @@ public class Main extends JFrame {
 
             @Override
             public void keyPressed(KeyEvent e) {
-                boolean recalc = false;
                 switch (e.getKeyCode()) {
                     case KeyEvent.VK_PLUS:
                         //zoom++
                         jCity.zoomIn();
-                        recalc = true;
                         break;
                     case KeyEvent.VK_MINUS:
                         jCity.zoomOut();
 
-                        recalc = true;
                         break;
                     case KeyEvent.VK_LEFT:
                         jCity.setLocation(jCity.getX() + 10, jCity.getY());
-                        recalc = true;
                         break;
                     case KeyEvent.VK_RIGHT:
                         jCity.setLocation(jCity.getX() - 10, jCity.getY());
-                        recalc = true;
-
                         break;
                     case KeyEvent.VK_UP:
                         jCity.setLocation(jCity.getX(), jCity.getY() + 10);
-                        recalc = true;
-
                         break;
                     case KeyEvent.VK_DOWN:
-                        recalc = true;
                         jCity.setLocation(jCity.getX(), jCity.getY() - 10);
                         break;
-
                     case KeyEvent.VK_H:
                         if (hoverpoint == null) {
                             hovermode = true;
@@ -118,10 +108,7 @@ public class Main extends JFrame {
                         }
                         break;
                 }
-                if (recalc) {
                     jCity.repaint();
-                }
-
             }
 
             @Override
@@ -148,6 +135,10 @@ public class Main extends JFrame {
                         while (getAvgNodePosition() < getHeight() / 4) {
                             jCity.zoomIn();
                         }
+                        jCity.setLocation(0, 0);
+                        repaint();
+                        break;
+                    case KeyEvent.VK_P:
                         jCity.setLocation(0, 0);
                         repaint();
                         break;
@@ -242,7 +233,7 @@ public class Main extends JFrame {
     }
 
     private JCity setUpCity(City city) {
-        JCity ret = new JCity(city);
+        JCity ret = new JCity(city,this);
         return ret;
     }
 
@@ -313,11 +304,9 @@ public class Main extends JFrame {
     public static void main(String[] args) {
         System.out.println("Main:" + new Timestamp(System.currentTimeMillis()) + " Creating City from .json...");
         City city = City.createCityFromJson(
-                new File(System.getProperty("user.dir") + "\\src\\parsing\\res\\rom.json"));
-
+                new File(System.getProperty("user.dir") + "\\src\\parsing\\res\\testcity.json"));
         System.out.println("Main:" + new Timestamp(System.currentTimeMillis()) + " Starting GUI...");
         Main main = new Main(city);
-
     }
 
 }

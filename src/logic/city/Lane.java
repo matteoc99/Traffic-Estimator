@@ -162,6 +162,10 @@ public class Lane {
         return reversed;
     }
 
+    /**
+     * get the node that lays at the beginning of this lane
+     * @return the node at the beginning of this lane
+     */
     public Node getFromNode() {
         Node ret;
         if (isReversed()) {
@@ -172,6 +176,10 @@ public class Lane {
         return ret;
     }
 
+    /**
+     * get the node that lays at the end of this lane
+     * @return the node at the end of this lane
+     */
     public Node getToNode() {
         Node ret;
         if (isReversed()) {
@@ -183,6 +191,10 @@ public class Lane {
     }
 
 
+    /**
+     * calculates the length of this lane
+     * @return the length of this lane
+     */
     public double getLength() {
         if (length == -1)
             length = parent.getLength();
@@ -202,6 +214,7 @@ public class Lane {
      * calc lane is called every frame
      * and calls the move of every car
      */
+    @Deprecated
     void calcLane() {
         for (int i = 0; i < vehicles.size(); i++) {
             Vehicle vehicle = vehicles.get(i);
