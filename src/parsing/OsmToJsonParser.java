@@ -247,36 +247,17 @@ public final class OsmToJsonParser {
      * Method reruns over all Nodes to adjust the positions
      */
     private static void adjustNodePositions() {
-        double smallestX = Integer.MAX_VALUE;
-        double smallestY = Integer.MAX_VALUE;
-
         JSONArray nodes = jsonRoot.getJSONArray("nodes");
 
         for (int i = 0; i < nodes.length(); i++) {
             JSONObject jNode = nodes.getJSONObject(i);
             double x = Double.parseDouble(jNode.getString("x"));
-            //x = Utils.getOsmTileX(x, 19);
-            x += 180;
-            x *= 10000000;
+            x = Utils.getOsmTileX(x, 19);
             double y = Double.parseDouble(jNode.getString("y"));
-            //y = Utils.getOsmTileY(y, 19);
-            y = 90 - y;
-            y *= 10000000;
+            y = Utils.getOsmTileY(y, 19);
 
-            if ((int) x < smallestX) smallestX = (int) x;
-            if ((int) y < smallestY) smallestY = (int) y;
-
-            jNode.put("x", (int) (x));
-            jNode.put("y", (int) (y));
-        }
-
-
-        for (int i = 0; i < nodes.length(); i++) {
-            JSONObject node = nodes.getJSONObject(i);
-            int orgX = node.getInt("x");
-            int orgY = node.getInt("y");
-            node.put("x", orgX - smallestX);
-            node.put("y", orgY - smallestY);
+            jNode.put("x", x);
+            jNode.put("y", y);
         }
     }
 
