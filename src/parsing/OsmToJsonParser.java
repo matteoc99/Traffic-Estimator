@@ -6,6 +6,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import utils.Utils;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -254,18 +255,21 @@ public final class OsmToJsonParser {
         for (int i = 0; i < nodes.length(); i++) {
             JSONObject jNode = nodes.getJSONObject(i);
             double x = Double.parseDouble(jNode.getString("x"));
+            //x = Utils.getOsmTileX(x, 19);
             x += 180;
             x *= 10000000;
             double y = Double.parseDouble(jNode.getString("y"));
+            //y = Utils.getOsmTileY(y, 19);
             y = 90 - y;
             y *= 10000000;
 
             if ((int) x < smallestX) smallestX = (int) x;
             if ((int) y < smallestY) smallestY = (int) y;
 
-            jNode.put("x", (int) (x)); //lon
-            jNode.put("y", (int) (y)); //lat
+            jNode.put("x", (int) (x));
+            jNode.put("y", (int) (y));
         }
+
 
         for (int i = 0; i < nodes.length(); i++) {
             JSONObject node = nodes.getJSONObject(i);

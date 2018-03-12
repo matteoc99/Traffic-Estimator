@@ -1,22 +1,12 @@
 package utils;
 
-import javax.imageio.ImageIO;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
 import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.net.URL;
-import java.security.GeneralSecurityException;
-import java.security.SecureRandom;
-import java.security.cert.X509Certificate;
 
 /**
  * @author Matteo Cosi
  * @since 25.12.2017
  */
+@SuppressWarnings({"unused", "WeakerAccess"})
 public class Utils {
 
     public static double calcDistanceBetweenPoints(Point a, Point b) {
@@ -33,5 +23,13 @@ public class Utils {
             angle += 360;
         }
         return angle;
+    }
+
+    public static double getOsmTileX(double lon, int zoom) {
+        return (lon + 180) / 360 * (1 << zoom);
+    }
+
+    public static double getOsmTileY(double lat, int zoom) {
+        return (1 - Math.log(Math.tan(Math.toRadians(lat)) + 1 / Math.cos(Math.toRadians(lat))) / Math.PI) / 2 * (1 << zoom);
     }
 }
