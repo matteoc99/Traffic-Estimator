@@ -603,10 +603,9 @@ public class City extends Thread {
 
     /**
      * searches for the node with the greatest y coordinate
-     * used to get the bounds of the city
      * @return the greatest y coordinate
      */
-    private double getMaxHeight() {
+    public double getMaxHeight() {
         double ret = 0;
         for (Node node : nodes) {
             if (node.getY() > ret)
@@ -618,10 +617,9 @@ public class City extends Thread {
 
     /**
      * searches for the node with the greatest x coordinate
-     * used to get the bounds of the city
      * @return the greatest x coordinate
      */
-    private double getMaxWidth() {
+    public double getMaxWidth() {
         double ret = 0;
         for (Node node : nodes) {
             if (node.getX() > ret)
