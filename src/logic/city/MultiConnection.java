@@ -1,5 +1,7 @@
 package logic.city;
 
+import utils.math.Position;
+
 import java.awt.*;
 
 /**
@@ -14,7 +16,7 @@ public class MultiConnection extends Node {
     private StreetlightLogic logic;
 
 
-    public MultiConnection(City parent, Point position, double fame, String id, StreetlightLogic logic) {
+    public MultiConnection(City parent, Position position, double fame, String id, StreetlightLogic logic) {
         this(parent, position, fame, id);
         this.logic = logic;
 
@@ -25,7 +27,7 @@ public class MultiConnection extends Node {
         this.logic = logic;
     }
 
-    public MultiConnection(City parent, Point position, double fame, String id) {
+    public MultiConnection(City parent, Position position, double fame, String id) {
         super(parent, position, fame, id);
         if (getLogic() == null)
             logic = new StreetlightLogic(getId(), this);

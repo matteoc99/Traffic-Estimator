@@ -10,8 +10,6 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import static java.lang.Integer.min;
-
 
 /**
  * @author Matteo Cosi
@@ -128,12 +126,12 @@ public class JCity extends JPanel {
                 g2.setColor(vehicle.getColor());
                 // draw cars
                 if (zoom < 1) {
-                    g2.fillOval((int) ((int) ((vehicle.currentPointOnLane().x) * zoom) - (8) / 2 - (1 + i * 2) * dir),
-                            (int) ((int) ((vehicle.currentPointOnLane().y) * zoom) - (8) / 2 - (1 + i * 2) * dir),
+                    g2.fillOval((int) ((int) ((vehicle.currentPositionOnLane().getX()) * zoom) - (8) / 2 - (1 + i * 2) * dir),
+                            (int) ((int) ((vehicle.currentPositionOnLane().getY()) * zoom) - (8) / 2 - (1 + i * 2) * dir),
                             8, 8);
                 } else {
-                    g2.fillOval((int) ((int) ((vehicle.currentPointOnLane().x) * zoom) - (8 * (int) (zoom)) / 2 - (zoom + i * zoom * 2) * dir),
-                            (int) ((int) ((vehicle.currentPointOnLane().y) * zoom) - (8 * (int) (zoom)) / 2 - (zoom + i * zoom * 2) * dir),
+                    g2.fillOval((int) ((int) ((vehicle.currentPositionOnLane().getX()) * zoom) - (8 * (int) (zoom)) / 2 - (zoom + i * zoom * 2) * dir),
+                            (int) ((int) ((vehicle.currentPositionOnLane().getY()) * zoom) - (8 * (int) (zoom)) / 2 - (zoom + i * zoom * 2) * dir),
                             8 * (int) (zoom), 8 * (int) (zoom));
                 }
 
@@ -146,8 +144,8 @@ public class JCity extends JPanel {
                         g2.setColor(Color.RED);
                     else
                         g2.setColor(Color.GREEN);
-                    g2.fillRect((int) (lane.getPointByProgress(lane.getLength() - 5).x * zoom) - (8) / 2 - (1 + i * 2) * dir,
-                            (int) (lane.getPointByProgress(lane.getLength() - 5).y * zoom) - (8) / 2 - (1 + i * 2) * dir,
+                    g2.fillRect((int) (lane.getPointByProgress(lane.getLength() - 5).getX() * zoom) - (8) / 2 - (1 + i * 2) * dir,
+                            (int) (lane.getPointByProgress(lane.getLength() - 5).getY() * zoom) - (8) / 2 - (1 + i * 2) * dir,
                             8, 8);
                 }
             } else {
@@ -156,8 +154,8 @@ public class JCity extends JPanel {
                         g2.setColor(Color.RED);
                     else
                         g2.setColor(Color.GREEN);
-                    g2.fillOval((int) ((lane.getPointByProgress(lane.getLength() - 5).x * zoom) - (8 * (int) (zoom)) / 2 - (zoom + i * zoom * 2) * dir),
-                            (int) ((lane.getPointByProgress(lane.getLength() - 5).y * zoom) - (8 * (int) (zoom)) / 2 - (zoom + i * zoom * 2) * dir),
+                    g2.fillOval((int) ((lane.getPointByProgress(lane.getLength() - 5).getX() * zoom) - (8 * (int) (zoom)) / 2 - (zoom + i * zoom * 2) * dir),
+                            (int) ((lane.getPointByProgress(lane.getLength() - 5).getY() * zoom) - (8 * (int) (zoom)) / 2 - (zoom + i * zoom * 2) * dir),
                             8 * (int) (zoom), 8 * (int) (zoom));
                 }
             }

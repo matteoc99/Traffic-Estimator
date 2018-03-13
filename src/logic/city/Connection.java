@@ -1,5 +1,7 @@
 package logic.city;
 
+import utils.math.Position;
+
 import java.awt.*;
 
 /**
@@ -12,7 +14,7 @@ public class Connection extends Node {
         this(node.getParent(), node.getPosition(), node.getFame(), node.getId());
     }
 
-    public Connection(City parent, Point position, double fame, String id) {
+    public Connection(City parent, Position position, double fame, String id) {
         super(parent, position, fame, id);
     }
 

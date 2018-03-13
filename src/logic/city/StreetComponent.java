@@ -1,6 +1,7 @@
 package logic.city;
 
 import utils.Utils;
+import utils.math.Position;
 
 import java.awt.*;
 
@@ -12,37 +13,20 @@ public class StreetComponent {
     /**
      * bounds of the lane
      */
-    private int xFrom;
-    private int xTo;
-    private int yFrom;
-    private int yTo;
-    /**
-     * the degrees of the lane
-     */
-    private double degrees = -1;
-
-    /**
-     * the bounds of this street component
-     */
-    private Rectangle bounds;
+    private double xFrom;
+    private double xTo;
+    private double yFrom;
+    private double yTo;
 
 
     /**
      * automatically sets xFrom xTo yFrom yTo and automatically calculates the degrees
      */
-    public StreetComponent(int xFrom, int xTo, int yFrom, int yTo) {
+    public StreetComponent(double xFrom, double xTo, double yFrom, double yTo) {
         this.xFrom = xFrom;
         this.xTo = xTo;
         this.yFrom = yFrom;
         this.yTo = yTo;
-        calcDegrees();
-    }
-
-    /**
-     * Calculates the degrees from the "From x,y" to the "To x,y"
-     */
-    protected void calcDegrees() {
-        this.degrees = Utils.calcDegreesBetweenTwoPoint(getxFrom(), getyFrom(), getxTo(), getyTo());
     }
 
 
@@ -52,71 +36,38 @@ public class StreetComponent {
      * @return the legth of the line
      */
     public double getLength() {
-
-        return Utils.calcDistanceBetweenPoints(new Point(xFrom, yFrom), new Point(xTo, yTo));
+        return new Position(xFrom, yFrom).distanceTo(new Position(xTo, yTo));
     }
 
-    public double getDegrees() {
-        return degrees;
-    }
-
-    /**
-     * refreshes the degrees in case that the x,y changes
-     */
-    public void refreshDegrees() {
-        calcDegrees();
-    }
-
-    public int getxTo() {
+    public double getxTo() {
         return xTo;
     }
 
-    public void setxTo(int xTo) {
+    public void setxTo(double xTo) {
         this.xTo = xTo;
     }
 
-    public int getyFrom() {
+    public double getyFrom() {
         return yFrom;
     }
 
-    public void setyFrom(int yFrom) {
+    public void setyFrom(double yFrom) {
         this.yFrom = yFrom;
     }
 
-    public int getyTo() {
+    public double getyTo() {
         return yTo;
     }
 
-    public void setyTo(int yTo) {
+    public void setyTo(double yTo) {
         this.yTo = yTo;
     }
 
-    public int getxFrom() {
+    public double getxFrom() {
         return xFrom;
     }
 
-    public void setxFrom(int xFrom) {
+    public void setxFrom(double xFrom) {
         this.xFrom = xFrom;
-    }
-
-
-    /**
-     * calculates the bounds of the street component
-     *
-     * @return the bounds
-     */
-    public Rectangle getBounds() {
-        int x = Integer.min(xTo, xFrom);
-        int y = Integer.min(yTo, yFrom);
-        int width = Integer.max(xTo, xFrom) - Integer.min(xTo, xFrom);
-        int height = Integer.max(yTo, yFrom) - Integer.min(yTo, yFrom);
-        if (height == 0)
-            height = 1;
-        if (width == 0)
-            width = 1;
-        if (bounds == null)
-            return bounds = new Rectangle(x, y, width, height);
-        else
-            return bounds;
     }
 }

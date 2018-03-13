@@ -1,11 +1,13 @@
 package logic.city;
 
+import javafx.geometry.Pos;
 import logic.vehicles.Vehicle;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 import utils.PathUtils;
 import utils.Utils;
+import utils.math.Position;
 
 import java.awt.*;
 import java.io.File;
@@ -128,12 +130,12 @@ public class City extends Thread {
             // id(String), x(number), y(number), fame(number), type(String)
             JSONObject nodeEntry = jNodes.getJSONObject(i);
             String id = nodeEntry.getString("id");
-            int x = nodeEntry.getInt("x");
-            int y = nodeEntry.getInt("y");
+            double x = nodeEntry.getDouble("x");
+            double y = nodeEntry.getDouble("y");
             double fame = nodeEntry.getDouble("fame");
             String type = nodeEntry.getString("type");
 
-            createNodeByClassName(type, city, new Point(x, y), fame, id);
+            createNodeByClassName(type, city, new Position(x, y), fame, id);
         }
         city.sortNodes();
 
@@ -179,24 +181,24 @@ public class City extends Thread {
      *
      * @param className type of the node
      * @param city      reference to the city it will be part of
-     * @param point     position of the node
+     * @param pos       position of the node
      * @param fame      how of the node, higher fame causes more cars to start or end their path on this node
      * @param id        of the node
      */
     private static void createNodeByClassName(String className,
                                               City city,
-                                              Point point,
+                                              Position pos,
                                               double fame,
                                               String id) {
         switch (className) {
             case "Connection":
-                new Connection(city, point, fame, id);
+                new Connection(city, pos, fame, id);
                 break;
             case "MultiConnection":
-                new MultiConnection(city, point, fame, id);
+                new MultiConnection(city, pos, fame, id);
                 break;
             case "DeadEnd":
-                new DeadEnd(city, point, fame, id);
+                new DeadEnd(city, pos, fame, id);
                 break;
         }
     }
@@ -500,17 +502,18 @@ public class City extends Thread {
      * @return closest Street
      */
     public Street getStreetByPoint(Point point) {
+        Position position = new Position(point.getX(), point.getY());
         int bestIndex = -1;
         double bestVal = Integer.MAX_VALUE;
 
         ArrayList<Street> streets1 = getStreets();
         for (int i = 0; i < streets1.size(); i++) {
             Street street = streets1.get(i);
-            Point a = street.getFrom().getPosition();
-            Point b = street.getTo().getPosition();
-            double val = (Utils.calcDistanceBetweenPoints(a, point) +
-                    Utils.calcDistanceBetweenPoints(b, point)) -
-                    Utils.calcDistanceBetweenPoints(a, b);
+            Position a = street.getFrom().getPosition();
+            Position b = street.getTo().getPosition();
+            double val = (a.distanceTo(position) +
+                    b.distanceTo(position) -
+                    a.distanceTo(b));
             val = Math.abs(val);
             if (val < bestVal) {
                 bestVal = val;
@@ -591,8 +594,9 @@ public class City extends Thread {
      * @return the bounds of the city
      */
     public Rectangle getBounds() {
+        // FIXME: 12.03.2018 goes to JCity (for now parsed to int) bad!
         if (bounds == null)
-            return bounds = new Rectangle(0, 0, getMaxWidth(), getMaxHeight());
+            return bounds = new Rectangle(0, 0, (int)getMaxWidth(), (int)getMaxHeight());
         else
             return bounds;
     }
@@ -602,8 +606,8 @@ public class City extends Thread {
      * used to get the bounds of the city
      * @return the greatest y coordinate
      */
-    private int getMaxHeight() {
-        int ret = 0;
+    private double getMaxHeight() {
+        double ret = 0;
         for (Node node : nodes) {
             if (node.getY() > ret)
                 ret = node.getY();
@@ -617,8 +621,8 @@ public class City extends Thread {
      * used to get the bounds of the city
      * @return the greatest x coordinate
      */
-    private int getMaxWidth() {
-        int ret = 0;
+    private double getMaxWidth() {
+        double ret = 0;
         for (Node node : nodes) {
             if (node.getX() > ret)
                 ret = node.getX();

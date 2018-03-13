@@ -273,27 +273,18 @@ public class Main extends JFrame {
         speed.setMinorTickSpacing(250);
         traffic.setMinorTickSpacing(1000);
         fps.setMinorTickSpacing(5);
-        speed.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                City.SPEED = speed.getValue() + 1;
-                requestFocus();
-            }
+        speed.addChangeListener(e -> {
+            City.SPEED = speed.getValue() + 1;
+            requestFocus();
         });
 
-        traffic.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                City.VEHICLE_AMOUNT = traffic.getValue() + 1;
-                requestFocus();
-            }
+        traffic.addChangeListener(e -> {
+            City.VEHICLE_AMOUNT = traffic.getValue() + 1;
+            requestFocus();
         });
-        fps.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                FPS = fps.getValue() + 1;
-                requestFocus();
-            }
+        fps.addChangeListener(e -> {
+            FPS = fps.getValue() + 1;
+            requestFocus();
         });
         ret.add(traffic);
         ret.add(speed);
@@ -304,7 +295,7 @@ public class Main extends JFrame {
     public static void main(String[] args) {
         System.out.println("Main:" + new Timestamp(System.currentTimeMillis()) + " Creating City from .json...");
         City city = City.createCityFromJson(
-                new File(System.getProperty("user.dir") + "\\src\\parsing\\res\\testcity.json"));
+                new File(System.getProperty("user.dir") + "\\src\\parsing\\res\\lana_NewXY.json"));
         System.out.println("Main:" + new Timestamp(System.currentTimeMillis()) + " Starting GUI...");
         Main main = new Main(city);
     }

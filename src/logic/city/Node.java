@@ -2,6 +2,7 @@ package logic.city;
 
 import logic.vehicles.Vehicle;
 import utils.Utils;
+import utils.math.Position;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -21,7 +22,7 @@ public class Node {
     /**
      * graphical position of the Node
      */
-    private Point position;
+    private Position position;
 
     /**
      * How likely this place is chosen as a goal/start
@@ -54,7 +55,7 @@ public class Node {
     /**
      * creates a node and adds it to the city
      */
-    public Node(City parent, Point position, double fame, String id) {
+    public Node(City parent, Position position, double fame, String id) {
         this.parent = parent;
         this.position = position;
         this.fame = fame;
@@ -106,19 +107,19 @@ public class Node {
     }
 
 
-    public int getX() {
-        return position.x;
+    public double getX() {
+        return position.getX();
     }
 
-    public int getY() {
-        return position.y;
+    public double getY() {
+        return position.getY();
     }
 
     public City getParent() {
         return parent;
     }
 
-    public Point getPosition() {
+    public Position getPosition() {
         return position;
     }
 
@@ -163,7 +164,8 @@ public class Node {
     }
 
     public void setDistanceCost(Node goal) {
-        this.distanceCost = Utils.calcDistanceBetweenPoints(getPosition(), goal.getPosition());
+        // TODO: 12.03.2018 test :P
+        this.distanceCost = getPosition().distanceTo(goal.getPosition());
     }
 
     public void setWalkedCost(double walkedCost) {
