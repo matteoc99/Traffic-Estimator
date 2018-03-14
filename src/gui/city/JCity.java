@@ -2,11 +2,13 @@ package gui.city;
 
 import logic.city.City;
 import logic.city.Lane;
+import logic.city.Node;
 import logic.city.Street;
 import logic.vehicles.Vehicle;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -40,14 +42,27 @@ public class JCity extends JPanel {
         this.container = container;
         setLayout(null);
         setBounds(0,0, getXYByTileXY(city.getMaxWidth()), getXYByTileXY(city.getMaxHeight()));
+
+        container.addKeyListener(new JCityKeyListener());
+
+        JCityMouseListener jcML = new JCityMouseListener();
+        container.addMouseListener(jcML);
+        container.addMouseMotionListener(jcML);
+        container.addMouseWheelListener(jcML);
+
+        //getNodesPos average
+        // FIXME: 13.03.2018 endless
+        /*
+        while (getAvgNodePosition() > getHeight() / 2) zoomOut();
+        while (getAvgNodePosition() < getHeight() / 4) zoomIn();
+        */
+
+        // FIXME: 13.03.2018 still little bit off
+        setLocation(-getXYByTileXY(city.getMinWidth()), -getXYByTileXY(city.getMinHeight()));
     }
 
     public City getCity() {
         return city;
-    }
-
-    public void setCity(City city) {
-        this.city = city;
     }
 
     @Override
@@ -58,7 +73,6 @@ public class JCity extends JPanel {
     }
 
     private void paintStreetLines(Graphics2D g) {
-        System.out.println(zoom);
         //drawNodes
       /*  for (Node node : nodes) {
             g.setColor(Color.BLUE);
@@ -72,8 +86,6 @@ public class JCity extends JPanel {
                 RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         g2.setRenderingHints(rh);
 
-        g2.setColor(new Color(55, 55, 55));
-        g2.fillRect(0, 0, getWidth(), getHeight());
         //drawStreets
         Iterator<Street> streets = city.getStreetIterator();
         while (streets.hasNext()) {
@@ -268,14 +280,149 @@ public class JCity extends JPanel {
 
     private static int getXYByTileXY(double tileXY) {
         int ret;
-        int raw = (int)tileXY;
+        int raw = (int) tileXY;
 
-        ret = raw*256;
-        ret+= (tileXY-raw)*256;
+        ret = raw * 256;
+        ret += (tileXY - raw) * 256;
         return ret;
     }
 
     public static double getZoom() {
         return zoom;
+    }
+
+    /**
+     * get avg node pos relative to zoom
+     */
+    public int getAvgNodePosition() {
+        int sumX = 0, sumY = 0;
+        Iterator<Node> nodes = city.getNodeIterator();
+        while (nodes.hasNext()) {
+            Node node = nodes.next();
+            sumX += node.getX() * JCity.getZoom();
+            sumY += node.getY() * JCity.getZoom();
+        }
+
+        return Integer.min(sumX / city.getNodeSize(), sumY / city.getNodeSize());
+    }
+
+    private class JCityKeyListener extends KeyAdapter {
+
+        public boolean hoverMode = false;
+        public Point hoverPoint = null;
+
+        @Override
+        public void keyPressed(KeyEvent e) {
+            switch (e.getKeyCode()) {
+                case KeyEvent.VK_PLUS:
+                    //zoom++
+                    zoomIn();
+                    break;
+                case KeyEvent.VK_MINUS:
+                    zoomOut();
+
+                    break;
+                case KeyEvent.VK_LEFT:
+                    setLocation(getX() + 10, getY());
+                    break;
+                case KeyEvent.VK_RIGHT:
+                    setLocation(getX() - 10, getY());
+                    break;
+                case KeyEvent.VK_UP:
+                    setLocation(getX(), getY() + 10);
+                    break;
+                case KeyEvent.VK_DOWN:
+                    setLocation(getX(), getY() - 10);
+                    break;
+                case KeyEvent.VK_H:
+                    if (hoverPoint == null) {
+                        hoverMode = true;
+                        hoverPoint = MouseInfo.getPointerInfo().getLocation();
+                    } else {
+                        int xOff = hoverPoint.x - MouseInfo.getPointerInfo().getLocation().x;
+                        int yOff = hoverPoint.y - MouseInfo.getPointerInfo().getLocation().y;
+                        xOff /= 4;
+                        yOff /= 4;
+                        setLocation(getX() - xOff, getY() - yOff);
+                    }
+                    break;
+            }
+            repaint();
+        }
+
+        @Override
+        public void keyReleased(KeyEvent e) {
+            switch (e.getKeyCode()) {
+
+                case KeyEvent.VK_H:
+                    hoverMode = false;
+                    hoverPoint = null;
+                    break;
+                case KeyEvent.VK_L:
+                    toggleShowLights();
+                    break;
+                case KeyEvent.VK_S:
+                    toggleShowStreets();
+                    break;
+                case KeyEvent.VK_V:
+                    toggleShowCars();
+                    break;
+                case KeyEvent.VK_R:
+                    while (getAvgNodePosition() > getHeight() / 2) {
+                        zoomOut();
+                    }
+                    while (getAvgNodePosition() < getHeight() / 4) {
+                        zoomIn();
+                    }
+                    setLocation(0, 0);
+                    repaint();
+                    break;
+                case KeyEvent.VK_P:
+                    setLocation(0, 0);
+                    repaint();
+                    break;
+            }
+        }
+    }
+    private class JCityMouseListener extends MouseAdapter {
+
+        /**
+         * Used to drag & drop the contacts
+         */
+        private Point fromCords;
+
+        @Override
+        public void mouseWheelMoved(MouseWheelEvent e) {
+            if (e.getWheelRotation() < 0) {
+                //zoom++
+                zoomIn();
+            } else {
+                //zoom--
+                zoomOut();
+            }
+        }
+
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            double x = e.getX() - getX();
+            double y = e.getY() - getY();
+            x /= JCity.getZoom();
+            y /= JCity.getZoom();
+            System.out.println(city.getStreetByPoint(new Point((int) x, (int) y)));
+        }
+
+        @Override
+        public void mousePressed(MouseEvent e) {
+            fromCords = e.getPoint();
+        }
+
+        @Override
+        public void mouseDragged(MouseEvent e) {
+            Point toCords = e.getPoint();
+            int offsetX = toCords.x - fromCords.x;
+            int offsetY = toCords.y - fromCords.y;
+            setLocation(getX() + offsetX, getY() + offsetY);
+            fromCords = toCords;
+        }
     }
 }

@@ -19,7 +19,7 @@ public class OverlayTest {
 
         JFrame frame = new JFrame();
 
-        overlay = new Overlay(frame, 46.6138900, 11.1524583, 19);
+        overlay = new Overlay(frame, 11.1325323, 46.6140000, 15);
 
         frame.getContentPane().setLayout(new GridLayout());
         frame.setBounds(100, 50, 1200, 850);

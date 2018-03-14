@@ -1,9 +1,8 @@
 package gui.city.Overlay;
 
-import com.sun.java.swing.SwingUtilities3;
+import utils.Utils;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
@@ -45,7 +44,7 @@ public class Overlay extends JPanel {
                 cursorImg, new Point(0, 0), "blank cursor");
     }
 
-    public Overlay(JFrame jFrame, double initialLat, double initialLon, int zoom) {
+    public Overlay(JFrame jFrame, double initialLon, double initialLat, int zoom) {
         this.initialLat = initialLat;
         this.initialLon = initialLon;
         this.jFrame = jFrame;
@@ -56,6 +55,10 @@ public class Overlay extends JPanel {
 
         setCurrentZoomLevel(zoom);
         arrangeLabelArray();
+
+        // already sets an paintOffset so that initialLat and initialLon is exactly topLeft
+        setupInitLoc();
+
         fillLabels();
 
         this.addComponentListener(new OverlayComponentAdapter());
@@ -63,18 +66,6 @@ public class Overlay extends JPanel {
         this.addMouseMotionListener(new OverlayMouseMotionAdapter());
 
         jFrame.addKeyListener(new OverlayKeyListener());
-    }
-
-    private void layoutLabels() {
-        this.removeAll();
-        for (int x = 0; x < labels.size(); x++) {
-            ArrayList<JLabel> labelRow = labels.get(x);
-            for (int y = 0; y < labelRow.size(); y++) {
-                JLabel label = labelRow.get(y);
-                label.setBounds((x - 1) * 256, (y - 1) * 256, 256, 256);
-                this.add(label);
-            }
-        }
     }
 
     private void loadInitialList() {
@@ -89,7 +80,24 @@ public class Overlay extends JPanel {
             if (!initialList.containsKey(zoom))
                 initialList.put(zoom, getTilePoint(initialLat, initialLon, zoom));
             zoom++;
+            System.out.println(zoom + ":" + getTilePoint(initialLat, initialLon, zoom));
         }
+    }
+
+    /**
+     * Moves everything in a way so that the tile which contains the initialCoordinates is visible in the top/left corner
+     */
+    private void setupInitLoc() {
+        double xOrg = Utils.getOsmTileX(initialLon, currentZoomLevel);
+        double yOrg = Utils.getOsmTileY(initialLat, currentZoomLevel);
+
+        double xDigits = xOrg - (int)xOrg;
+        double yDigits = yOrg - (int)yOrg;
+
+        xPaintOffset -= xDigits * 256;
+        yPaintOffset -= yDigits * 256;
+
+        moveOffset(-1, -1);
     }
 
     private void setCurrentZoomLevel(int zoom) {
@@ -128,8 +136,8 @@ public class Overlay extends JPanel {
     }
 
     /**
-     * Positive: up
-     * negative: down
+     * Positive: down
+     * negative: up
      *
      * @param distance amount of tiles (based on zoom 19)
      */
@@ -208,6 +216,18 @@ public class Overlay extends JPanel {
         labels = newLabelList;
 
         layoutLabels();
+    }
+
+    private void layoutLabels() {
+        this.removeAll();
+        for (int x = 0; x < labels.size(); x++) {
+            ArrayList<JLabel> labelRow = labels.get(x);
+            for (int y = 0; y < labelRow.size(); y++) {
+                JLabel label = labelRow.get(y);
+                label.setBounds((x - 1) * 256, (y - 1) * 256, 256, 256);
+                this.add(label);
+            }
+        }
     }
 
     private synchronized void trySettingIcon(int xIndex, int yIndex, JLabel label) {
@@ -312,6 +332,7 @@ public class Overlay extends JPanel {
         @Override
         public void componentResized(ComponentEvent e) {
             super.componentResized(e);
+            System.out.println("arrangeLabelArray() called");
             arrangeLabelArray();
         }
     }

@@ -29,8 +29,8 @@ public final class OsmToJsonParser {
     private static Map<String, Integer> streetsOnNode = new HashMap<>();
 
     public static void main(String[] args) {
-        parse(System.getProperty("user.dir") + "\\src\\parsing\\res\\san.osm",
-                System.getProperty("user.dir") + "\\src\\parsing\\res\\san.json");
+        parse(System.getProperty("user.dir") + "\\src\\parsing\\res\\lana.osm",
+                System.getProperty("user.dir") + "\\src\\parsing\\res\\lana_NewXY.json");
     }
 
     /**
@@ -249,16 +249,33 @@ public final class OsmToJsonParser {
     private static void adjustNodePositions() {
         JSONArray nodes = jsonRoot.getJSONArray("nodes");
 
+        double minLat = Double.MAX_VALUE;
+        double minLon = Double.MAX_VALUE;
+        double maxLat = Double.MIN_VALUE;
+        double maxLon = Double.MIN_VALUE;
+
         for (int i = 0; i < nodes.length(); i++) {
             JSONObject jNode = nodes.getJSONObject(i);
             double x = Double.parseDouble(jNode.getString("x"));
+            minLon = minLon < x ? minLon : x;
+            maxLon = maxLon > x ? maxLon : x;
             x = Utils.getOsmTileX(x, 19);
+
             double y = Double.parseDouble(jNode.getString("y"));
+            minLat = minLat < y ? minLat : y;
+            maxLat = maxLat > y ? maxLat : y;
             y = Utils.getOsmTileY(y, 19);
 
             jNode.put("x", x);
             jNode.put("y", y);
         }
+
+        JSONObject jBounds = new JSONObject();
+        jBounds.put("minLat", minLat);
+        jBounds.put("minLon", minLon);
+        jBounds.put("maxLat" ,maxLat);
+        jBounds.put("maxLon", maxLon);
+        jsonRoot.put("bounds", jBounds);
     }
 
     /**

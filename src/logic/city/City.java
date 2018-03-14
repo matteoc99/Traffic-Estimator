@@ -1,12 +1,10 @@
 package logic.city;
 
-import javafx.geometry.Pos;
 import logic.vehicles.Vehicle;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 import utils.PathUtils;
-import utils.Utils;
 import utils.math.Position;
 
 import java.awt.*;
@@ -60,13 +58,16 @@ public class City extends Thread {
      */
     private boolean lanesSorted = false;
 
-
-
     /**
      * bounds of the city
      */
     private Rectangle bounds;
 
+    /**
+     * geographical positions
+     * Lon(x) Lat(y)
+     */
+    private double minLon, minLat, maxLon, maxLat;
 
     /**
      * contains all the vehicles of a city
@@ -123,6 +124,12 @@ public class City extends Thread {
         }
 
         JSONObject topNode = new JSONObject(root);
+
+        JSONObject bounds = topNode.getJSONObject("bounds");
+        city.minLon = bounds.getDouble("minLon");
+        city.maxLon = bounds.getDouble("maxLon");
+        city.minLat = bounds.getDouble("minLat");
+        city.maxLat = bounds.getDouble("maxLat");
 
         System.out.println("City:" + new Timestamp(System.currentTimeMillis()) + " Creating Nodes...");
         JSONArray jNodes = topNode.getJSONArray("nodes");
@@ -629,6 +636,33 @@ public class City extends Thread {
     }
 
     /**
+     * searches for the node with the smallest y coordinate
+     * @return the smallest y coordinate
+     */
+    public double getMinHeight() {
+        double ret = Double.MAX_VALUE;
+        for (Node node : nodes) {
+            if (node.getY() < ret)
+                ret = node.getY();
+        }
+        return ret;
+    }
+
+
+    /**
+     * searches for the node with the smallest x coordinate
+     * @return the smallest x coordinate
+     */
+    public double getMinWidth() {
+        double ret = Double.MAX_VALUE;
+        for (Node node : nodes) {
+            if (node.getX() < ret)
+                ret = node.getX();
+        }
+        return ret;
+    }
+
+    /**
      * a method work in progress
      * should be used for performance increase
      */
@@ -656,5 +690,21 @@ public class City extends Thread {
 
     public ArrayList<Lane> getLanes() {
         return lanes;
+    }
+
+    public double getMinLon() {
+        return minLon;
+    }
+
+    public double getMinLat() {
+        return minLat;
+    }
+
+    public double getMaxLon() {
+        return maxLon;
+    }
+
+    public double getMaxLat() {
+        return maxLat;
     }
 }
