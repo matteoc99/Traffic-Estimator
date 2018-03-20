@@ -5,6 +5,7 @@ import logic.city.Lane;
 import logic.city.Node;
 import logic.city.Street;
 import logic.vehicles.Vehicle;
+import utils.Utils;
 
 import javax.swing.*;
 import java.awt.*;
@@ -45,11 +46,6 @@ public class JCity extends JPanel {
 
         container.addKeyListener(new JCityKeyListener());
 
-        JCityMouseListener jcML = new JCityMouseListener();
-        container.addMouseListener(jcML);
-        container.addMouseMotionListener(jcML);
-        container.addMouseWheelListener(jcML);
-
         //getNodesPos average
         // FIXME: 13.03.2018 endless
         /*
@@ -59,6 +55,37 @@ public class JCity extends JPanel {
 
         // FIXME: 13.03.2018 still little bit off
         setLocation(-getXYByTileXY(city.getMinWidth()), -getXYByTileXY(city.getMinHeight()));
+
+        /*
+        {
+            Node node = city.getRandomNode();
+            for (Node nodess : city.getNodes()) {
+                if (nodess.getY() < node.getY())
+                    node = nodess;
+            }
+
+            setLocation(-getXYByTileXY(node.getX()), -getXYByTileXY(node.getY()));
+
+            System.out.println(getLocation());
+            System.out.println(node);
+            System.out.println(getXYByTileXY(node.getX()));
+            System.out.println(getXYByTileXY(node.getY()));
+        }
+        {
+            Node node = city.getRandomNode();
+            for (Node nodess : city.getNodes()) {
+                if (nodess.getX() < node.getX())
+                    node = nodess;
+            }
+
+            setLocation(-getXYByTileXY(node.getX()), -getXYByTileXY(node.getY()));
+
+            System.out.println(getLocation());
+            System.out.println(node);
+            System.out.println(getXYByTileXY(node.getX()));
+            System.out.println(getXYByTileXY(node.getY()));
+        }
+        */
     }
 
     public City getCity() {
@@ -112,12 +139,9 @@ public class JCity extends JPanel {
 
     private void drawLaneAndCars(Lane lane, Graphics2D g2, int i, boolean isBackward) {
         int dir = isBackward? -1:1;
-        //drawlanes
+        //draw lanes
         g2.setColor(lane.getColorByTraffic());
-        // FIXME: 13.03.2018
-        int stroke = (int) (2 * lane.getTraffic());
-        // if(stroke<1)
-        stroke = 1;
+        int stroke = 1;
         g2.setStroke(new BasicStroke((float) (stroke * zoom >= 1 ? stroke * zoom : 1), BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
         if (showStreets)
             if (zoom >= 1) {
@@ -235,6 +259,7 @@ public class JCity extends JPanel {
     }
 
     public void zoomIn() {
+        System.out.println("In "+zoom);
         Point mousePoint = MouseInfo.getPointerInfo().getLocation();
         mousePoint.x = mousePoint.x - container.getX() - getX();
         mousePoint.y = mousePoint.y - container.getY() - getY();
@@ -243,7 +268,7 @@ public class JCity extends JPanel {
     }
 
     public void zoomOut() {
-
+        System.out.println("Out "+zoom);
         Point mousePoint = MouseInfo.getPointerInfo().getLocation();
         mousePoint.x -= container.getX() + getX();
         mousePoint.y -= container.getY() + getY();
@@ -382,47 +407,6 @@ public class JCity extends JPanel {
                     repaint();
                     break;
             }
-        }
-    }
-    private class JCityMouseListener extends MouseAdapter {
-
-        /**
-         * Used to drag & drop the contacts
-         */
-        private Point fromCords;
-
-        @Override
-        public void mouseWheelMoved(MouseWheelEvent e) {
-            if (e.getWheelRotation() < 0) {
-                //zoom++
-                zoomIn();
-            } else {
-                //zoom--
-                zoomOut();
-            }
-        }
-
-        @Override
-        public void mouseClicked(MouseEvent e) {
-            double x = e.getX() - getX();
-            double y = e.getY() - getY();
-            x /= JCity.getZoom();
-            y /= JCity.getZoom();
-            System.out.println(city.getStreetByPoint(new Point((int) x, (int) y)));
-        }
-
-        @Override
-        public void mousePressed(MouseEvent e) {
-            fromCords = e.getPoint();
-        }
-
-        @Override
-        public void mouseDragged(MouseEvent e) {
-            Point toCords = e.getPoint();
-            int offsetX = toCords.x - fromCords.x;
-            int offsetY = toCords.y - fromCords.y;
-            setLocation(getX() + offsetX, getY() + offsetY);
-            fromCords = toCords;
         }
     }
 }

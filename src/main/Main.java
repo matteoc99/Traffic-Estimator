@@ -2,8 +2,8 @@ package main;
 
 import gui.ControlPanel;
 import gui.CustomSlider;
+import gui.city.CityMap;
 import gui.city.JCity;
-import gui.city.Overlay.Overlay;
 import logic.city.City;
 
 import javax.swing.*;
@@ -33,13 +33,10 @@ public class Main extends JFrame {
         setupWindow();
         c = getContentPane();
         controlPanel = setUpControlPanel();
-        jCity = setUpCity(city);
-        Overlay overlay = new Overlay(this, city.getMinLon(), city.getMaxLat(), 15);
-        overlay.setBounds(0, 0, getWidth(), getHeight());
-
+        CityMap cityMap = new CityMap(this, city);
+        cityMap.setBounds(0, 0, getWidth()-getWidth()/6, getHeight());
+        c.add(cityMap);
         c.add(controlPanel);
-        c.add(jCity);
-        c.add(overlay);
 
         setResizable(false);
 

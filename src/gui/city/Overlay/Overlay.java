@@ -15,8 +15,6 @@ import java.util.HashMap;
  */
 public class Overlay extends JPanel {
 
-    private static Cursor blankCursor;
-
     private Point onClickP = new Point(0, 0);
     private int xPaintOffset, yPaintOffset = 0;
 
@@ -34,15 +32,6 @@ public class Overlay extends JPanel {
     private TileManager tileManager = new OSMTileManager(this);
 
     private JFrame jFrame;
-
-    static {
-        // Transparent 16 x 16 pixel cursor image.
-        BufferedImage cursorImg = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
-
-        // Create a new blank cursor.
-        blankCursor = Toolkit.getDefaultToolkit().createCustomCursor(
-                cursorImg, new Point(0, 0), "blank cursor");
-    }
 
     public Overlay(JFrame jFrame, double initialLon, double initialLat, int zoom) {
         this.initialLat = initialLat;
@@ -62,8 +51,6 @@ public class Overlay extends JPanel {
         fillLabels();
 
         this.addComponentListener(new OverlayComponentAdapter());
-        this.addMouseListener(new OverlayMouseAdapter());
-        this.addMouseMotionListener(new OverlayMouseMotionAdapter());
 
         jFrame.addKeyListener(new OverlayKeyListener());
     }
@@ -131,7 +118,7 @@ public class Overlay extends JPanel {
      *
      * @param distance amount of tiles (based on zoom 19)
      */
-    public void moveHorizontal(int distance) {
+    private void moveHorizontal(int distance) {
         moveOffset(distance, 0);
     }
 
@@ -141,7 +128,7 @@ public class Overlay extends JPanel {
      *
      * @param distance amount of tiles (based on zoom 19)
      */
-    public void moveVertical(int distance) {
+    private void moveVertical(int distance) {
         moveOffset(0, distance);
     }
 
@@ -176,6 +163,30 @@ public class Overlay extends JPanel {
         }
     }
 
+    public void movePixels(int xDiff, int yDiff) {
+        xPaintOffset += xDiff;
+        yPaintOffset += yDiff;
+
+        if (xPaintOffset > 256) {
+            int c = xPaintOffset / 256;
+            xPaintOffset -= 256 * c;
+            moveHorizontal(-c);
+        } else if (xPaintOffset < -256) {
+            int c = xPaintOffset / -256;
+            xPaintOffset += 256 * c;
+            moveHorizontal(c);
+        } else if (yPaintOffset > 256) {
+            int c = yPaintOffset / 256;
+            yPaintOffset -= 256 * c;
+            moveVertical(-c);
+        } else if (yPaintOffset < -256) {
+            int c = yPaintOffset / -256;
+            yPaintOffset += 256 * c;
+            moveVertical(c);
+        } else {
+            repaint();
+        }
+    }
     private void arrangeLabelArray() {
         tileManager.clearLabelsToBuffer();
         tileManager.clearTilesToBuffer();
@@ -243,7 +254,7 @@ public class Overlay extends JPanel {
         }
     }
 
-    public BufferedImage getTileWithExtraOffset(int extraX, int extraY) {
+    private BufferedImage getTileWithExtraOffset(int extraX, int extraY) {
         Point point = getTilePointWithExtraOffset(extraX, extraY);
         return tileManager.getTileImage(point, currentZoomLevel);
     }
@@ -334,74 +345,6 @@ public class Overlay extends JPanel {
             super.componentResized(e);
             System.out.println("arrangeLabelArray() called");
             arrangeLabelArray();
-        }
-    }
-
-    private class OverlayMouseAdapter extends MouseAdapter {
-
-        @Override
-        public void mousePressed(MouseEvent e) {
-            onClickP = e.getLocationOnScreen();
-            if (jFrame == null)
-                Overlay.this.findParentFrame();
-            if (jFrame != null)
-                jFrame.setCursor(blankCursor);
-        }
-
-        @Override
-        public void mouseReleased(MouseEvent e) {
-            if (jFrame == null)
-                Overlay.this.findParentFrame();
-            if (jFrame != null)
-                jFrame.setCursor(Cursor.getDefaultCursor());
-        }
-    }
-
-    private class OverlayMouseMotionAdapter extends MouseMotionAdapter {
-        Robot robot;
-
-        {
-            try {
-                robot = new Robot();
-            } catch (AWTException e) {
-                e.printStackTrace();
-            }
-        }
-
-        @Override
-        public void mouseDragged(MouseEvent e) {
-            Point raw = e.getLocationOnScreen();
-            int xDiff = (int) (raw.getX() - onClickP.x);
-            int yDiff = (int) (raw.getY() - onClickP.y);
-
-            if (Math.abs(xDiff) <= 1 && Math.abs(yDiff) <= 1) {
-                return;
-            }
-
-            xPaintOffset += xDiff;
-            yPaintOffset += yDiff;
-
-                if (xPaintOffset > 256) {
-                    int c = xPaintOffset / 256;
-                    xPaintOffset -= 256 * c;
-                    moveHorizontal(-c);
-                } else if (xPaintOffset < -256) {
-                    int c = xPaintOffset / -256;
-                    xPaintOffset += 256 * c;
-                    moveHorizontal(c);
-                } else if (yPaintOffset > 256) {
-                    int c = yPaintOffset / 256;
-                    yPaintOffset -= 256 * c;
-                    moveVertical(-c);
-                } else if (yPaintOffset < -256) {
-                    int c = yPaintOffset / -256;
-                    yPaintOffset += 256 * c;
-                    moveVertical(c);
-                } else {
-                    repaint();
-                }
-
-            robot.mouseMove(onClickP.x, onClickP.y);
         }
     }
 

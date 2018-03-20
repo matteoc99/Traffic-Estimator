@@ -29,8 +29,8 @@ public final class OsmToJsonParser {
     private static Map<String, Integer> streetsOnNode = new HashMap<>();
 
     public static void main(String[] args) {
-        parse(System.getProperty("user.dir") + "\\src\\parsing\\res\\lana.osm",
-                System.getProperty("user.dir") + "\\src\\parsing\\res\\lana_NewXY.json");
+        parse(System.getProperty("user.dir") + "\\src\\parsing\\res\\topleft.osm",
+                System.getProperty("user.dir") + "\\src\\parsing\\res\\topleft.json");
     }
 
     /**

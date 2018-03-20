@@ -45,8 +45,7 @@ public class TileBuffer implements Runnable {
                 if (labelsToBuffer.size() == 0 && tilesToBuffer.size() == 0)
                     try {
                         wait();
-                    } catch (InterruptedException ignored) {
-                    }
+                    } catch (InterruptedException ignored) {}
             }
             Pair<JLabel, Pair<Integer, Point>> lB = getNextLabelToBuffer();
             if (lB != null) {
