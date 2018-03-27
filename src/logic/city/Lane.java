@@ -1,6 +1,7 @@
 package logic.city;
 
 import logic.vehicles.Vehicle;
+import utils.math.Position;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -306,13 +307,14 @@ public class Lane {
         this.streetlight = streetlight;
     }
 
-    public Point getPointByProgress(double progressInLane) {
-        Point ret = new Point();
-        int deltay = getFromNode().getY() - getToNode().getY();
-        int deltax = getFromNode().getX() - getToNode().getX();
-        double x = getFromNode().getX() - deltax * (progressInLane / getLength());
-        double y = getFromNode().getY() - deltay * (progressInLane / getLength());
-        ret.setLocation(x, y);
+    public Position getPointByProgress(double progressInLane) {
+        Position ret = new Position(0, 0);
+        double deltaY = getFromNode().getY() - getToNode().getY();
+        double deltaX = getFromNode().getX() - getToNode().getX();
+        double x = getFromNode().getX() - deltaX * (progressInLane / getLength());
+        double y = getFromNode().getY() - deltaY * (progressInLane / getLength());
+        ret.setX(x);
+        ret.setY(y);
         return ret;
     }
 }

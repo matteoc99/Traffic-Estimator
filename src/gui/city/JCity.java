@@ -2,15 +2,17 @@ package gui.city;
 
 import logic.city.City;
 import logic.city.Lane;
+import logic.city.Node;
 import logic.city.Street;
 import logic.vehicles.Vehicle;
+import main.Main;
+import utils.Utils;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.Iterator;
-
-import static java.lang.Integer.min;
 
 
 /**
@@ -41,15 +43,67 @@ public class JCity extends JPanel {
         this.city = city;
         this.container = container;
         setLayout(null);
-        setBounds(city.getBounds());
+        setBounds(0,0, getXYByTileXY(city.getMaxWidth()), getXYByTileXY(city.getMaxHeight()));
+
+        container.addKeyListener(new JCityKeyListener());
+
+        //getNodesPos average
+        // FIXME: 13.03.2018 endless
+        /*
+        while (getAvgNodePosition() > getHeight() / 2) zoomOut();
+        while (getAvgNodePosition() < getHeight() / 4) zoomIn();
+        */
+        new Thread(() -> {
+            while (true) {
+                long zeitvorsleep = System.currentTimeMillis();
+                repaint();
+                long zeitvergangen = (System.currentTimeMillis() - zeitvorsleep);
+                if (zeitvergangen < 1000.0 / Main.FPS) {
+                    try {
+                        Thread.sleep((long) (1000.0 / Main.FPS - zeitvergangen));
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }).start();
+
+        setLocation(-getXYByTileXY(city.getMinWidth()), -getXYByTileXY(city.getMinHeight()));
+
+        /*
+        {
+            Node node = city.getRandomNode();
+            for (Node nodess : city.getNodes()) {
+                if (nodess.getY() < node.getY())
+                    node = nodess;
+            }
+
+            setLocation(-getXYByTileXY(node.getX()), -getXYByTileXY(node.getY()));
+
+            System.out.println(getLocation());
+            System.out.println(node);
+            System.out.println(getXYByTileXY(node.getX()));
+            System.out.println(getXYByTileXY(node.getY()));
+        }
+        {
+            Node node = city.getRandomNode();
+            for (Node nodess : city.getNodes()) {
+                if (nodess.getX() < node.getX())
+                    node = nodess;
+            }
+
+            setLocation(-getXYByTileXY(node.getX()), -getXYByTileXY(node.getY()));
+
+            System.out.println(getLocation());
+            System.out.println(node);
+            System.out.println(getXYByTileXY(node.getX()));
+            System.out.println(getXYByTileXY(node.getY()));
+        }
+        */
     }
 
     public City getCity() {
         return city;
-    }
-
-    public void setCity(City city) {
-        this.city = city;
     }
 
     @Override
@@ -67,13 +121,12 @@ public class JCity extends JPanel {
         }*/
 
         Graphics2D g2 = g;
+        // FIXME: 13.03.2018 don't recreate object
         RenderingHints rh = new RenderingHints(
                 RenderingHints.KEY_TEXT_ANTIALIASING,
                 RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         g2.setRenderingHints(rh);
 
-        g2.setColor(new Color(55, 55, 55));
-        g2.fillRect(0, 0, getWidth(), getHeight());
         //drawStreets
         Iterator<Street> streets = city.getStreetIterator();
         while (streets.hasNext()) {
@@ -88,8 +141,9 @@ public class JCity extends JPanel {
             }
         }
 
-        int newWidth = (int) (city.getBounds().width * zoom);
-        int newHeight = (int) (city.getBounds().height * zoom);
+        // TODO: 13.03.2018 Did the bounds even change?
+        int newWidth = (int) (getXYByTileXY(city.getMaxWidth()) * zoom);
+        int newHeight = (int) (getXYByTileXY(city.getMaxHeight()) * zoom);
 
         setSize(newWidth, newHeight);
         if (firstPaint) {
@@ -98,26 +152,22 @@ public class JCity extends JPanel {
     }
 
     private void drawLaneAndCars(Lane lane, Graphics2D g2, int i, boolean isBackward) {
-        int dir = 1;
-        if (isBackward)
-            dir = -1;
-        //drawlanes
+        int dir = isBackward? -1:1;
+        //draw lanes
         g2.setColor(lane.getColorByTraffic());
-        int stroke = (int) (2 * lane.getTraffic());
-        // if(stroke<1)
-        stroke = 1;
+        int stroke = 1;
         g2.setStroke(new BasicStroke((float) (stroke * zoom >= 1 ? stroke * zoom : 1), BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
         if (showStreets)
             if (zoom >= 1) {
-                g2.drawLine((int) ((int) (lane.getParent().getxFrom() * zoom) - (zoom + i * zoom * 2) * dir),
-                        (int) ((int) (lane.getParent().getyFrom() * zoom) - (zoom + i * zoom * 2) * dir),
-                        (int) ((int) (lane.getParent().getxTo() * zoom) - (zoom + i * zoom * 2) * dir),
-                        (int) ((int) (lane.getParent().getyTo() * zoom) - (zoom + i * zoom * 2) * dir));
+                g2.drawLine((int) ((int) (getXYByTileXY(lane.getParent().getxFrom()) * zoom) - (zoom + i * zoom * 2) * dir),
+                        (int) ((int) (getXYByTileXY(lane.getParent().getyFrom()) * zoom) - (zoom + i * zoom * 2) * dir),
+                        (int) ((int) (getXYByTileXY(lane.getParent().getxTo()) * zoom) - (zoom + i * zoom * 2) * dir),
+                        (int) ((int) (getXYByTileXY(lane.getParent().getyTo()) * zoom) - (zoom + i * zoom * 2) * dir));
             } else {
-                g2.drawLine((int) ((int) (lane.getParent().getxFrom() * zoom) - (1 + i * 2) * dir),
-                        (int) ((int) (lane.getParent().getyFrom() * zoom) - (1 + i * 2) * dir),
-                        (int) ((int) (lane.getParent().getxTo() * zoom) - (1 + i * 2) * dir),
-                        (int) ((int) (lane.getParent().getyTo() * zoom) - (1 + i * 2) * dir));
+                g2.drawLine((int) ((int) (getXYByTileXY(lane.getParent().getxFrom()) * zoom) - (1 + i * 2) * dir),
+                        (int) ((int) (getXYByTileXY(lane.getParent().getyFrom()) * zoom) - (1 + i * 2) * dir),
+                        (int) ((int) (getXYByTileXY(lane.getParent().getxTo()) * zoom) - (1 + i * 2) * dir),
+                        (int) ((int) (getXYByTileXY(lane.getParent().getyTo()) * zoom) - (1 + i * 2) * dir));
 
             }
         ArrayList<Vehicle> vehicles = lane.getVehicles();
@@ -128,12 +178,12 @@ public class JCity extends JPanel {
                 g2.setColor(vehicle.getColor());
                 // draw cars
                 if (zoom < 1) {
-                    g2.fillOval((int) ((int) ((vehicle.currentPointOnLane().x) * zoom) - (8) / 2 - (1 + i * 2) * dir),
-                            (int) ((int) ((vehicle.currentPointOnLane().y) * zoom) - (8) / 2 - (1 + i * 2) * dir),
+                    g2.fillOval((int) ((int) ((getXYByTileXY(vehicle.currentPositionOnLane().getX())) * zoom) - (8) / 2 - (1 + i * 2) * dir),
+                            (int) ((int) ((getXYByTileXY(vehicle.currentPositionOnLane().getY())) * zoom) - (8) / 2 - (1 + i * 2) * dir),
                             8, 8);
                 } else {
-                    g2.fillOval((int) ((int) ((vehicle.currentPointOnLane().x) * zoom) - (8 * (int) (zoom)) / 2 - (zoom + i * zoom * 2) * dir),
-                            (int) ((int) ((vehicle.currentPointOnLane().y) * zoom) - (8 * (int) (zoom)) / 2 - (zoom + i * zoom * 2) * dir),
+                    g2.fillOval((int) ((int) ((getXYByTileXY(vehicle.currentPositionOnLane().getX())) * zoom) - (8 * (int) (zoom)) / 2 - (zoom + i * zoom * 2) * dir),
+                            (int) ((int) ((getXYByTileXY(vehicle.currentPositionOnLane().getY())) * zoom) - (8 * (int) (zoom)) / 2 - (zoom + i * zoom * 2) * dir),
                             8 * (int) (zoom), 8 * (int) (zoom));
                 }
 
@@ -146,8 +196,8 @@ public class JCity extends JPanel {
                         g2.setColor(Color.RED);
                     else
                         g2.setColor(Color.GREEN);
-                    g2.fillRect((int) (lane.getPointByProgress(lane.getLength() - 5).x * zoom) - (8) / 2 - (1 + i * 2) * dir,
-                            (int) (lane.getPointByProgress(lane.getLength() - 5).y * zoom) - (8) / 2 - (1 + i * 2) * dir,
+                    g2.fillRect((int) (getXYByTileXY(lane.getPointByProgress(lane.getLength()).getX()) * zoom) - (8) / 2 - (1 + i * 2) * dir,
+                            (int) (getXYByTileXY(lane.getPointByProgress(lane.getLength()).getY()) * zoom) - (8) / 2 - (1 + i * 2) * dir,
                             8, 8);
                 }
             } else {
@@ -156,8 +206,8 @@ public class JCity extends JPanel {
                         g2.setColor(Color.RED);
                     else
                         g2.setColor(Color.GREEN);
-                    g2.fillOval((int) ((lane.getPointByProgress(lane.getLength() - 5).x * zoom) - (8 * (int) (zoom)) / 2 - (zoom + i * zoom * 2) * dir),
-                            (int) ((lane.getPointByProgress(lane.getLength() - 5).y * zoom) - (8 * (int) (zoom)) / 2 - (zoom + i * zoom * 2) * dir),
+                    g2.fillOval((int) ((getXYByTileXY(lane.getPointByProgress(lane.getLength()).getX()) * zoom) - (8 * (int) (zoom)) / 2 - (zoom + i * zoom * 2) * dir),
+                            (int) ((getXYByTileXY(lane.getPointByProgress(lane.getLength()).getY()) * zoom) - (8 * (int) (zoom)) / 2 - (zoom + i * zoom * 2) * dir),
                             8 * (int) (zoom), 8 * (int) (zoom));
                 }
             }
@@ -205,7 +255,6 @@ public class JCity extends JPanel {
         this.showLights = showLights;
     }
 
-
     public boolean isShowCars() {
         return showCars;
     }
@@ -223,30 +272,32 @@ public class JCity extends JPanel {
     }
 
     public void zoomIn() {
+        System.out.println("JCity: In "+zoom);
         Point mousePoint = MouseInfo.getPointerInfo().getLocation();
         mousePoint.x = mousePoint.x - container.getX() - getX();
         mousePoint.y = mousePoint.y - container.getY() - getY();
         zoom *= 2;
-        repositionAfterZoom(mousePoint, true);
+        //repositionAfterZoom(mousePoint, true);
     }
 
     public void zoomOut() {
-
+        System.out.println("JCity: Out "+zoom);
         Point mousePoint = MouseInfo.getPointerInfo().getLocation();
         mousePoint.x -= container.getX() + getX();
         mousePoint.y -= container.getY() + getY();
 
         zoom /= 2;
-        repositionAfterZoom(mousePoint, false);
+        //repositionAfterZoom(mousePoint, false);
     }
 
-    private void repositionAfterZoom(Point mousePoint, boolean zoomin) {
+    private void repositionAfterZoom(Point mousePoint, boolean zoomIn) {
         if (mousePoint.x > 0 && mousePoint.y > 0) {
-            int newWidth = (int) (city.getBounds().width * zoom);
-            int newHeight = (int) (city.getBounds().height * zoom);
+            // TODO: 13.03.2018 Most likely Values didn't change, inefficient to reiterate all nodes
+            int newWidth = (int) (getXYByTileXY(city.getMaxWidth()) * zoom);
+            int newHeight = (int) (getXYByTileXY(city.getMaxHeight()) * zoom);
             setSize(newWidth, newHeight);
 
-            if (zoomin) {
+            if (zoomIn) {
                 mousePoint.x *= 2;
                 mousePoint.y *= 2;
             } else {
@@ -265,7 +316,110 @@ public class JCity extends JPanel {
         }
     }
 
+    private static int getXYByTileXY(double tileXY) {
+        int ret;
+        int raw = (int) tileXY;
+
+        ret = raw * 256;
+        ret += (tileXY - raw) * 256;
+        return ret;
+    }
+
     public static double getZoom() {
         return zoom;
+    }
+
+    /**
+     * get avg node pos relative to zoom
+     */
+    public int getAvgNodePosition() {
+        int sumX = 0, sumY = 0;
+        Iterator<Node> nodes = city.getNodeIterator();
+        while (nodes.hasNext()) {
+            Node node = nodes.next();
+            sumX += node.getX() * JCity.getZoom();
+            sumY += node.getY() * JCity.getZoom();
+        }
+
+        return Integer.min(sumX / city.getNodeSize(), sumY / city.getNodeSize());
+    }
+
+    private class JCityKeyListener extends KeyAdapter {
+
+        public boolean hoverMode = false;
+        public Point hoverPoint = null;
+
+        @Override
+        public void keyPressed(KeyEvent e) {
+            switch (e.getKeyCode()) {
+                case KeyEvent.VK_PLUS:
+                    //zoom++
+                    zoomIn();
+                    break;
+                case KeyEvent.VK_MINUS:
+                    zoomOut();
+
+                    break;
+                case KeyEvent.VK_LEFT:
+                    setLocation(getX() + 10, getY());
+                    break;
+                case KeyEvent.VK_RIGHT:
+                    setLocation(getX() - 10, getY());
+                    break;
+                case KeyEvent.VK_UP:
+                    setLocation(getX(), getY() + 10);
+                    break;
+                case KeyEvent.VK_DOWN:
+                    setLocation(getX(), getY() - 10);
+                    break;
+                case KeyEvent.VK_H:
+                    if (hoverPoint == null) {
+                        hoverMode = true;
+                        hoverPoint = MouseInfo.getPointerInfo().getLocation();
+                    } else {
+                        int xOff = hoverPoint.x - MouseInfo.getPointerInfo().getLocation().x;
+                        int yOff = hoverPoint.y - MouseInfo.getPointerInfo().getLocation().y;
+                        xOff /= 4;
+                        yOff /= 4;
+                        setLocation(getX() - xOff, getY() - yOff);
+                    }
+                    break;
+            }
+            repaint();
+        }
+
+        @Override
+        public void keyReleased(KeyEvent e) {
+            switch (e.getKeyCode()) {
+
+                case KeyEvent.VK_H:
+                    hoverMode = false;
+                    hoverPoint = null;
+                    break;
+                case KeyEvent.VK_L:
+                    toggleShowLights();
+                    break;
+                case KeyEvent.VK_S:
+                    toggleShowStreets();
+                    break;
+                case KeyEvent.VK_V:
+                    toggleShowCars();
+                    break;
+                case KeyEvent.VK_R:
+                    while (getAvgNodePosition() > getHeight() / 2) {
+                        zoomOut();
+                    }
+                    while (getAvgNodePosition() < getHeight() / 4) {
+                        zoomIn();
+                    }
+                    setLocation(0, 0);
+                    repaint();
+                    break;
+                case KeyEvent.VK_P:
+                    setLocation(0, 0);
+                    repaint();
+                    break;
+            }
+        }
     }
 }

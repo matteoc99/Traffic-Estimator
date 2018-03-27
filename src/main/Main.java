@@ -2,19 +2,14 @@ package main;
 
 import gui.ControlPanel;
 import gui.CustomSlider;
+import gui.city.CityMap;
 import gui.city.JCity;
 import logic.city.City;
-import logic.city.Node;
-import logic.vehicles.Vehicle;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import java.awt.*;
-import java.awt.event.*;
 import java.io.File;
 import java.sql.Timestamp;
-import java.util.Iterator;
 
 /**
  * @author Matteo Cosi
@@ -24,202 +19,33 @@ public class Main extends JFrame {
 
     //fps stuff
     public static int FPS = 20;
-    public static long zeitvorsleep;
 
 
     private static JCity jCity;
     private ControlPanel controlPanel;
     private Container c;
-    City city;
 
+    // FIXME: 13.03.2018 yep; effizienz gleich 0 xD ... nana jk
     int effizienz = 0;
-
-    //moving modes
-    public static boolean hovermode = false;
-    public static Point hoverpoint = null;
-
-
-    /**
-     * Used to drag & drop the contacts
-     */
-    private Point fromCords;
 
     public Main(City city) {
         setupWindow();
-        this.city = city;
         c = getContentPane();
         controlPanel = setUpControlPanel();
-        jCity = setUpCity(city);
+        CityMap cityMap = new CityMap(this, city);
+        cityMap.setBounds(0, 0, getWidth()-getWidth()/6, getHeight());
+        c.add(cityMap);
         c.add(controlPanel);
-        c.add(jCity);
+
         setResizable(false);
 
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        //getNodesPos average
-        while (getAvgNodePosition() > getHeight() / 2) {
-            jCity.zoomOut();
-        }
-        while (getAvgNodePosition() < getHeight() / 4) {
-            jCity.zoomIn();
-        }
-        jCity.setLocation(0, 0);
 
         repaint();
-
-        addKeyListener(new KeyListener() {
-            @Override
-            public void keyTyped(KeyEvent e) {
-
-            }
-
-            @Override
-            public void keyPressed(KeyEvent e) {
-                switch (e.getKeyCode()) {
-                    case KeyEvent.VK_PLUS:
-                        //zoom++
-                        jCity.zoomIn();
-                        break;
-                    case KeyEvent.VK_MINUS:
-                        jCity.zoomOut();
-
-                        break;
-                    case KeyEvent.VK_LEFT:
-                        jCity.setLocation(jCity.getX() + 10, jCity.getY());
-                        break;
-                    case KeyEvent.VK_RIGHT:
-                        jCity.setLocation(jCity.getX() - 10, jCity.getY());
-                        break;
-                    case KeyEvent.VK_UP:
-                        jCity.setLocation(jCity.getX(), jCity.getY() + 10);
-                        break;
-                    case KeyEvent.VK_DOWN:
-                        jCity.setLocation(jCity.getX(), jCity.getY() - 10);
-                        break;
-                    case KeyEvent.VK_H:
-                        if (hoverpoint == null) {
-                            hovermode = true;
-                            hoverpoint = MouseInfo.getPointerInfo().getLocation();
-                        } else {
-                            int xoff = hoverpoint.x - MouseInfo.getPointerInfo().getLocation().x;
-                            int yoff = hoverpoint.y - MouseInfo.getPointerInfo().getLocation().y;
-                            xoff /= 4;
-                            yoff /= 4;
-                            jCity.setLocation(jCity.getX() - xoff, jCity.getY() - yoff);
-                        }
-                        break;
-                }
-                    jCity.repaint();
-            }
-
-            @Override
-            public void keyReleased(KeyEvent e) {
-                switch (e.getKeyCode()) {
-
-                    case KeyEvent.VK_H:
-                        hovermode = false;
-                        hoverpoint = null;
-                        break;
-                    case KeyEvent.VK_L:
-                        jCity.toggleShowLights();
-                        break;
-                    case KeyEvent.VK_S:
-                        jCity.toggleShowStreets();
-                        break;
-                    case KeyEvent.VK_V:
-                        jCity.toggleShowCars();
-                        break;
-                    case KeyEvent.VK_R:
-                        while (getAvgNodePosition() > getHeight() / 2) {
-                            jCity.zoomOut();
-                        }
-                        while (getAvgNodePosition() < getHeight() / 4) {
-                            jCity.zoomIn();
-                        }
-                        jCity.setLocation(0, 0);
-                        repaint();
-                        break;
-                    case KeyEvent.VK_P:
-                        jCity.setLocation(0, 0);
-                        repaint();
-                        break;
-                }
-            }
-        });
-        MouseAdapter mouseAdapter = new MouseAdapter() {
-            @Override
-            public void mouseWheelMoved(MouseWheelEvent e) {
-                if (e.getWheelRotation() < 0) {
-                    //zoom++
-                    jCity.zoomIn();
-                } else {
-                    //zoom--
-                    jCity.zoomOut();
-                }
-            }
-
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                double x = e.getX() - jCity.getX();
-                double y = e.getY() - jCity.getY();
-                x /= JCity.getZoom();
-                y /= JCity.getZoom();
-                System.out.println(city.getStreetByPoint(new Point((int) x, (int) y)));
-            }
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-                fromCords = e.getPoint();
-            }
-
-            @Override
-            public void mouseDragged(MouseEvent e) {
-                Point toCords = e.getPoint();
-                int offsetX = toCords.x - fromCords.x;
-                int offsetY = toCords.y - fromCords.y;
-                jCity.setLocation(jCity.getX() + offsetX, jCity.getY() + offsetY);
-                fromCords = toCords;
-            }
-        };
-
-        addMouseWheelListener(mouseAdapter);
-
-        addMouseMotionListener(mouseAdapter);
-
-        addMouseListener(mouseAdapter);
-
 
         requestFocus();
 
         city.start();
-
-        while (true) {
-            zeitvorsleep = System.currentTimeMillis();
-            repaint();
-            long zeitvergangen = (long) (System.currentTimeMillis() - zeitvorsleep);
-            if (zeitvergangen < 1000.0 / FPS) {
-                try {
-                    Thread.sleep((long) (1000.0 / FPS - zeitvergangen));
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
-
-
-    /**
-     * get avg node pos relative to zoom
-     */
-    private int getAvgNodePosition() {
-        int sumX = 0, sumY = 0;
-        Iterator<Node> nodes = city.getNodeIterator();
-        while (nodes.hasNext()) {
-            Node node = nodes.next();
-            sumX += node.getX() * JCity.getZoom();
-            sumY += node.getY() * JCity.getZoom();
-        }
-
-        return Integer.min(sumX / city.getNodeSize(), sumY / city.getNodeSize());
     }
 
     private void setupWindow() {
@@ -273,27 +99,18 @@ public class Main extends JFrame {
         speed.setMinorTickSpacing(250);
         traffic.setMinorTickSpacing(1000);
         fps.setMinorTickSpacing(5);
-        speed.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                City.SPEED = speed.getValue() + 1;
-                requestFocus();
-            }
+        speed.addChangeListener(e -> {
+            City.SPEED = speed.getValue() + 1;
+            requestFocus();
         });
 
-        traffic.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                City.VEHICLE_AMOUNT = traffic.getValue() + 1;
-                requestFocus();
-            }
+        traffic.addChangeListener(e -> {
+            City.VEHICLE_AMOUNT = traffic.getValue() + 1;
+            requestFocus();
         });
-        fps.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                FPS = fps.getValue() + 1;
-                requestFocus();
-            }
+        fps.addChangeListener(e -> {
+            FPS = fps.getValue() + 1;
+            requestFocus();
         });
         ret.add(traffic);
         ret.add(speed);
@@ -304,7 +121,7 @@ public class Main extends JFrame {
     public static void main(String[] args) {
         System.out.println("Main:" + new Timestamp(System.currentTimeMillis()) + " Creating City from .json...");
         City city = City.createCityFromJson(
-                new File(System.getProperty("user.dir") + "\\src\\parsing\\res\\testcity.json"));
+                new File(System.getProperty("user.dir") + "\\src\\parsing\\res\\lana_NewXY.json"));
         System.out.println("Main:" + new Timestamp(System.currentTimeMillis()) + " Starting GUI...");
         Main main = new Main(city);
     }

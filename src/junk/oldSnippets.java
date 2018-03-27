@@ -1,6 +1,11 @@
 package junk;
 
+import gui.city.JCity;
+import gui.city.Overlay.Overlay;
 import logic.vehicles.driving.DataSets;
+
+import java.awt.*;
+import java.awt.event.*;
 
 /**
  * @author Matteo Cosi
@@ -110,5 +115,122 @@ double[] data = new double[network.getLayerByIndex(0).getNeuronCount()];
 
  */
     }
+
+/* Old listeners from overlay and JCity
+
+
+private class JCityMouseListener extends MouseAdapter {
+
+private Point fromCords;
+
+    @Override
+    public void mouseWheelMoved(MouseWheelEvent e) {
+        if (e.getWheelRotation() < 0) {
+            //zoom++
+            zoomIn();
+        } else {
+            //zoom--
+            zoomOut();
+        }
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        double x = e.getX() - getX();
+        double y = e.getY() - getY();
+        x /= JCity.getZoom();
+        y /= JCity.getZoom();
+        System.out.println(city.getStreetByPoint(new Point((int) x, (int) y)));
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+        fromCords = e.getPoint();
+    }
+
+    @Override
+    public void mouseDragged(MouseEvent e) {
+        Point toCords = e.getPoint();
+        int offsetX = toCords.x - fromCords.x;
+        int offsetY = toCords.y - fromCords.y;
+        setLocation(getX() + offsetX, getY() + offsetY);
+        fromCords = toCords;
+    }
+}
+
+    private class OverlayMouseAdapter extends MouseAdapter {
+
+        @Override
+        public void mousePressed(MouseEvent e) {
+            onClickP = e.getLocationOnScreen();
+            if (jFrame == null)
+                Overlay.this.findParentFrame();
+            if (jFrame != null)
+                jFrame.setCursor(blankCursor);
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent e) {
+            if (jFrame == null)
+                Overlay.this.findParentFrame();
+            if (jFrame != null)
+                jFrame.setCursor(Cursor.getDefaultCursor());
+        }
+    }
+
+    private class OverlayMouseMotionAdapter extends MouseMotionAdapter {
+        Robot robot;
+
+        {
+            try {
+                robot = new Robot();
+            } catch (AWTException e) {
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        public void mouseDragged(MouseEvent e) {
+            Point raw = e.getLocationOnScreen();
+            int xDiff = (int) (raw.getX() - onClickP.x);
+            int yDiff = (int) (raw.getY() - onClickP.y);
+
+            if (Math.abs(xDiff) <= 1 && Math.abs(yDiff) <= 1) {
+                return;
+            }
+
+            movePixels(xDiff, yDiff);
+
+            robot.mouseMove(onClickP.x, onClickP.y);
+        }
+    }
+
+    private class OverlayKeyListener extends KeyAdapter {
+        @Override
+        public void keyTyped(KeyEvent e) {
+            switch (e.getKeyChar()) {
+                case 'd':
+                    moveHorizontal(1);
+                    break;
+                case 'a':
+                    moveHorizontal(-1);
+                    break;
+                case 'w':
+                    moveVertical(-1);
+                    break;
+                case 's':
+                    moveVertical(1);
+                    break;
+                case 'e':
+                    increaseCurrentZoom();
+                    break;
+                case 'q':
+                    decreaseCurrentZoom();
+                    break;
+            }
+        }
+    }
+
+    */
 }
 

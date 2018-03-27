@@ -29,8 +29,8 @@ public final class OsmToJsonParser {
     private static Map<String, Integer> streetsOnNode = new HashMap<>();
 
     public static void main(String[] args) {
-        parse(System.getProperty("user.dir") + "\\src\\parsing\\res\\san.osm",
-                System.getProperty("user.dir") + "\\src\\parsing\\res\\san.json");
+        parse(System.getProperty("user.dir") + "\\src\\parsing\\res\\topleft.osm",
+                System.getProperty("user.dir") + "\\src\\parsing\\res\\topleft.json");
     }
 
     /**
@@ -247,37 +247,35 @@ public final class OsmToJsonParser {
      * Method reruns over all Nodes to adjust the positions
      */
     private static void adjustNodePositions() {
-        double smallestX = Integer.MAX_VALUE;
-        double smallestY = Integer.MAX_VALUE;
-
         JSONArray nodes = jsonRoot.getJSONArray("nodes");
+
+        double minLat = Double.MAX_VALUE;
+        double minLon = Double.MAX_VALUE;
+        double maxLat = Double.MIN_VALUE;
+        double maxLon = Double.MIN_VALUE;
 
         for (int i = 0; i < nodes.length(); i++) {
             JSONObject jNode = nodes.getJSONObject(i);
             double x = Double.parseDouble(jNode.getString("x"));
-            //x = Utils.getOsmTileX(x, 19);
-            x += 180;
-            x *= 10000000;
+            minLon = minLon < x ? minLon : x;
+            maxLon = maxLon > x ? maxLon : x;
+            x = Utils.getOsmTileX(x, 19);
+
             double y = Double.parseDouble(jNode.getString("y"));
-            //y = Utils.getOsmTileY(y, 19);
-            y = 90 - y;
-            y *= 10000000;
+            minLat = minLat < y ? minLat : y;
+            maxLat = maxLat > y ? maxLat : y;
+            y = Utils.getOsmTileY(y, 19);
 
-            if ((int) x < smallestX) smallestX = (int) x;
-            if ((int) y < smallestY) smallestY = (int) y;
-
-            jNode.put("x", (int) (x));
-            jNode.put("y", (int) (y));
+            jNode.put("x", x);
+            jNode.put("y", y);
         }
 
-
-        for (int i = 0; i < nodes.length(); i++) {
-            JSONObject node = nodes.getJSONObject(i);
-            int orgX = node.getInt("x");
-            int orgY = node.getInt("y");
-            node.put("x", orgX - smallestX);
-            node.put("y", orgY - smallestY);
-        }
+        JSONObject jBounds = new JSONObject();
+        jBounds.put("minLat", minLat);
+        jBounds.put("minLon", minLon);
+        jBounds.put("maxLat" ,maxLat);
+        jBounds.put("maxLon", maxLon);
+        jsonRoot.put("bounds", jBounds);
     }
 
     /**

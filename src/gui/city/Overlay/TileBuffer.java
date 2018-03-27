@@ -45,8 +45,7 @@ public class TileBuffer implements Runnable {
                 if (labelsToBuffer.size() == 0 && tilesToBuffer.size() == 0)
                     try {
                         wait();
-                    } catch (InterruptedException ignored) {
-                    }
+                    } catch (InterruptedException ignored) {}
             }
             Pair<JLabel, Pair<Integer, Point>> lB = getNextLabelToBuffer();
             if (lB != null) {
@@ -69,7 +68,7 @@ public class TileBuffer implements Runnable {
             //osmTileManager.overlay.fillLabel(input.getKey());
             osmTileManager.overlay.fillLabels();
         } catch (Exception e) {
-            e.printStackTrace();
+            // TODO: 21.03.2018  e.printStackTrace();
         }
     }
 
@@ -80,7 +79,7 @@ public class TileBuffer implements Runnable {
             BufferedImage bufferedImage = ImageIO.read(new URL(osmTileManager.getTileLink(point, zoom)));
             osmTileManager.addImage(bufferedImage, zoom, point);
         } catch (Exception e) {
-            e.printStackTrace();
+            // TODO: 21.03.2018  e.printStackTrace();
         }
     }
 

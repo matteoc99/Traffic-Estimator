@@ -7,6 +7,7 @@ import logic.city.Node;
 import logic.city.Path;
 import logic.vehicles.driving.Character;
 import logic.vehicles.driving.VehicleDriving;
+import utils.math.Position;
 
 import java.awt.*;
 
@@ -119,14 +120,8 @@ public class Vehicle {
      *
      * @return the point where to draw the car
      */
-    public Point currentPointOnLane() {
-        Point ret = new Point();
-        int deltax = lane.getFromNode().getX() - lane.getToNode().getX();
-        int deltay = lane.getFromNode().getY() - lane.getToNode().getY();
-        double x = lane.getFromNode().getX() - deltax * (progressInLane / lane.getLength());
-        double y = lane.getFromNode().getY() - deltay * (progressInLane / lane.getLength());
-        ret.setLocation(x, y);
-        return ret;
+    public Position currentPositionOnLane() {
+        return lane.getPointByProgress(progressInLane);
     }
 
 
