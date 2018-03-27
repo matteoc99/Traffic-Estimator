@@ -1,5 +1,7 @@
 package utils.math;
 
+import java.awt.*;
+
 /**
  * @author Maximilian Estfelller
  * @since 01.08.2017
@@ -13,6 +15,11 @@ public class Position implements Cloneable{
     public Position(double x, double y) {
         this.x = x;
         this.y = y;
+    }
+
+    public Position(Point p) {
+        this.x = p.getX();
+        this.y = p.getY();
     }
 
     public double getX() {

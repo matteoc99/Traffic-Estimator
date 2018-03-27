@@ -1,6 +1,7 @@
 package gui.city.Overlay;
 
 import utils.Utils;
+import utils.math.Position;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,7 +16,6 @@ import java.util.HashMap;
  */
 public class Overlay extends JPanel {
 
-    private Point onClickP = new Point(0, 0);
     private int xPaintOffset, yPaintOffset = 0;
 
     private final double initialLat, initialLon;
@@ -67,7 +67,6 @@ public class Overlay extends JPanel {
             if (!initialList.containsKey(zoom))
                 initialList.put(zoom, getTilePoint(initialLat, initialLon, zoom));
             zoom++;
-            System.out.println(zoom + ":" + getTilePoint(initialLat, initialLon, zoom));
         }
     }
 
@@ -85,6 +84,43 @@ public class Overlay extends JPanel {
         yPaintOffset -= yDigits * 256;
 
         moveOffset(-1, -1);
+    }
+
+    public void moveCordsVisibleAt(double lon, double lat, int visibleAtX, int visibleAtY) {
+        double x = Utils.getOsmTileX(lon, currentZoomLevel);
+        double y = Utils.getOsmTileY(lat, currentZoomLevel);
+
+        System.out.println(x);
+        System.out.println(y);
+
+        movePositionVisibleAt(new Position(x, y), visibleAtX, visibleAtY);
+    }
+
+    public void movePositionVisibleAt(Position position, int visibleAtX, int visibleAtY) {
+        Point initialPoint = initialList.get(currentZoomLevel);
+        double currentTopLeftXTile = initialPoint.getX() + xTileOffset; // FIXME: 23.03.2018 xTileOffset not based on zoom
+        double currentTopLeftYTile = initialPoint.getY() + yTileOffset;
+
+        System.out.println("iP: "+initialPoint.getX());
+        System.out.println("xTO: "+xTileOffset);
+
+        double difX = position.getX() - currentTopLeftXTile;
+        double difY = position.getY() - currentTopLeftYTile;
+
+        double xDigits = difX-(int)difX;
+        double yDigits = difY-(int)difY;
+
+        xPaintOffset = -(int)(xDigits * 256);
+        yPaintOffset = -(int)(yDigits * 256);
+
+        moveOffset((int) Math.floor(difX), (int) Math.floor(difY));
+
+        repaint();
+
+        System.out.println(currentTopLeftXTile);
+        System.out.println(currentTopLeftYTile);
+        System.out.println(difX);
+        System.out.println(difY);
     }
 
     private void setCurrentZoomLevel(int zoom) {
@@ -110,6 +146,34 @@ public class Overlay extends JPanel {
         tileManager.clearTilesToBuffer();
         fillLabels();
         bufferRequest();
+    }
+
+    public void movePixels(int xDiff, int yDiff) {
+        xPaintOffset += xDiff;
+        yPaintOffset += yDiff;
+
+
+        while (xPaintOffset > 0) {
+            int c = xPaintOffset / 256 + 1;
+            xPaintOffset -= 256 * c;
+            moveHorizontal(-c);
+        }
+        while (xPaintOffset < -256) {
+            int c = xPaintOffset / -256;
+            xPaintOffset += 256 * c;
+            moveHorizontal(c);
+        }
+        while (yPaintOffset > 0) {
+            int c = yPaintOffset / 256 + 1;
+            yPaintOffset -= 256 * c;
+            moveVertical(-c);
+        }
+        while (yPaintOffset < -256) {
+            int c = yPaintOffset / -256;
+            yPaintOffset += 256 * c;
+            moveVertical(c);
+        }
+        repaint();
     }
 
     /**
@@ -163,30 +227,6 @@ public class Overlay extends JPanel {
         }
     }
 
-    public void movePixels(int xDiff, int yDiff) {
-        xPaintOffset += xDiff;
-        yPaintOffset += yDiff;
-
-        if (xPaintOffset > 256) {
-            int c = xPaintOffset / 256;
-            xPaintOffset -= 256 * c;
-            moveHorizontal(-c);
-        } else if (xPaintOffset < -256) {
-            int c = xPaintOffset / -256;
-            xPaintOffset += 256 * c;
-            moveHorizontal(c);
-        } else if (yPaintOffset > 256) {
-            int c = yPaintOffset / 256;
-            yPaintOffset -= 256 * c;
-            moveVertical(-c);
-        } else if (yPaintOffset < -256) {
-            int c = yPaintOffset / -256;
-            yPaintOffset += 256 * c;
-            moveVertical(c);
-        } else {
-            repaint();
-        }
-    }
     private void arrangeLabelArray() {
         tileManager.clearLabelsToBuffer();
         tileManager.clearTilesToBuffer();
@@ -369,6 +409,19 @@ public class Overlay extends JPanel {
                     break;
                 case 'q':
                     decreaseCurrentZoom();
+                    break;
+                case 'i':
+                    JFrame jFrame = new JFrame();
+                    jFrame.setBounds(100,100,256,256);
+                    jFrame.setLayout(null);
+                    jFrame.setResizable(false);
+                    JLabel jLabel = new JLabel(labels.get(0).get(0).getIcon());
+                    jLabel.setBounds(0,0, 256, 256);
+                    jFrame.getContentPane().add(jLabel);
+                    jFrame.setVisible(true);
+                    break;
+                case 'l':
+                    moveCordsVisibleAt(11.1181027, 46.6140000, 0, 0);
                     break;
             }
         }

@@ -5,6 +5,7 @@ import logic.city.Lane;
 import logic.city.Node;
 import logic.city.Street;
 import logic.vehicles.Vehicle;
+import main.Main;
 import utils.Utils;
 
 import javax.swing.*;
@@ -52,8 +53,21 @@ public class JCity extends JPanel {
         while (getAvgNodePosition() > getHeight() / 2) zoomOut();
         while (getAvgNodePosition() < getHeight() / 4) zoomIn();
         */
+        new Thread(() -> {
+            while (true) {
+                long zeitvorsleep = System.currentTimeMillis();
+                repaint();
+                long zeitvergangen = (System.currentTimeMillis() - zeitvorsleep);
+                if (zeitvergangen < 1000.0 / Main.FPS) {
+                    try {
+                        Thread.sleep((long) (1000.0 / Main.FPS - zeitvergangen));
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }).start();
 
-        // FIXME: 13.03.2018 still little bit off
         setLocation(-getXYByTileXY(city.getMinWidth()), -getXYByTileXY(city.getMinHeight()));
 
         /*
@@ -241,7 +255,6 @@ public class JCity extends JPanel {
         this.showLights = showLights;
     }
 
-
     public boolean isShowCars() {
         return showCars;
     }
@@ -259,22 +272,22 @@ public class JCity extends JPanel {
     }
 
     public void zoomIn() {
-        System.out.println("In "+zoom);
+        System.out.println("JCity: In "+zoom);
         Point mousePoint = MouseInfo.getPointerInfo().getLocation();
         mousePoint.x = mousePoint.x - container.getX() - getX();
         mousePoint.y = mousePoint.y - container.getY() - getY();
         zoom *= 2;
-        repositionAfterZoom(mousePoint, true);
+        //repositionAfterZoom(mousePoint, true);
     }
 
     public void zoomOut() {
-        System.out.println("Out "+zoom);
+        System.out.println("JCity: Out "+zoom);
         Point mousePoint = MouseInfo.getPointerInfo().getLocation();
         mousePoint.x -= container.getX() + getX();
         mousePoint.y -= container.getY() + getY();
 
         zoom /= 2;
-        repositionAfterZoom(mousePoint, false);
+        //repositionAfterZoom(mousePoint, false);
     }
 
     private void repositionAfterZoom(Point mousePoint, boolean zoomIn) {

@@ -19,7 +19,6 @@ public class Main extends JFrame {
 
     //fps stuff
     public static int FPS = 20;
-    public static long zeitvorsleep;
 
 
     private static JCity jCity;
@@ -47,19 +46,6 @@ public class Main extends JFrame {
         requestFocus();
 
         city.start();
-
-        while (true) {
-            zeitvorsleep = System.currentTimeMillis();
-            repaint();
-            long zeitvergangen = (System.currentTimeMillis() - zeitvorsleep);
-            if (zeitvergangen < 1000.0 / FPS) {
-                try {
-                    Thread.sleep((long) (1000.0 / FPS - zeitvergangen));
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
     }
 
     private void setupWindow() {
