@@ -10,7 +10,8 @@ import utils.Utils;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -21,6 +22,7 @@ import java.util.Iterator;
  */
 public class JCity extends JPanel {
 
+    public boolean canRepaint=true;
     /**
      * reference
      */
@@ -43,7 +45,7 @@ public class JCity extends JPanel {
         this.city = city;
         this.container = container;
         setLayout(null);
-        setBounds(0,0, getXYByTileXY(city.getMaxWidth()), getXYByTileXY(city.getMaxHeight()));
+        setBounds(0, 0, getXYByTileXY(city.getMaxWidth()), getXYByTileXY(city.getMaxHeight()));
 
         container.addKeyListener(new JCityKeyListener());
 
@@ -56,7 +58,8 @@ public class JCity extends JPanel {
         new Thread(() -> {
             while (true) {
                 long zeitvorsleep = System.currentTimeMillis();
-                repaint();
+                if (canRepaint)
+                    repaint();
                 long zeitvergangen = (System.currentTimeMillis() - zeitvorsleep);
                 if (zeitvergangen < 1000.0 / Main.FPS) {
                     try {
@@ -67,6 +70,13 @@ public class JCity extends JPanel {
                 }
             }
         }).start();
+
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                JCity.this.repaint();
+            }
+        };
 
         setLocation(-getXYByTileXY(city.getMinWidth()), -getXYByTileXY(city.getMinHeight()));
 
@@ -152,7 +162,7 @@ public class JCity extends JPanel {
     }
 
     private void drawLaneAndCars(Lane lane, Graphics2D g2, int i, boolean isBackward) {
-        int dir = isBackward? -1:1;
+        int dir = isBackward ? -1 : 1;
         //draw lanes
         g2.setColor(lane.getColorByTraffic());
         int stroke = 1;
@@ -272,48 +282,41 @@ public class JCity extends JPanel {
     }
 
     public void zoomIn() {
-        System.out.println("JCity: In "+zoom);
+        System.out.println("JCity: In " + zoom);
         Point mousePoint = MouseInfo.getPointerInfo().getLocation();
         mousePoint.x = mousePoint.x - container.getX() - getX();
         mousePoint.y = mousePoint.y - container.getY() - getY();
         zoom *= 2;
-        //repositionAfterZoom(mousePoint, true);
+        resizeAfterZoom();
     }
 
     public void zoomOut() {
-        System.out.println("JCity: Out "+zoom);
+        System.out.println("JCity: Out " + zoom);
         Point mousePoint = MouseInfo.getPointerInfo().getLocation();
         mousePoint.x -= container.getX() + getX();
         mousePoint.y -= container.getY() + getY();
-
         zoom /= 2;
-        //repositionAfterZoom(mousePoint, false);
+        resizeAfterZoom();
     }
 
-    private void repositionAfterZoom(Point mousePoint, boolean zoomIn) {
-        if (mousePoint.x > 0 && mousePoint.y > 0) {
-            // TODO: 13.03.2018 Most likely Values didn't change, inefficient to reiterate all nodes
-            int newWidth = (int) (getXYByTileXY(city.getMaxWidth()) * zoom);
-            int newHeight = (int) (getXYByTileXY(city.getMaxHeight()) * zoom);
-            setSize(newWidth, newHeight);
+    public void moveCordsVisibleAt(double lon, double lat, int visibleAtX, int visibleAtY) {
+        double x = Utils.getOsmTileX(lon, 19);
+        double y = Utils.getOsmTileY(lat, 19);
 
-            if (zoomIn) {
-                mousePoint.x *= 2;
-                mousePoint.y *= 2;
-            } else {
-                mousePoint.x /= 2;
-                mousePoint.y /= 2;
-            }
-            setLocation(container.getWidth()/2-mousePoint.x,container.getHeight()/2-mousePoint.y);
-            try {
-                Robot r = new Robot();
-                r.mouseMove(container.getX()+container.getWidth()/2,container.getY()+container.getHeight()/2);
-            } catch (AWTException e) {
-                e.printStackTrace();
-            }
-        } else {
-            System.out.println("no mouse pointed");
-        }
+        int pX = getXYByTileXY(x);
+        int pY = getXYByTileXY(y);
+
+        movePositionVisibleAt(new Point(pX, pY), visibleAtX, visibleAtY);
+    }
+
+    private void resizeAfterZoom() {
+        int newWidth = (int) (getXYByTileXY(city.getMaxWidth()) * zoom);
+        int newHeight = (int) (getXYByTileXY(city.getMaxHeight()) * zoom);
+        setSize(newWidth, newHeight);
+    }
+
+    private void movePositionVisibleAt(Point point, int visibleAtX, int visibleAtY) {
+        setLocation((int) ((int) -point.getX() * zoom), (int) ((int) -point.getY() * zoom));
     }
 
     private static int getXYByTileXY(double tileXY) {
@@ -383,6 +386,9 @@ public class JCity extends JPanel {
                         yOff /= 4;
                         setLocation(getX() - xOff, getY() - yOff);
                     }
+                    break;
+                case 'l':
+                    moveCordsVisibleAt(11.1181027, 46.6140000, 0, 0);
                     break;
             }
             repaint();

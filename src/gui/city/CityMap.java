@@ -34,7 +34,6 @@ public class CityMap extends JPanel {
         this.setLayout(null);
         overlay = new Overlay(parent, city.getMinLon(), city.getMaxLat(), 19);
         overlay.setLocation(0, 0);
-
         jCity = new JCity(city, parent);
 
         this.add(jCity);
@@ -58,16 +57,6 @@ public class CityMap extends JPanel {
             overlay.setSize(e.getComponent().getWidth(), e.getComponent().getHeight());
         }
     }
-
-
-
-
-
-
-
-
-
-
 
     private class CityMapMouseListener extends MouseAdapter {
 

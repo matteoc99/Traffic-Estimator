@@ -1,5 +1,6 @@
 package gui.city.Overlay;
 
+import gui.city.JCity;
 import utils.Utils;
 import utils.math.Position;
 
@@ -93,32 +94,28 @@ public class Overlay extends JPanel {
         System.out.println(x);
         System.out.println(y);
 
-        movePositionVisibleAt(new Position(x, y), visibleAtX, visibleAtY);
+        movePositionVisibleAt(new Position(x, y), 500, 500);
     }
 
     public void movePositionVisibleAt(Position position, int visibleAtX, int visibleAtY) {
-        Point initialPoint = initialList.get(currentZoomLevel);
-        double currentTopLeftXTile = initialPoint.getX() + xTileOffset; // FIXME: 23.03.2018 xTileOffset not based on zoom
-        double currentTopLeftYTile = initialPoint.getY() + yTileOffset;
+        Point currentTopLeftTile = getTilePointWithExtraOffset(0, 0, currentZoomLevel);
 
-        System.out.println("iP: "+initialPoint.getX());
-        System.out.println("xTO: "+xTileOffset);
-
-        double difX = position.getX() - currentTopLeftXTile;
-        double difY = position.getY() - currentTopLeftYTile;
+        double difX = position.getX() - currentTopLeftTile.getX();
+        double difY = position.getY() - currentTopLeftTile.getY();
 
         double xDigits = difX-(int)difX;
         double yDigits = difY-(int)difY;
 
+        moveOffset((int) difX-1, (int) difY-1);
+
         xPaintOffset = -(int)(xDigits * 256);
         yPaintOffset = -(int)(yDigits * 256);
 
-        moveOffset((int) Math.floor(difX), (int) Math.floor(difY));
+        movePixels(visibleAtX, visibleAtY);
 
         repaint();
 
-        System.out.println(currentTopLeftXTile);
-        System.out.println(currentTopLeftYTile);
+        System.out.println(currentTopLeftTile);
         System.out.println(difX);
         System.out.println(difY);
     }
@@ -422,6 +419,7 @@ public class Overlay extends JPanel {
                     break;
                 case 'l':
                     moveCordsVisibleAt(11.1181027, 46.6140000, 0, 0);
+                    System.out.println();
                     break;
             }
         }
