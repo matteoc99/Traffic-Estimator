@@ -19,6 +19,7 @@ public class PathUtils {
     }
 
     private static void generatePaths(City city, int count) {
+        // FIXME: 12.04.2018 Exception when package:paths is not created yet
         File pth = new File(System.getProperty("user.dir") + "/src/logic/paths/" + city.getName() + ".pth");
         FileOutputStream fos = null;
         try {

@@ -1,12 +1,14 @@
 package gui.city.Overlay;
 
-import gui.city.JCity;
 import utils.Utils;
 import utils.math.Position;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -78,8 +80,8 @@ public class Overlay extends JPanel {
         double xOrg = Utils.getOsmTileX(initialLon, currentZoomLevel);
         double yOrg = Utils.getOsmTileY(initialLat, currentZoomLevel);
 
-        double xDigits = xOrg - (int)xOrg;
-        double yDigits = yOrg - (int)yOrg;
+        double xDigits = xOrg - (int) xOrg;
+        double yDigits = yOrg - (int) yOrg;
 
         xPaintOffset -= xDigits * 256;
         yPaintOffset -= yDigits * 256;
@@ -91,33 +93,32 @@ public class Overlay extends JPanel {
         double x = Utils.getOsmTileX(lon, currentZoomLevel);
         double y = Utils.getOsmTileY(lat, currentZoomLevel);
 
-        System.out.println(x);
-        System.out.println(y);
-
         movePositionVisibleAt(new Position(x, y), 500, 500);
     }
 
     public void movePositionVisibleAt(Position position, int visibleAtX, int visibleAtY) {
+        if (position == null) return;
         Point currentTopLeftTile = getTilePointWithExtraOffset(0, 0, currentZoomLevel);
 
         double difX = position.getX() - currentTopLeftTile.getX();
         double difY = position.getY() - currentTopLeftTile.getY();
 
-        double xDigits = difX-(int)difX;
-        double yDigits = difY-(int)difY;
+        double xDigits = difX - (int) difX;
+        double yDigits = difY - (int) difY;
 
-        moveOffset((int) difX-1, (int) difY-1);
+        moveOffset((int) difX - 1, (int) difY - 1);
 
-        xPaintOffset = -(int)(xDigits * 256);
-        yPaintOffset = -(int)(yDigits * 256);
+        xPaintOffset = -(int) (xDigits * 256);
+        yPaintOffset = -(int) (yDigits * 256);
 
         movePixels(visibleAtX, visibleAtY);
 
         repaint();
+    }
 
-        System.out.println(currentTopLeftTile);
-        System.out.println(difX);
-        System.out.println(difY);
+    public Position getTilePositionAt(int x, int y) {
+        System.out.println(getComponentAt(x, y));
+        return null;
     }
 
     private void setCurrentZoomLevel(int zoom) {
@@ -237,28 +238,28 @@ public class Overlay extends JPanel {
         ArrayList<ArrayList<JLabel>> newLabelList = new ArrayList<>();
 
         for (int xIndex = 0; xIndex < visibleX + 2; xIndex++) {
-            ArrayList<JLabel> newRow = new ArrayList<>();
+            ArrayList<JLabel> newColumn = new ArrayList<>();
 
-            ArrayList<JLabel> row;
+            ArrayList<JLabel> column;
             try {
-                row = labels.get(xIndex);
+                column = labels.get(xIndex);
             } catch (Exception e) {
-                row = new ArrayList<>();
+                column = new ArrayList<>();
             }
 
             for (int yIndex = 0; yIndex < visibleY + 2; yIndex++) {
                 JLabel label;
                 try {
-                    label = row.get(yIndex);
+                    label = column.get(yIndex);
                 } catch (Exception e) {
                     label = new JLabel();
                     label.setBorder(BorderFactory.createLineBorder(Color.RED, 1));
                 }
                 trySettingIcon(xIndex, yIndex, label);
-                newRow.add(yIndex, label);
+                newColumn.add(yIndex, label);
             }
 
-            newLabelList.add(newRow);
+            newLabelList.add(newColumn);
         }
 
         labels = newLabelList;
@@ -409,11 +410,11 @@ public class Overlay extends JPanel {
                     break;
                 case 'i':
                     JFrame jFrame = new JFrame();
-                    jFrame.setBounds(100,100,256,256);
+                    jFrame.setBounds(100, 100, 256, 256);
                     jFrame.setLayout(null);
                     jFrame.setResizable(false);
                     JLabel jLabel = new JLabel(labels.get(0).get(0).getIcon());
-                    jLabel.setBounds(0,0, 256, 256);
+                    jLabel.setBounds(0, 0, 256, 256);
                     jFrame.getContentPane().add(jLabel);
                     jFrame.setVisible(true);
                     break;

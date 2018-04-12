@@ -2,6 +2,7 @@ package gui.city;
 
 import gui.city.Overlay.Overlay;
 import logic.city.City;
+import utils.math.Position;
 
 import javax.swing.*;
 import java.awt.*;
@@ -77,8 +78,8 @@ public class CityMap extends JPanel {
             if (e.getWheelRotation() < 0) {
                 jCity.zoomIn();
                 overlay.increaseCurrentZoom();
-                // TODO: 12.04.2018
-                //overlay.movePositionVisibleAt();
+
+                //overlay.movePositionVisibleAt(null, e.getX(), e.getY());
             } else {
                 jCity.zoomOut();
                 overlay.decreaseCurrentZoom();
@@ -88,6 +89,13 @@ public class CityMap extends JPanel {
         @Override
         public void mousePressed(MouseEvent e) {
             onClickP = e.getLocationOnScreen();
+
+            Point mousePosition = new Point(e.getXOnScreen()-overlay.getLocationOnScreen().x,
+                    e.getYOnScreen()-overlay.getLocationOnScreen().y);
+
+            System.out.println(mousePosition);
+
+            overlay.getTilePositionAt(mousePosition.x, mousePosition.y);
 
             jFrame.setCursor(blankCursor);
         }
