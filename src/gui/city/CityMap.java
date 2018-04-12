@@ -77,6 +77,8 @@ public class CityMap extends JPanel {
             if (e.getWheelRotation() < 0) {
                 jCity.zoomIn();
                 overlay.increaseCurrentZoom();
+                // TODO: 12.04.2018
+                //overlay.movePositionVisibleAt();
             } else {
                 jCity.zoomOut();
                 overlay.decreaseCurrentZoom();

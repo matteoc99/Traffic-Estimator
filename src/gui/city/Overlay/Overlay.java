@@ -21,7 +21,7 @@ public class Overlay extends JPanel {
 
     private final double initialLat, initialLon;
 
-    private int currentZoomLevel;
+    protected int currentZoomLevel;
 
     private HashMap<Integer, Point> initialList = new HashMap<>();
 

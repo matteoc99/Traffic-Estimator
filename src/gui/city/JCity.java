@@ -349,19 +349,17 @@ public class JCity extends JPanel {
 
     private class JCityKeyListener extends KeyAdapter {
 
-        public boolean hoverMode = false;
-        public Point hoverPoint = null;
+        private boolean hoverMode = false;
+        private Point hoverPoint = null;
 
         @Override
         public void keyPressed(KeyEvent e) {
             switch (e.getKeyCode()) {
                 case KeyEvent.VK_PLUS:
-                    //zoom++
                     zoomIn();
                     break;
                 case KeyEvent.VK_MINUS:
                     zoomOut();
-
                     break;
                 case KeyEvent.VK_LEFT:
                     setLocation(getX() + 10, getY());
@@ -397,7 +395,6 @@ public class JCity extends JPanel {
         @Override
         public void keyReleased(KeyEvent e) {
             switch (e.getKeyCode()) {
-
                 case KeyEvent.VK_H:
                     hoverMode = false;
                     hoverPoint = null;
