@@ -36,6 +36,16 @@ public class Overlay extends JPanel {
 
     private JFrame jFrame;
 
+    public static Position transformPositionByZoom(Position pos, int fromZoom, int toZoom) {
+        Position ret = new Position(0, 0);
+        int power = fromZoom - toZoom;
+        if (power == 0)
+            return pos.clone();
+        ret.setX(pos.getX() / Math.pow(2, power));
+        ret.setY(pos.getY() / Math.pow(2, power));
+        return ret;
+    }
+
     public Overlay(JFrame jFrame, double initialLon, double initialLat, int zoom) {
         this.initialLat = initialLat;
         this.initialLon = initialLon;
@@ -97,6 +107,7 @@ public class Overlay extends JPanel {
     }
 
     public void movePositionVisibleAt(Position position, int visibleAtX, int visibleAtY) {
+        System.out.println("called");
         if (position == null) return;
         Point currentTopLeftTile = getTilePointWithExtraOffset(0, 0, currentZoomLevel);
 
@@ -116,9 +127,26 @@ public class Overlay extends JPanel {
         repaint();
     }
 
-    public Position getTilePositionAt(int x, int y) {
-        System.out.println(getComponentAt(x, y));
-        return null;
+    /**
+     * Returns the Position(Tile.x, Tile.y) of the Tile that is visible at the following location with digits.
+     * x and y are relative to the top/left visible point
+     *
+     * @param x-pixel
+     * @param y-pixel
+     * @return the exact Position(osm)
+     */
+    public Position getTilePositionAtVisible(int x, int y) {
+        Position ret;
+
+        x -= xPaintOffset;
+        y -= yPaintOffset;
+
+        Point currentTopLeftTile = getTilePointWithExtraOffset(0, 0, currentZoomLevel);
+        ret = new Position(currentTopLeftTile);
+        ret.setX(ret.getX() + x / 256.0 + 1);
+        ret.setY(ret.getY() + y / 256.0 + 1);
+
+        return ret;
     }
 
     private void setCurrentZoomLevel(int zoom) {
@@ -367,6 +395,10 @@ public class Overlay extends JPanel {
             yTile = ((1 << zoom) - 1);
 
         return new Point(xTile, yTile);
+    }
+
+    public int getCurrentZoomLevel() {
+        return currentZoomLevel;
     }
 
     @Override

@@ -75,27 +75,32 @@ public class CityMap extends JPanel {
 
         @Override
         public void mouseWheelMoved(MouseWheelEvent e) {
+            Point mousePos = MouseInfo.getPointerInfo().getLocation();
+            Point mousePositionRvOverlay = new Point(mousePos.x-overlay.getLocationOnScreen().x,
+                    mousePos.y-overlay.getLocationOnScreen().y);
+
+            Position osmPos = overlay.getTilePositionAtVisible(mousePositionRvOverlay.x, mousePositionRvOverlay.y);
+
+            int oldZoom = overlay.getCurrentZoomLevel();
+
             if (e.getWheelRotation() < 0) {
                 jCity.zoomIn();
                 overlay.increaseCurrentZoom();
-
-                //overlay.movePositionVisibleAt(null, e.getX(), e.getY());
+                int newZoom = overlay.getCurrentZoomLevel();
+                osmPos = Overlay.transformPositionByZoom(osmPos, oldZoom, newZoom);
+                overlay.movePositionVisibleAt(osmPos, mousePositionRvOverlay.x, mousePositionRvOverlay.y);
             } else {
                 jCity.zoomOut();
                 overlay.decreaseCurrentZoom();
+                int newZoom = overlay.getCurrentZoomLevel();
+                osmPos = Overlay.transformPositionByZoom(osmPos, oldZoom, newZoom);
+                overlay.movePositionVisibleAt(osmPos, mousePositionRvOverlay.x, mousePositionRvOverlay.y);
             }
         }
 
         @Override
         public void mousePressed(MouseEvent e) {
             onClickP = e.getLocationOnScreen();
-
-            Point mousePosition = new Point(e.getXOnScreen()-overlay.getLocationOnScreen().x,
-                    e.getYOnScreen()-overlay.getLocationOnScreen().y);
-
-            System.out.println(mousePosition);
-
-            overlay.getTilePositionAt(mousePosition.x, mousePosition.y);
 
             jFrame.setCursor(blankCursor);
         }
