@@ -73,6 +73,7 @@ public class VehicleDriving implements DrivingInterface {
      */
     Network network;
 
+    boolean canGo;
 
 
     public VehicleDriving(Vehicle vehicle) {
@@ -238,6 +239,8 @@ public class VehicleDriving implements DrivingInterface {
                 vehicle.changeLane(lane);
             } else {
                 System.out.println("BAD PATH:");
+                System.out.println(vehicle.getPrevGoal());
+                System.out.println(vehicle.getCurrentGoal());
                 System.out.println("\t"+path);
                 System.out.println();
             }
@@ -273,7 +276,7 @@ public class VehicleDriving implements DrivingInterface {
         //todo from time to time evaluate other actions because --> once follow lane u are stuck until lane change
         if (vehicle.getProgressInLane() / vehicle.getLane().getLength() > 0.95) {
             //change lane or die if path end is reached
-            if (vehicle.getLane().equals(vehicle.getPrevGoal().getLaneTo(vehicle.getCurrentGoal()))) {
+            if (canGo && vehicle.getLane().equals(vehicle.getPrevGoal().getLaneTo(vehicle.getCurrentGoal()))) {
                 vehicle.setPrevGoal(vehicle.getCurrentGoal());
                 vehicle.setCurrentGoal(vehicle.getCity().getNodeById(vehicle.getPath().getGoalAndIncrement()));
             }
@@ -281,7 +284,7 @@ public class VehicleDriving implements DrivingInterface {
                 vehicle.getLane().removeVehicle(vehicle);
                 vehicle.getCity().getVehicles().remove(vehicle);
             } else {
-                boolean canGo = vehicle.getPrevGoal().register(vehicle, vehicle.getCurrentGoal());
+               canGo = vehicle.getPrevGoal().register(vehicle, vehicle.getCurrentGoal());
                 if (canGo) {
                     Lane lane = vehicle.getPrevGoal().getLaneTo(vehicle.getCurrentGoal());
                     vehicle.changeLane(lane);
@@ -448,7 +451,7 @@ public class VehicleDriving implements DrivingInterface {
     }
 
     public int getSafetyDist(){
-        int ret= (int) (vehicle.getCurrentSpeed()/6)+2;
+        int ret= (int) ((int) (vehicle.getCurrentSpeed()/100)+0.01);
         return ret;
     }
 }

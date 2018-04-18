@@ -28,11 +28,14 @@ public class Main extends JFrame {
     // FIXME: 13.03.2018 yep; effizienz gleich 0 xD ... nana jk
     int effizienz = 0;
 
+    CityMap cityMap;
+
+
     public Main(City city) {
         setupWindow();
         c = getContentPane();
         controlPanel = setUpControlPanel();
-        CityMap cityMap = new CityMap(this, city);
+        cityMap = new CityMap(this, city);
         cityMap.setBounds(0, 0, getWidth()-getWidth()/6, getHeight());
         c.add(cityMap);
         c.add(controlPanel);
@@ -101,15 +104,18 @@ public class Main extends JFrame {
         fps.setMinorTickSpacing(5);
         speed.addChangeListener(e -> {
             City.SPEED = speed.getValue() + 1;
+            cityMap.repaint();
             requestFocus();
         });
 
         traffic.addChangeListener(e -> {
             City.VEHICLE_AMOUNT = traffic.getValue() + 1;
+            cityMap.repaint();
             requestFocus();
         });
         fps.addChangeListener(e -> {
             FPS = fps.getValue() + 1;
+            cityMap.repaint();
             requestFocus();
         });
         ret.add(traffic);
@@ -121,7 +127,7 @@ public class Main extends JFrame {
     public static void main(String[] args) {
         System.out.println("Main:" + new Timestamp(System.currentTimeMillis()) + " Creating City from .json...");
         City city = City.createCityFromJson(
-                new File(System.getProperty("user.dir") + "\\src\\parsing\\res\\lana_NewXY.json"));
+                new File(System.getProperty("user.dir") + "\\src\\parsing\\res\\topleft.json"));
         System.out.println("Main:" + new Timestamp(System.currentTimeMillis()) + " Starting GUI...");
         Main main = new Main(city);
     }

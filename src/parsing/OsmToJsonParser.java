@@ -308,5 +308,8 @@ public final class OsmToJsonParser {
     }
 
     private OsmToJsonParser() {
+        // TODO: 11.04.2018 ampel
+        //  <tag k="crossing" v="traffic_signals"/>
+        //  <tag k="highway" v="traffic_signals"/>
     }
 }

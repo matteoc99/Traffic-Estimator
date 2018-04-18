@@ -13,25 +13,21 @@ public class MultiConnection extends Node {
     /**
      * Street crossing contains a StreetlightLogic system
      */
-    private StreetlightLogic logic;
+    private StreetlightLogic logic=null;
 
 
-    public MultiConnection(City parent, Position position, double fame, String id, StreetlightLogic logic) {
-        this(parent, position, fame, id);
-        this.logic = logic;
+    public MultiConnection(City parent, Position position, double fame, String id) {
+        super(parent, position, fame, id);
 
     }
 
     public MultiConnection(Node node, StreetlightLogic logic) {
         this(node.getParent(), node.getPosition(), node.getFame(), node.getId());
-        this.logic = logic;
     }
 
-    public MultiConnection(City parent, Position position, double fame, String id) {
-        super(parent, position, fame, id);
-        if (getLogic() == null)
-            logic = new StreetlightLogic(getId(), this);
-    logic.start();
+    public void addStreetLightLogic() {
+        logic = new StreetlightLogic(getId(), this);
+        logic.start();
     }
 
     public void setLogic(StreetlightLogic logic) {

@@ -28,7 +28,7 @@ public class Street extends StreetComponent {
     /**
      * The maximum speed allowed on this Street, actual speed of the car might be higher
      */
-    private double maxSpeed=50;
+    private double maxSpeed = 50;
 
     /**
      * The higher the less known a street is. 0 very known
@@ -56,7 +56,7 @@ public class Street extends StreetComponent {
         this.to = to;
         this.maxSpeed = maxSpeed;
         // TODO: 01.03.2018 why is maxspeed == 2.0
-        this.maxSpeed=50;
+        this.maxSpeed = 50;
         this.unProminence = unProminence;
 
 
@@ -66,6 +66,7 @@ public class Street extends StreetComponent {
 
         from.addStreet(this);
         to.addStreet(this);
+
     }
 
 
@@ -111,17 +112,19 @@ public class Street extends StreetComponent {
         if (!contains(lane)) {
             if (lane.isReversed()) {
                 backwardLanes.add(lane);
-                if(getFrom() instanceof MultiConnection){
-                    // TODO: 06.03.2018 from lane direction get the direction of the light direction is ignored for now
-                    Streetlight streetlight = new Streetlight(lane, ((MultiConnection) getFrom()).getLogic(), Streetlight.Direction.STRAIGHT);
-                    ((MultiConnection) getFrom()).getLogic().addStreetlight(streetlight);
+                if (getFrom() instanceof MultiConnection) {
+                    if (((MultiConnection) getFrom()).getLogic() != null) {
+                        Streetlight streetlight = new Streetlight(lane, ((MultiConnection) getFrom()).getLogic(), Streetlight.Direction.STRAIGHT);
+                        ((MultiConnection) getFrom()).getLogic().addStreetlight(streetlight);
+                    }
                 }
             } else {
                 forwardLanes.add(lane);
-                if(getTo() instanceof MultiConnection){
-                    // TODO: 06.03.2018 from lane direction get the direction of the light direction is ignored for now
-                    Streetlight streetlight = new Streetlight(lane, ((MultiConnection) getTo()).getLogic(), Streetlight.Direction.STRAIGHT);
-                    ((MultiConnection) getTo()).getLogic().addStreetlight(streetlight);
+                if (getTo() instanceof MultiConnection) {
+                    if (((MultiConnection) getTo()).getLogic() != null) {
+                        Streetlight streetlight = new Streetlight(lane, ((MultiConnection) getTo()).getLogic(), Streetlight.Direction.STRAIGHT);
+                        ((MultiConnection) getTo()).getLogic().addStreetlight(streetlight);
+                    }
                 }
             }
         } else {
@@ -193,8 +196,7 @@ public class Street extends StreetComponent {
         return maxSpeed;
     }
 
-    public void setMaxSpeed(double maxSpeed)
-    {
+    public void setMaxSpeed(double maxSpeed) {
         this.maxSpeed = maxSpeed;
     }
 

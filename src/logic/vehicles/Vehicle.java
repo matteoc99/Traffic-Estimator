@@ -221,7 +221,7 @@ public class Vehicle {
     }
 
     public void incrementProgressInLane(double currentSpeed) {
-        progressInLane += currentSpeed / 4; // TODO: 28.02.2018 trimm
+        progressInLane += currentSpeed / 120; // TODO: 28.02.2018 trimm
     }
 
     public City getCity() {

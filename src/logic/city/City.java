@@ -84,7 +84,7 @@ public class City extends Thread {
     /**
      * The amount of cars that should drive in this city
      */
-    public static int VEHICLE_AMOUNT = 10;
+    public static int VEHICLE_AMOUNT = 1;
 
 
     /**
@@ -555,7 +555,6 @@ public class City extends Thread {
             zeitvorsleep = System.currentTimeMillis();
             calcCity();
             int i = 0;
-
             while (getVehicles().size() < VEHICLE_AMOUNT && i < 10) {
                 Vehicle vehicle = new Vehicle(this);
                 vehicle.setColor(new Color((int) ((Math.random() * 200) + 50), (int) (Math.random() * 200) + 50, (int) (Math.random() * 200) + 50));
