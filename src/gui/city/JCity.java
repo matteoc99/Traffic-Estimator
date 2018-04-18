@@ -38,6 +38,8 @@ public class JCity extends JPanel {
 
     //zoom
     public static double zoom = 1;
+    public double maxZoom = 1;
+    public double minZoom = 1 / Math.pow(2, 10);
 
     JFrame container;
 
@@ -45,7 +47,7 @@ public class JCity extends JPanel {
         this.city = city;
         this.container = container;
         setLayout(null);
-        setBounds(0, 0, getXYByTileXY(city.getMaxWidth()), getXYByTileXY(city.getMaxHeight()));
+        setBounds(0, 0, getXYByOsmTileXY(city.getMaxWidth()), getXYByOsmTileXY(city.getMaxHeight()));
 
         container.addKeyListener(new JCityKeyListener());
 
@@ -71,45 +73,11 @@ public class JCity extends JPanel {
             }
         }).start();
 
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                JCity.this.repaint();
-            }
-        };
+        moveVisibleAt(new Point(getXYByOsmTileXY(city.getMinWidth()), getXYByOsmTileXY(city.getMinHeight())), 0, 0);
+    }
 
-        setLocation(-getXYByTileXY(city.getMinWidth()), -getXYByTileXY(city.getMinHeight()));
-
-        /*
-        {
-            Node node = city.getRandomNode();
-            for (Node nodess : city.getNodes()) {
-                if (nodess.getY() < node.getY())
-                    node = nodess;
-            }
-
-            setLocation(-getXYByTileXY(node.getX()), -getXYByTileXY(node.getY()));
-
-            System.out.println(getLocation());
-            System.out.println(node);
-            System.out.println(getXYByTileXY(node.getX()));
-            System.out.println(getXYByTileXY(node.getY()));
-        }
-        {
-            Node node = city.getRandomNode();
-            for (Node nodess : city.getNodes()) {
-                if (nodess.getX() < node.getX())
-                    node = nodess;
-            }
-
-            setLocation(-getXYByTileXY(node.getX()), -getXYByTileXY(node.getY()));
-
-            System.out.println(getLocation());
-            System.out.println(node);
-            System.out.println(getXYByTileXY(node.getX()));
-            System.out.println(getXYByTileXY(node.getY()));
-        }
-        */
+    public void moveVisibleAt(Point point, int visibleX, int visibleY) {
+        setLocation(-point.x + visibleX, -point.y + visibleY);
     }
 
     public City getCity() {
@@ -152,8 +120,8 @@ public class JCity extends JPanel {
         }
 
         // TODO: 13.03.2018 Did the bounds even change?
-        int newWidth = (int) (getXYByTileXY(city.getMaxWidth()) * zoom);
-        int newHeight = (int) (getXYByTileXY(city.getMaxHeight()) * zoom);
+        int newWidth = (int) (getXYByOsmTileXY(city.getMaxWidth()) * zoom);
+        int newHeight = (int) (getXYByOsmTileXY(city.getMaxHeight()) * zoom);
 
         setSize(newWidth, newHeight);
         if (firstPaint) {
@@ -169,15 +137,15 @@ public class JCity extends JPanel {
         g2.setStroke(new BasicStroke((float) (stroke * zoom >= 1 ? stroke * zoom : 1), BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
         if (showStreets)
             if (zoom >= 1) {
-                g2.drawLine((int) ((int) (getXYByTileXY(lane.getParent().getxFrom()) * zoom) - (zoom + i * zoom * 2) * dir),
-                        (int) ((int) (getXYByTileXY(lane.getParent().getyFrom()) * zoom) - (zoom + i * zoom * 2) * dir),
-                        (int) ((int) (getXYByTileXY(lane.getParent().getxTo()) * zoom) - (zoom + i * zoom * 2) * dir),
-                        (int) ((int) (getXYByTileXY(lane.getParent().getyTo()) * zoom) - (zoom + i * zoom * 2) * dir));
+                g2.drawLine((int) ((int) (getXYByOsmTileXY(lane.getParent().getxFrom()) * zoom) - (zoom + i * zoom * 2) * dir),
+                        (int) ((int) (getXYByOsmTileXY(lane.getParent().getyFrom()) * zoom) - (zoom + i * zoom * 2) * dir),
+                        (int) ((int) (getXYByOsmTileXY(lane.getParent().getxTo()) * zoom) - (zoom + i * zoom * 2) * dir),
+                        (int) ((int) (getXYByOsmTileXY(lane.getParent().getyTo()) * zoom) - (zoom + i * zoom * 2) * dir));
             } else {
-                g2.drawLine((int) ((int) (getXYByTileXY(lane.getParent().getxFrom()) * zoom) - (1 + i * 2) * dir),
-                        (int) ((int) (getXYByTileXY(lane.getParent().getyFrom()) * zoom) - (1 + i * 2) * dir),
-                        (int) ((int) (getXYByTileXY(lane.getParent().getxTo()) * zoom) - (1 + i * 2) * dir),
-                        (int) ((int) (getXYByTileXY(lane.getParent().getyTo()) * zoom) - (1 + i * 2) * dir));
+                g2.drawLine((int) ((int) (getXYByOsmTileXY(lane.getParent().getxFrom()) * zoom) - (1 + i * 2) * dir),
+                        (int) ((int) (getXYByOsmTileXY(lane.getParent().getyFrom()) * zoom) - (1 + i * 2) * dir),
+                        (int) ((int) (getXYByOsmTileXY(lane.getParent().getxTo()) * zoom) - (1 + i * 2) * dir),
+                        (int) ((int) (getXYByOsmTileXY(lane.getParent().getyTo()) * zoom) - (1 + i * 2) * dir));
 
             }
         ArrayList<Vehicle> vehicles = lane.getVehicles();
@@ -188,12 +156,12 @@ public class JCity extends JPanel {
                 g2.setColor(vehicle.getColor());
                 // draw cars
                 if (zoom < 1) {
-                    g2.fillOval((int) ((int) ((getXYByTileXY(vehicle.currentPositionOnLane().getX())) * zoom) - (8) / 2 - (1 + i * 2) * dir),
-                            (int) ((int) ((getXYByTileXY(vehicle.currentPositionOnLane().getY())) * zoom) - (8) / 2 - (1 + i * 2) * dir),
+                    g2.fillOval((int) ((int) ((getXYByOsmTileXY(vehicle.currentPositionOnLane().getX())) * zoom) - (8) / 2 - (1 + i * 2) * dir),
+                            (int) ((int) ((getXYByOsmTileXY(vehicle.currentPositionOnLane().getY())) * zoom) - (8) / 2 - (1 + i * 2) * dir),
                             8, 8);
                 } else {
-                    g2.fillOval((int) ((int) ((getXYByTileXY(vehicle.currentPositionOnLane().getX())) * zoom) - (8 * (int) (zoom)) / 2 - (zoom + i * zoom * 2) * dir),
-                            (int) ((int) ((getXYByTileXY(vehicle.currentPositionOnLane().getY())) * zoom) - (8 * (int) (zoom)) / 2 - (zoom + i * zoom * 2) * dir),
+                    g2.fillOval((int) ((int) ((getXYByOsmTileXY(vehicle.currentPositionOnLane().getX())) * zoom) - (8 * (int) (zoom)) / 2 - (zoom + i * zoom * 2) * dir),
+                            (int) ((int) ((getXYByOsmTileXY(vehicle.currentPositionOnLane().getY())) * zoom) - (8 * (int) (zoom)) / 2 - (zoom + i * zoom * 2) * dir),
                             8 * (int) (zoom), 8 * (int) (zoom));
                 }
 
@@ -206,8 +174,8 @@ public class JCity extends JPanel {
                         g2.setColor(Color.RED);
                     else
                         g2.setColor(Color.GREEN);
-                    g2.fillRect((int) (getXYByTileXY(lane.getPointByProgress(lane.getLength()).getX()) * zoom) - (8) / 2 - (1 + i * 2) * dir,
-                            (int) (getXYByTileXY(lane.getPointByProgress(lane.getLength()).getY()) * zoom) - (8) / 2 - (1 + i * 2) * dir,
+                    g2.fillRect((int) (getXYByOsmTileXY(lane.getPointByProgress(lane.getLength()).getX()) * zoom) - (8) / 2 - (1 + i * 2) * dir,
+                            (int) (getXYByOsmTileXY(lane.getPointByProgress(lane.getLength()).getY()) * zoom) - (8) / 2 - (1 + i * 2) * dir,
                             8, 8);
                 }
             } else {
@@ -216,8 +184,8 @@ public class JCity extends JPanel {
                         g2.setColor(Color.RED);
                     else
                         g2.setColor(Color.GREEN);
-                    g2.fillOval((int) ((getXYByTileXY(lane.getPointByProgress(lane.getLength()).getX()) * zoom) - (8 * (int) (zoom)) / 2 - (zoom + i * zoom * 2) * dir),
-                            (int) ((getXYByTileXY(lane.getPointByProgress(lane.getLength()).getY()) * zoom) - (8 * (int) (zoom)) / 2 - (zoom + i * zoom * 2) * dir),
+                    g2.fillOval((int) ((getXYByOsmTileXY(lane.getPointByProgress(lane.getLength()).getX()) * zoom) - (8 * (int) (zoom)) / 2 - (zoom + i * zoom * 2) * dir),
+                            (int) ((getXYByOsmTileXY(lane.getPointByProgress(lane.getLength()).getY()) * zoom) - (8 * (int) (zoom)) / 2 - (zoom + i * zoom * 2) * dir),
                             8 * (int) (zoom), 8 * (int) (zoom));
                 }
             }
@@ -282,49 +250,54 @@ public class JCity extends JPanel {
     }
 
     public void zoomIn() {
-        System.out.println("JCity: In " + zoom);
+        if (zoom == maxZoom)
+            return;
         Point mousePoint = MouseInfo.getPointerInfo().getLocation();
         mousePoint.x = mousePoint.x - container.getX() - getX();
         mousePoint.y = mousePoint.y - container.getY() - getY();
         zoom *= 2;
         resizeAfterZoom();
+
+        System.out.println(zoom);
     }
 
     public void zoomOut() {
-        System.out.println("JCity: Out " + zoom);
+        System.out.println(minZoom);
+        if (zoom == minZoom)
+            return;
         Point mousePoint = MouseInfo.getPointerInfo().getLocation();
         mousePoint.x -= container.getX() + getX();
         mousePoint.y -= container.getY() + getY();
         zoom /= 2;
         resizeAfterZoom();
+
+        System.out.println(zoom);
     }
 
     public void moveCordsVisibleAt(double lon, double lat, int visibleAtX, int visibleAtY) {
+        // TODO: 16.04.2018 Test this!
         double x = Utils.getOsmTileX(lon, 19);
         double y = Utils.getOsmTileY(lat, 19);
 
-        int pX = getXYByTileXY(x);
-        int pY = getXYByTileXY(y);
+        // FIXME: 18.04.2018 Not sure about the multiplication with zoom
+        int pX = (int)(getXYByOsmTileXY(x) * zoom);
+        int pY = (int)(getXYByOsmTileXY(y) * zoom);
 
-        movePositionVisibleAt(new Point(pX, pY), visibleAtX, visibleAtY);
+        moveVisibleAt(new Point(pX, pY), visibleAtX, visibleAtY);
     }
 
     private void resizeAfterZoom() {
-        int newWidth = (int) (getXYByTileXY(city.getMaxWidth()) * zoom);
-        int newHeight = (int) (getXYByTileXY(city.getMaxHeight()) * zoom);
+        int newWidth = (int) (getXYByOsmTileXY(city.getMaxWidth()) * zoom);
+        int newHeight = (int) (getXYByOsmTileXY(city.getMaxHeight()) * zoom);
         setSize(newWidth, newHeight);
     }
 
-    private void movePositionVisibleAt(Point point, int visibleAtX, int visibleAtY) {
-        setLocation((int) ((int) -point.getX() * zoom), (int) ((int) -point.getY() * zoom));
-    }
-
-    private static int getXYByTileXY(double tileXY) {
+    static int getXYByOsmTileXY(double osmTileXY) {
         int ret;
-        int raw = (int) tileXY;
+        int raw = (int) osmTileXY;
 
         ret = raw * 256;
-        ret += (tileXY - raw) * 256;
+        ret += (osmTileXY - raw) * 256;
         return ret;
     }
 

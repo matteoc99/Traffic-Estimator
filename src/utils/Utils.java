@@ -31,6 +31,5 @@ public class Utils {
 
     public static double getOsmTileY(double lat, int zoom) {
         return (1 - Math.log(Math.tan(Math.toRadians(lat)) + 1 / Math.cos(Math.toRadians(lat))) / Math.PI) / 2 * (1 << zoom);
-
     }
 }

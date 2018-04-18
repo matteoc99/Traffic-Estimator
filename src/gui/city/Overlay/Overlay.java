@@ -36,6 +36,13 @@ public class Overlay extends JPanel {
 
     private JFrame jFrame;
 
+    /**
+     * Attention: Always creates a new Position
+     *
+     * @param pos old Position
+     * @param fromZoom old zoom
+     * @param toZoom new zoom
+     */
     public static Position transformPositionByZoom(Position pos, int fromZoom, int toZoom) {
         Position ret = new Position(0, 0);
         int power = fromZoom - toZoom;
@@ -107,7 +114,6 @@ public class Overlay extends JPanel {
     }
 
     public void movePositionVisibleAt(Position position, int visibleAtX, int visibleAtY) {
-        System.out.println("called");
         if (position == null) return;
         Point currentTopLeftTile = getTilePointWithExtraOffset(0, 0, currentZoomLevel);
 
