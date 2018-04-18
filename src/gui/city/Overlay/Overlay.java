@@ -34,8 +34,6 @@ public class Overlay extends JPanel {
 
     private TileManager tileManager = new OSMTileManager(this);
 
-    private JFrame jFrame;
-
     /**
      * Attention: Always creates a new Position
      *
@@ -56,7 +54,6 @@ public class Overlay extends JPanel {
     public Overlay(JFrame jFrame, double initialLon, double initialLat, int zoom) {
         this.initialLat = initialLat;
         this.initialLon = initialLon;
-        this.jFrame = jFrame;
 
         loadInitialList();
 
@@ -71,8 +68,6 @@ public class Overlay extends JPanel {
         fillLabels();
 
         this.addComponentListener(new OverlayComponentAdapter());
-
-        jFrame.addKeyListener(new OverlayKeyListener());
     }
 
     private void loadInitialList() {
@@ -345,18 +340,6 @@ public class Overlay extends JPanel {
         return point;
     }
 
-    private void findParentFrame() {
-        Component currentComponent = this;
-        while (jFrame == null) {
-            Component parent = currentComponent.getParent();
-            if (parent == null)
-                break;
-            if (parent instanceof JFrame)
-                jFrame = ((JFrame) parent);
-            currentComponent = parent;
-        }
-    }
-
     public void setXPaintOffset(int xPaintOffset) {
         this.xPaintOffset = xPaintOffset;
     }
@@ -419,48 +402,7 @@ public class Overlay extends JPanel {
         @Override
         public void componentResized(ComponentEvent e) {
             super.componentResized(e);
-            System.out.println("arrangeLabelArray() called");
             arrangeLabelArray();
-        }
-    }
-
-    private class OverlayKeyListener extends KeyAdapter {
-        @Override
-        public void keyTyped(KeyEvent e) {
-            switch (e.getKeyChar()) {
-                case 'd':
-                    moveHorizontal(1);
-                    break;
-                case 'a':
-                    moveHorizontal(-1);
-                    break;
-                case 'w':
-                    moveVertical(-1);
-                    break;
-                case 's':
-                    moveVertical(1);
-                    break;
-                case 'e':
-                    increaseCurrentZoom();
-                    break;
-                case 'q':
-                    decreaseCurrentZoom();
-                    break;
-                case 'i':
-                    JFrame jFrame = new JFrame();
-                    jFrame.setBounds(100, 100, 256, 256);
-                    jFrame.setLayout(null);
-                    jFrame.setResizable(false);
-                    JLabel jLabel = new JLabel(labels.get(0).get(0).getIcon());
-                    jLabel.setBounds(0, 0, 256, 256);
-                    jFrame.getContentPane().add(jLabel);
-                    jFrame.setVisible(true);
-                    break;
-                case 'l':
-                    moveCordsVisibleAt(11.1181027, 46.6140000, 0, 0);
-                    System.out.println();
-                    break;
-            }
         }
     }
 }
