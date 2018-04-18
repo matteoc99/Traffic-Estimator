@@ -22,7 +22,6 @@ import java.util.Iterator;
  */
 public class JCity extends JPanel {
 
-    public boolean canRepaint=true;
     /**
      * reference
      */
@@ -57,21 +56,6 @@ public class JCity extends JPanel {
         while (getAvgNodePosition() > getHeight() / 2) zoomOut();
         while (getAvgNodePosition() < getHeight() / 4) zoomIn();
         */
-        new Thread(() -> {
-            while (true) {
-                long zeitvorsleep = System.currentTimeMillis();
-                if (canRepaint)
-                    repaint();
-                long zeitvergangen = (System.currentTimeMillis() - zeitvorsleep);
-                if (zeitvergangen < 1000.0 / Main.FPS) {
-                    try {
-                        Thread.sleep((long) (1000.0 / Main.FPS - zeitvergangen));
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }).start();
 
         moveVisibleAt(new Point(getXYByOsmTileXY(city.getMinWidth()), getXYByOsmTileXY(city.getMinHeight())), 0, 0);
     }

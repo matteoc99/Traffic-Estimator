@@ -2,6 +2,7 @@ package gui.city;
 
 import gui.city.Overlay.Overlay;
 import logic.city.City;
+import main.Main;
 import utils.math.Position;
 
 import javax.swing.*;
@@ -50,6 +51,22 @@ public class CityMap extends JPanel {
         jCity.addMouseListener(cmml);
         jCity.addMouseMotionListener(cmml);
         jCity.addMouseWheelListener(cmml);
+
+        new Thread(() -> {
+            while (true) {
+                long zeitvorsleep = System.currentTimeMillis();
+                repaint();
+                long zeitvergangen = (System.currentTimeMillis() - zeitvorsleep);
+                if (zeitvergangen < 1000.0 / Main.FPS) {
+                    try {
+                        Thread.sleep((long) (1000.0 / Main.FPS - zeitvergangen));
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }).start();
+
     }
 
     private class CityMapComponentListener extends ComponentAdapter {
@@ -78,8 +95,6 @@ public class CityMap extends JPanel {
             Point mousePos = MouseInfo.getPointerInfo().getLocation();
             Point mousePositionRvOverlay = new Point(mousePos.x - overlay.getLocationOnScreen().x,
                     mousePos.y - overlay.getLocationOnScreen().y);
-            Point mousePositionRvCity = new Point(mousePos.x - jCity.getLocationOnScreen().x,
-                    mousePos.y - jCity.getLocationOnScreen().y);
 
             Position osmPos = overlay.getTilePositionAtVisible(mousePositionRvOverlay.x, mousePositionRvOverlay.y);
 
