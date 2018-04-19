@@ -29,8 +29,8 @@ public final class OsmToJsonParser {
     private static Map<String, Integer> streetsOnNode = new HashMap<>();
 
     public static void main(String[] args) {
-        parse(System.getProperty("user.dir") + "\\src\\parsing\\res\\bozenLarge.osm",
-                System.getProperty("user.dir") + "\\src\\parsing\\res\\bozenLarge.json");
+        parse(System.getProperty("user.dir") + "\\src\\parsing\\res\\map.osm",
+                System.getProperty("user.dir") + "\\src\\parsing\\res\\delMe.json");
     }
 
     /**
@@ -91,8 +91,6 @@ public final class OsmToJsonParser {
                     " Adjusting positions of nodes...");
             adjustNodePositions();
 
-            jsonRoot.put("streetlight", new JSONArray());
-
             System.out.println("OsmToJsonParser:" + new Timestamp(System.currentTimeMillis()) +
                     " Printing...");
             PrintWriter printWriter = new PrintWriter(json);
@@ -131,6 +129,25 @@ public final class OsmToJsonParser {
 
             jNode.put("fame", 0.2);
             jNode.put("type", "NotClassified");
+
+            NodeList tagList = eElement.getElementsByTagName("tag");
+            int tagLength = tagList.getLength();
+
+            for (int j = 0; j < tagLength; j++) {
+                Node nTag = tagList.item(j);
+
+                if (nTag.getNodeType() != Node.ELEMENT_NODE)
+                    continue;
+
+                Element eNdsElement = (Element) nTag;
+
+                String value = eNdsElement.getAttribute("v");
+
+                if (value.equals("traffic_signals")) {
+                    jNode.put("traffic_signal", true);
+                    break;
+                }
+            }
 
             jNodes.put(jNode);
         }

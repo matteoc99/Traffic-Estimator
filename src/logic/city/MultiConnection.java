@@ -16,16 +16,14 @@ public class MultiConnection extends Node {
     private StreetlightLogic logic=null;
 
 
-    public MultiConnection(City parent, Position position, double fame, String id) {
+    public MultiConnection(City parent, Position position, double fame, String id, boolean hasTrafficSignals) {
         super(parent, position, fame, id);
+        if (hasTrafficSignals)
+            addStreetLightLogic();
 
     }
 
-    public MultiConnection(Node node, StreetlightLogic logic) {
-        this(node.getParent(), node.getPosition(), node.getFame(), node.getId());
-    }
-
-    public void addStreetLightLogic() {
+    private void addStreetLightLogic() {
         logic = new StreetlightLogic(getId(), this);
         logic.start();
     }

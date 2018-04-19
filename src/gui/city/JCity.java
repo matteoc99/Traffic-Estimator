@@ -5,7 +5,6 @@ import logic.city.Lane;
 import logic.city.Node;
 import logic.city.Street;
 import logic.vehicles.Vehicle;
-import main.Main;
 import utils.Utils;
 
 import javax.swing.*;
@@ -152,26 +151,14 @@ public class JCity extends JPanel {
             }
         //draw streetlights
         if (showLights) {
-            if (zoom < 1) {
-                if (lane.getStreetlight() != null) {
-                    if (lane.getStreetlight().getState() == 0)
-                        g2.setColor(Color.RED);
-                    else
-                        g2.setColor(Color.GREEN);
-                    g2.fillRect((int) (getXYByOsmTileXY(lane.getPointByProgress(lane.getLength()).getX()) * zoom) - (8) / 2 - (1 + i * 2) * dir,
-                            (int) (getXYByOsmTileXY(lane.getPointByProgress(lane.getLength()).getY()) * zoom) - (8) / 2 - (1 + i * 2) * dir,
-                            8, 8);
-                }
-            } else {
-                if (lane.getStreetlight() != null) {
-                    if (lane.getStreetlight().getState() == 0)
-                        g2.setColor(Color.RED);
-                    else
-                        g2.setColor(Color.GREEN);
-                    g2.fillOval((int) ((getXYByOsmTileXY(lane.getPointByProgress(lane.getLength()).getX()) * zoom) - (8 * (int) (zoom)) / 2 - (zoom + i * zoom * 2) * dir),
-                            (int) ((getXYByOsmTileXY(lane.getPointByProgress(lane.getLength()).getY()) * zoom) - (8 * (int) (zoom)) / 2 - (zoom + i * zoom * 2) * dir),
-                            8 * (int) (zoom), 8 * (int) (zoom));
-                }
+            if (lane.getStreetlight() != null) {
+                if (lane.getStreetlight().getState() == 0)
+                    g2.setColor(Color.RED);
+                else
+                    g2.setColor(Color.GREEN);
+                g2.fillRect((int) (getXYByOsmTileXY(lane.getPointByProgress(lane.getLength()).getX())) - (8) / 2 - (1 + i * 2) * dir,
+                        (int) (getXYByOsmTileXY(lane.getPointByProgress(lane.getLength()).getY())) - (8) / 2 - (1 + i * 2) * dir,
+                        8, 8);
             }
         }
     }
@@ -264,8 +251,8 @@ public class JCity extends JPanel {
         double y = Utils.getOsmTileY(lat, 19);
 
         // FIXME: 18.04.2018 Not sure about the multiplication with zoom
-        int pX = (int)(getXYByOsmTileXY(x) * zoom);
-        int pY = (int)(getXYByOsmTileXY(y) * zoom);
+        int pX = (int) (getXYByOsmTileXY(x) * zoom);
+        int pY = (int) (getXYByOsmTileXY(y) * zoom);
 
         moveVisibleAt(new Point(pX, pY), visibleAtX, visibleAtY);
     }

@@ -2,6 +2,7 @@ package logic.city;
 
 import logic.vehicles.Vehicle;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 import utils.PathUtils;
@@ -142,7 +143,13 @@ public class City extends Thread {
             double fame = nodeEntry.getDouble("fame");
             String type = nodeEntry.getString("type");
 
-            createNodeByClassName(type, city, new Position(x, y), fame, id);
+            boolean trafficSignals;
+            try {
+                trafficSignals = nodeEntry.getBoolean("traffic_signal");
+            } catch (JSONException e) {
+                trafficSignals = false;
+            }
+            createNodeByClassName(type, city, new Position(x, y), fame, id, trafficSignals);
         }
         city.sortNodes();
 
@@ -186,23 +193,25 @@ public class City extends Thread {
     /**
      * Created the right NodeObject depending on the nodes type
      *
-     * @param className type of the node
-     * @param city      reference to the city it will be part of
-     * @param pos       position of the node
-     * @param fame      how of the node, higher fame causes more cars to start or end their path on this node
-     * @param id        of the node
+     * @param className         type of the node
+     * @param city              reference to the city it will be part of
+     * @param pos               position of the node
+     * @param fame              how of the node, higher fame causes more cars to start or end their path on this node
+     * @param id                of the node
+     * @param trafficSignals    does the intersection have a traffic signal
      */
     private static void createNodeByClassName(String className,
                                               City city,
                                               Position pos,
                                               double fame,
-                                              String id) {
+                                              String id,
+                                              boolean trafficSignals) {
         switch (className) {
             case "Connection":
                 new Connection(city, pos, fame, id);
                 break;
             case "MultiConnection":
-                new MultiConnection(city, pos, fame, id);
+                new MultiConnection(city, pos, fame, id, trafficSignals);
                 break;
             case "DeadEnd":
                 new DeadEnd(city, pos, fame, id);
@@ -606,6 +615,8 @@ public class City extends Thread {
         else
             return bounds;
     }
+
+    // fixme finders are very inefficient
 
     /**
      * searches for the node with the greatest y coordinate
