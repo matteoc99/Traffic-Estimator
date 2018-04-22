@@ -41,6 +41,23 @@ public class JCity extends JPanel {
 
     JFrame container;
 
+    /**
+     * CAREFUL: There is a slight inaccuracy due to converting to an int
+     * Based on OsmZoom:19
+     */
+    public static int getXYByOsmTileXY(double osmTileXY) {
+        int ret;
+        int raw = (int) osmTileXY;
+
+        ret = raw * 256;
+        ret += (osmTileXY - raw) * 256;
+        return ret;
+    }
+
+    public static double getOSMTileXYByXY(int xy) {
+        return xy / 256.0;
+    }
+
     public JCity(City city, JFrame container) {
         this.city = city;
         this.container = container;
@@ -137,6 +154,7 @@ public class JCity extends JPanel {
             for (int j = 0; j < vehicles.size(); j++) {
                 Vehicle vehicle = vehicles.get(j);
                 g2.setColor(vehicle.getColor());
+                // FIXME: 22.04.2018 Vehicle can be null
                 // draw cars
                 if (zoom < 1) {
                     g2.fillOval((int) ((int) ((getXYByOsmTileXY(vehicle.currentPositionOnLane().getX())) * zoom) - (8) / 2 - (1 + i * 2) * dir),
@@ -261,15 +279,6 @@ public class JCity extends JPanel {
         int newWidth = (int) (getXYByOsmTileXY(city.getMaxWidth()) * zoom);
         int newHeight = (int) (getXYByOsmTileXY(city.getMaxHeight()) * zoom);
         setSize(newWidth, newHeight);
-    }
-
-    static int getXYByOsmTileXY(double osmTileXY) {
-        int ret;
-        int raw = (int) osmTileXY;
-
-        ret = raw * 256;
-        ret += (osmTileXY - raw) * 256;
-        return ret;
     }
 
     public static double getZoom() {

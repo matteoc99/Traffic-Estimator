@@ -388,7 +388,9 @@ public class City extends Thread {
     }
 
 
-    // TODO: 07.03.2018 @maxi kommentieren
+    /**
+     * Sorts the nodeList by ID
+     */
     public void sortNodes() {
         nodes.sort(Comparator.comparing(Node::getId));
         nodesSorted = true;
@@ -406,7 +408,14 @@ public class City extends Thread {
         return getNodeById(id, 0, nodes.size() - 1);
     }
 
-    // TODO: 07.03.2018 @maxi kommentieren
+    /**
+     * performs a binary search on the nodeList
+     *
+     * @param id to search for
+     * @param left startIndex
+     * @param right endIndex
+     * @return the Node with the given id
+     */
     private Node getNodeById(String id, int left, int right) {
         if (left > right)
             return null;
@@ -451,7 +460,14 @@ public class City extends Thread {
         return getStreetById(id, 0, streets.size() - 1);
     }
 
-    // TODO: 07.03.2018 @maxi kommentieren
+    /**
+     * performs a binary search on the streetList
+     *
+     * @param id to search for
+     * @param left startIndex
+     * @param right endIndex
+     * @return the Street with the given id
+     */
     public Street getStreetById(String id, int left, int right) {
         if (left > right)
             return null;
@@ -514,11 +530,10 @@ public class City extends Thread {
      * Method returns the Street which is closest to the given Point.
      * Currently used for debugging
      *
-     * @param point to check
+     * @param position to check
      * @return closest Street
      */
-    public Street getStreetByPoint(Point point) {
-        Position position = new Position(point.getX(), point.getY());
+    public Street getStreetByPoint(Position position) {
         int bestIndex = -1;
         double bestVal = Integer.MAX_VALUE;
 

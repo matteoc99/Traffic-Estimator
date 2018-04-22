@@ -314,6 +314,11 @@ public final class OsmToJsonParser {
                 if (key.equals("highway")) {
                     switch (value) {
                         case "footway":
+                        case "steps":
+                        case "path":
+                        case "track":
+                        case "bridleway":
+                        case "cycleway":
                             return false;
                         default:
                             return true;

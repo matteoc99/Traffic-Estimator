@@ -125,10 +125,18 @@ public class CityMap extends JPanel {
         public void mousePressed(MouseEvent e) {
             onClickP = e.getLocationOnScreen();
 
-            Point mousePos = MouseInfo.getPointerInfo().getLocation();
-            Point mousePositionRvCity = new Point(mousePos.x - jCity.getLocationOnScreen().x,
-                    mousePos.y - jCity.getLocationOnScreen().y);
-            System.out.println(mousePositionRvCity);
+            { // TODO: 22.04.2018 Debug only
+                Point mousePos = MouseInfo.getPointerInfo().getLocation();
+                Point mousePositionRvCity = new Point(mousePos.x - jCity.getLocationOnScreen().x,
+                        mousePos.y - jCity.getLocationOnScreen().y);
+
+                Position osmPosition = new Position(
+                        JCity.getOSMTileXYByXY((int) (mousePositionRvCity.getX() / JCity.zoom)),
+                        JCity.getOSMTileXYByXY((int) (mousePositionRvCity.getY() / JCity.zoom))
+                );
+
+                System.out.println(jCity.getCity().getStreetByPoint(osmPosition));
+            }
 
             jFrame.setCursor(blankCursor);
         }
