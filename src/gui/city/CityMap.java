@@ -52,10 +52,6 @@ public class CityMap extends JPanel {
         jCity.addMouseMotionListener(cmml);
         jCity.addMouseWheelListener(cmml);
 
-
-        requestFocus();
-
-
         new Thread(() -> {
             while (true) {
                 long zeitvorsleep = System.currentTimeMillis();
@@ -70,6 +66,7 @@ public class CityMap extends JPanel {
                 }
             }
         }).start();
+
 
     }
 

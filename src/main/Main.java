@@ -10,6 +10,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import java.sql.Timestamp;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author Matteo Cosi
@@ -34,19 +35,26 @@ public class Main extends JFrame {
     public Main(City city) {
         setupWindow();
         c = getContentPane();
+
         controlPanel = setUpControlPanel();
+
         cityMap = new CityMap(this, city);
         cityMap.setBounds(0, 0, getWidth()-getWidth()/6, getHeight());
         c.add(cityMap);
-        c.add(controlPanel);
+        c.add(controlPanel,0);
 
         setResizable(false);
 
-        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
         repaint();
 
+
         requestFocus();
+
+
+
+
 
         city.start();
     }
@@ -127,7 +135,7 @@ public class Main extends JFrame {
     public static void main(String[] args) {
         System.out.println("Main:" + new Timestamp(System.currentTimeMillis()) + " Creating City from .json...");
         City city = City.createCityFromJson(
-                new File(System.getProperty("user.dir") + "\\src\\parsing\\res\\eppan.json"));
+                new File(System.getProperty("user.dir") + "\\src\\parsing\\res\\bozen.json"));
         System.out.println("Main:" + new Timestamp(System.currentTimeMillis()) + " Starting GUI...");
         Main main = new Main(city);
     }
