@@ -78,7 +78,7 @@ public class Vehicle {
      */
     private City city;
 
-    public int speedTrimm=120;
+    public int speedTrimm = 120;
 
     public Vehicle(City city) {
         this.city = city;
@@ -123,7 +123,9 @@ public class Vehicle {
      * @return the point where to draw the car
      */
     public Position currentPositionOnLane() {
-        return lane.getPointByProgress(progressInLane);
+        if (lane != null)
+            return lane.getPointByProgress(progressInLane);
+        return null;
     }
 
 

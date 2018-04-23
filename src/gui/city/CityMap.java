@@ -14,8 +14,8 @@ public class CityMap extends JPanel {
 
     private static Cursor blankCursor;
 
-    private Overlay overlay;
-    private JCity jCity;
+    public Overlay overlay;
+    public JCity jCity;
 
     private JFrame jFrame;
 
@@ -51,6 +51,10 @@ public class CityMap extends JPanel {
         jCity.addMouseListener(cmml);
         jCity.addMouseMotionListener(cmml);
         jCity.addMouseWheelListener(cmml);
+
+
+        requestFocus();
+
 
         new Thread(() -> {
             while (true) {

@@ -240,7 +240,9 @@ public class VehicleDriving implements DrivingInterface {
                 System.out.println(vehicle.getPrevGoal());
                 System.out.println(vehicle.getCurrentGoal());
                 System.out.println("\t"+path);
-                System.out.println();
+                path.resetProgress();
+                System.out.println(path.getGoalAndIncrement()+"::and::"+path.getGoal()+" dont exist");
+                setUp();
             }
         } else
             System.out.println("DIE2");

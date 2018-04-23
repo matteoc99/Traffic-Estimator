@@ -37,9 +37,9 @@ public class Overlay extends JPanel {
     /**
      * Attention: Always creates a new Position
      *
-     * @param pos old Position
+     * @param pos      old Position
      * @param fromZoom old zoom
-     * @param toZoom new zoom
+     * @param toZoom   new zoom
      */
     public static Position transformPositionByZoom(Position pos, int fromZoom, int toZoom) {
         Position ret = new Position(0, 0);
@@ -68,6 +68,8 @@ public class Overlay extends JPanel {
         fillLabels();
 
         this.addComponentListener(new OverlayComponentAdapter());
+
+
     }
 
     private void loadInitialList() {

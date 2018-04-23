@@ -29,8 +29,8 @@ public final class OsmToJsonParser {
     private static Map<String, Integer> streetsOnNode = new HashMap<>();
 
     public static void main(String[] args) {
-        parse(System.getProperty("user.dir") + "\\src\\parsing\\res\\bozen.osm",
-                System.getProperty("user.dir") + "\\src\\parsing\\res\\bozen.json");
+        parse(System.getProperty("user.dir") + "\\src\\parsing\\res\\eppan.osm",
+                System.getProperty("user.dir") + "\\src\\parsing\\res\\eppan.json");
     }
 
     /**
@@ -290,7 +290,7 @@ public final class OsmToJsonParser {
         JSONObject jBounds = new JSONObject();
         jBounds.put("minLat", minLat);
         jBounds.put("minLon", minLon);
-        jBounds.put("maxLat" ,maxLat);
+        jBounds.put("maxLat", maxLat);
         jBounds.put("maxLon", maxLon);
         jsonRoot.put("bounds", jBounds);
     }
@@ -303,6 +303,7 @@ public final class OsmToJsonParser {
      */
     private static boolean validateWay(Element way) {
         NodeList attrList = way.getElementsByTagName("tag");
+        boolean isValidHighway = false;
         for (int i = 0; i < attrList.getLength(); i++) {
             Node node = attrList.item(i);
             if (node.getNodeType() == Node.ELEMENT_NODE) {
@@ -321,12 +322,16 @@ public final class OsmToJsonParser {
                         case "cycleway":
                             return false;
                         default:
-                            return true;
+                            isValidHighway = true;
                     }
+                } else {
+                    if (key.equals("area")||key.equals("access")&&value.equals("private"))
+                        return false;
                 }
+
             }
         }
-        return false;
+        return isValidHighway;
     }
 
     private OsmToJsonParser() {

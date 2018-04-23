@@ -134,39 +134,26 @@ public class JCity extends JPanel {
         //draw lanes
         g2.setColor(lane.getColorByTraffic());
         int stroke = 1;
-        g2.setStroke(new BasicStroke((float) (stroke * zoom >= 1 ? stroke * zoom : 1), BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
         if (showStreets)
-            if (zoom >= 1) {
-                g2.drawLine((int) ((int) (getXYByOsmTileXY(lane.getParent().getxFrom()) * zoom) - (zoom + i * zoom * 2) * dir),
-                        (int) ((int) (getXYByOsmTileXY(lane.getParent().getyFrom()) * zoom) - (zoom + i * zoom * 2) * dir),
-                        (int) ((int) (getXYByOsmTileXY(lane.getParent().getxTo()) * zoom) - (zoom + i * zoom * 2) * dir),
-                        (int) ((int) (getXYByOsmTileXY(lane.getParent().getyTo()) * zoom) - (zoom + i * zoom * 2) * dir));
-            } else {
-                g2.drawLine((int) ((int) (getXYByOsmTileXY(lane.getParent().getxFrom()) * zoom) - (1 + i * 2) * dir),
-                        (int) ((int) (getXYByOsmTileXY(lane.getParent().getyFrom()) * zoom) - (1 + i * 2) * dir),
-                        (int) ((int) (getXYByOsmTileXY(lane.getParent().getxTo()) * zoom) - (1 + i * 2) * dir),
-                        (int) ((int) (getXYByOsmTileXY(lane.getParent().getyTo()) * zoom) - (1 + i * 2) * dir));
+            g2.drawLine((int) (getXYByOsmTileXY(lane.getParent().getxFrom()) * zoom) - (1 + i * 2) * dir,
+                    (int) (getXYByOsmTileXY(lane.getParent().getyFrom()) * zoom) - (1 + i * 2) * dir,
+                    (int) (getXYByOsmTileXY(lane.getParent().getxTo()) * zoom) - (1 + i * 2) * dir,
+                    (int) (getXYByOsmTileXY(lane.getParent().getyTo()) * zoom) - (1 + i * 2) * dir);
 
-            }
+
         ArrayList<Vehicle> vehicles = lane.getVehicles();
         //anti duplicate
-        if (showCars)
-            for (int j = 0; j < vehicles.size(); j++) {
-                Vehicle vehicle = vehicles.get(j);
+        if (showCars) {
+            ArrayList<Vehicle> cars = new ArrayList<>(vehicles);
+            for (Vehicle vehicle : cars) {
                 g2.setColor(vehicle.getColor());
                 // FIXME: 22.04.2018 Vehicle can be null
                 // draw cars
-                if (zoom < 1) {
-                    g2.fillOval((int) ((int) ((getXYByOsmTileXY(vehicle.currentPositionOnLane().getX())) * zoom) - (8) / 2 - (1 + i * 2) * dir),
-                            (int) ((int) ((getXYByOsmTileXY(vehicle.currentPositionOnLane().getY())) * zoom) - (8) / 2 - (1 + i * 2) * dir),
-                            8, 8);
-                } else {
-                    g2.fillOval((int) ((int) ((getXYByOsmTileXY(vehicle.currentPositionOnLane().getX())) * zoom) - (8 * (int) (zoom)) / 2 - (zoom + i * zoom * 2) * dir),
-                            (int) ((int) ((getXYByOsmTileXY(vehicle.currentPositionOnLane().getY())) * zoom) - (8 * (int) (zoom)) / 2 - (zoom + i * zoom * 2) * dir),
-                            8 * (int) (zoom), 8 * (int) (zoom));
-                }
-
+                g2.fillOval((int) ((int) ((getXYByOsmTileXY(vehicle.currentPositionOnLane().getX())) * zoom) - (8) / 2 - (1 + i * 2) * dir),
+                        (int) ((int) ((getXYByOsmTileXY(vehicle.currentPositionOnLane().getY())) * zoom) - (8) / 2 - (1 + i * 2) * dir),
+                        8, 8);
             }
+        }
         //draw streetlights
         if (showLights) {
             if (lane.getStreetlight() != null) {
@@ -174,9 +161,14 @@ public class JCity extends JPanel {
                     g2.setColor(Color.RED);
                 else
                     g2.setColor(Color.GREEN);
-                g2.fillRect((int) (getXYByOsmTileXY(lane.getPointByProgress(lane.getLength()).getX()))  - (1 + i * 2) * dir,
-                        (int) (getXYByOsmTileXY(lane.getPointByProgress(lane.getLength()).getY()))   - (1 + i * 2) * dir,
+                if(dir<0)
+                g2.fillRect((getXYByOsmTileXY(lane.getPointByProgress(lane.getLength()).getX()*zoom)) -6,
+                        (getXYByOsmTileXY(lane.getPointByProgress(lane.getLength()).getY()*zoom))-6,
                         8, 8);
+                else
+                    g2.fillRect((getXYByOsmTileXY(lane.getPointByProgress(lane.getLength()).getX()*zoom)) + (2),
+                            (getXYByOsmTileXY(lane.getPointByProgress(lane.getLength()).getY()*zoom))+ (2),
+                            8, 8);
             }
         }
     }
@@ -301,57 +293,9 @@ public class JCity extends JPanel {
     }
 
     private class JCityKeyListener extends KeyAdapter {
-
-        private boolean hoverMode = false;
-        private Point hoverPoint = null;
-
-        @Override
-        public void keyPressed(KeyEvent e) {
-            switch (e.getKeyCode()) {
-                case KeyEvent.VK_PLUS:
-                    zoomIn();
-                    break;
-                case KeyEvent.VK_MINUS:
-                    zoomOut();
-                    break;
-                case KeyEvent.VK_LEFT:
-                    setLocation(getX() + 10, getY());
-                    break;
-                case KeyEvent.VK_RIGHT:
-                    setLocation(getX() - 10, getY());
-                    break;
-                case KeyEvent.VK_UP:
-                    setLocation(getX(), getY() + 10);
-                    break;
-                case KeyEvent.VK_DOWN:
-                    setLocation(getX(), getY() - 10);
-                    break;
-                case KeyEvent.VK_H:
-                    if (hoverPoint == null) {
-                        hoverMode = true;
-                        hoverPoint = MouseInfo.getPointerInfo().getLocation();
-                    } else {
-                        int xOff = hoverPoint.x - MouseInfo.getPointerInfo().getLocation().x;
-                        int yOff = hoverPoint.y - MouseInfo.getPointerInfo().getLocation().y;
-                        xOff /= 4;
-                        yOff /= 4;
-                        setLocation(getX() - xOff, getY() - yOff);
-                    }
-                    break;
-                case 'l':
-                    moveCordsVisibleAt(11.1181027, 46.6140000, 0, 0);
-                    break;
-            }
-            repaint();
-        }
-
         @Override
         public void keyReleased(KeyEvent e) {
             switch (e.getKeyCode()) {
-                case KeyEvent.VK_H:
-                    hoverMode = false;
-                    hoverPoint = null;
-                    break;
                 case KeyEvent.VK_L:
                     toggleShowLights();
                     break;
@@ -360,20 +304,6 @@ public class JCity extends JPanel {
                     break;
                 case KeyEvent.VK_V:
                     toggleShowCars();
-                    break;
-                case KeyEvent.VK_R:
-                    while (getAvgNodePosition() > getHeight() / 2) {
-                        zoomOut();
-                    }
-                    while (getAvgNodePosition() < getHeight() / 4) {
-                        zoomIn();
-                    }
-                    setLocation(0, 0);
-                    repaint();
-                    break;
-                case KeyEvent.VK_P:
-                    setLocation(0, 0);
-                    repaint();
                     break;
             }
         }

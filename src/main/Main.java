@@ -71,7 +71,7 @@ public class Main extends JFrame {
         ret.setBackground(new Color(86, 90, 200));
         ret.setBounds(getWidth() - getWidth() / 6, 0, getWidth() / 6, getHeight());
 
-        CustomSlider speed = new CustomSlider(JSlider.HORIZONTAL, 0, 1500, City.SPEED);
+        CustomSlider speed = new CustomSlider(JSlider.HORIZONTAL, 20, 1500, City.SPEED);
         CustomSlider traffic = new CustomSlider(JSlider.HORIZONTAL, 0, 10000, City.VEHICLE_AMOUNT);
         CustomSlider fps = new CustomSlider(JSlider.HORIZONTAL, 0, 80, FPS);
 
@@ -127,7 +127,7 @@ public class Main extends JFrame {
     public static void main(String[] args) {
         System.out.println("Main:" + new Timestamp(System.currentTimeMillis()) + " Creating City from .json...");
         City city = City.createCityFromJson(
-                new File(System.getProperty("user.dir") + "\\src\\parsing\\res\\bozenLarge.json"));
+                new File(System.getProperty("user.dir") + "\\src\\parsing\\res\\eppan.json"));
         System.out.println("Main:" + new Timestamp(System.currentTimeMillis()) + " Starting GUI...");
         Main main = new Main(city);
     }

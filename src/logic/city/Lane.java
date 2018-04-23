@@ -1,6 +1,7 @@
 package logic.city;
 
 import logic.vehicles.Vehicle;
+import utils.Utils;
 import utils.math.Position;
 
 import java.awt.*;
@@ -135,7 +136,7 @@ public class Lane {
         if (contains(vehicle))
             vehicles.remove(vehicle);
         else
-            throw new RuntimeException("NO THING TO REMOVE 69");
+            System.out.println("NO THING TO REMOVE 69");
     }
 
     public boolean contains(Vehicle vehicle) {
@@ -316,5 +317,9 @@ public class Lane {
         ret.setX(x);
         ret.setY(y);
         return ret;
+    }
+
+    public double getDegrees() {
+        return Utils.calcDegreesBetweenTwoPoint((int)Math.round(getFromNode().getX()),(int)Math.round(getFromNode().getY()),(int)Math.round(getToNode().getX()),(int)Math.round(getToNode().getY()));
     }
 }
