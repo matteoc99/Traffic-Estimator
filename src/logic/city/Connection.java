@@ -10,13 +10,26 @@ import java.awt.*;
  */
 public class Connection extends Node {
 
-    public Connection(Node node) {
-        this(node.getParent(), node.getPosition(), node.getFame(), node.getId());
+    /**
+     * Street crossing contains a StreetlightLogic system
+     */
+    private StreetlightLogic logic=null;
+
+    public Connection(City parent, Position position, double fame, String id, boolean hasTrafficSignals) {
+        super(parent, position, fame, id);
+        if (hasTrafficSignals)
+            addStreetLightLogic();
+
     }
 
-    public Connection(City parent, Position position, double fame, String id) {
-        super(parent, position, fame, id);
+    /**
+     * call before parse streets in xml
+     */
+    public void addStreetLightLogic() {
+        logic = new StreetlightLogic(getId(), this);
+        logic.start();
     }
+
 
     /**
      * can add only two streets, because this node is a connection
@@ -30,5 +43,9 @@ public class Connection extends Node {
             super.addStreet(street);
         else
             throw new RuntimeException("TO MANY ADDED");
+    }
+
+    public StreetlightLogic getLogic() {
+        return logic;
     }
 }

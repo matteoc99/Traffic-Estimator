@@ -117,6 +117,11 @@ public class Street extends StreetComponent {
                         Streetlight streetlight = new Streetlight(lane, ((MultiConnection) getFrom()).getLogic(), Streetlight.Direction.STRAIGHT);
                         ((MultiConnection) getFrom()).getLogic().addStreetlight(streetlight);
                     }
+                }else if (getFrom() instanceof Connection) {
+                    if (((Connection) getFrom()).getLogic() != null) {
+                        Streetlight streetlight = new Streetlight(lane, ((Connection) getFrom()).getLogic(), Streetlight.Direction.STRAIGHT);
+                        ((Connection) getFrom()).getLogic().addStreetlight(streetlight);
+                    }
                 }
             } else {
                 forwardLanes.add(lane);
@@ -124,6 +129,11 @@ public class Street extends StreetComponent {
                     if (((MultiConnection) getTo()).getLogic() != null) {
                         Streetlight streetlight = new Streetlight(lane, ((MultiConnection) getTo()).getLogic(), Streetlight.Direction.STRAIGHT);
                         ((MultiConnection) getTo()).getLogic().addStreetlight(streetlight);
+                    }
+                }else if (getTo() instanceof Connection) {
+                    if (((Connection) getTo()).getLogic() != null) {
+                        Streetlight streetlight = new Streetlight(lane, ((Connection) getTo()).getLogic(), Streetlight.Direction.STRAIGHT);
+                        ((Connection) getTo()).getLogic().addStreetlight(streetlight);
                     }
                 }
             }

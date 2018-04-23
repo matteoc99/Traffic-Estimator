@@ -4,13 +4,11 @@ import NeuralNetworkLibrary.src.network.Network;
 import logic.city.Connection;
 import logic.city.Lane;
 import logic.city.Path;
-import logic.city.Streetlight;
 import logic.vehicles.Vehicle;
 import utils.NetworkUtils;
-import utils.PathUtils;
+import utils.PathGenerator;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  * @author Matteo Cosi
@@ -141,7 +139,6 @@ public class VehicleDriving implements DrivingInterface {
 
     @Override
     public Action getNextAction() {
-
         return Action.FOLLOW_LANE;
     }
 
@@ -215,7 +212,7 @@ public class VehicleDriving implements DrivingInterface {
         considerative = Math.random();
         agressivity = Math.random();
         desiredSpeed = Math.random();
-        // TODO: 28.02.2018 make better
+        reactionTime = (int) (Math.random()*10);
     }
 
     @Override
@@ -224,8 +221,9 @@ public class VehicleDriving implements DrivingInterface {
     }
 
     public void setUp() {
+
         vehicle.setProgressInLane(0);
-        Path path = PathUtils.getRandomPath(vehicle.getCity());
+        Path path = PathGenerator.getRandomPath(vehicle.getCity());
 
         vehicle.setPath(path);
         if (vehicle.getPath() != null && vehicle.getPath().isValid()) {
@@ -274,6 +272,7 @@ public class VehicleDriving implements DrivingInterface {
     private void followLaneAction() {
 
         //todo from time to time evaluate other actions because --> once follow lane u are stuck until lane change
+        // TODO: 18.04.2018 BUG  if not can go and need to stop. Next goal is taken and evaluated.
         if (vehicle.getProgressInLane() / vehicle.getLane().getLength() > 0.95) {
             //change lane or die if path end is reached
             if (canGo && vehicle.getLane().equals(vehicle.getPrevGoal().getLaneTo(vehicle.getCurrentGoal()))) {
@@ -331,9 +330,8 @@ public class VehicleDriving implements DrivingInterface {
         Vehicle nextVehicle = vehicle.getLane().getNextVehicle(vehicle.getProgressInLane());
         double nextVehiclePos = nextVehicle == null ? vehicle.getLane().getLength() : nextVehicle.getProgressInLane();
 
-
         if (vehicle.getCurrentSpeed() > goalSpeed || nextVehiclePos < vehicle.getProgressInLane() + vehicle.getCurrentSpeed() + getSafetyDist() ) {
-            while (vehicle.getCurrentSpeed() > goalSpeed || nextVehiclePos < vehicle.getProgressInLane() + vehicle.getCurrentSpeed() + getSafetyDist() ) {
+            while (vehicle.getCurrentSpeed() > goalSpeed || nextVehiclePos < vehicle.getProgressInLane() + vehicle.getCurrentSpeed()/vehicle.speedTrimm + getSafetyDist() ) {
                 vehicle.incrementCurrentSpeed(-Math.log(goalSpeed));
                 if(vehicle.getCurrentSpeed()==0)
                     break;

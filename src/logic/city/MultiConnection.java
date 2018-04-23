@@ -23,7 +23,10 @@ public class MultiConnection extends Node {
 
     }
 
-    private void addStreetLightLogic() {
+    /**
+     * call before parse streets in xml
+     */
+    public void addStreetLightLogic() {
         logic = new StreetlightLogic(getId(), this);
         logic.start();
     }

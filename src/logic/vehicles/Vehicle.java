@@ -78,6 +78,8 @@ public class Vehicle {
      */
     private City city;
 
+    public int speedTrimm=120;
+
     public Vehicle(City city) {
         this.city = city;
         vehicleDriving = new VehicleDriving(this, Character.BUDDHA);
@@ -221,7 +223,7 @@ public class Vehicle {
     }
 
     public void incrementProgressInLane(double currentSpeed) {
-        progressInLane += currentSpeed / 120; // TODO: 28.02.2018 trimm
+        progressInLane += currentSpeed / speedTrimm; // TODO: 28.02.2018 trimm
     }
 
     public City getCity() {

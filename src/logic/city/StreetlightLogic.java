@@ -7,14 +7,14 @@ import java.util.ArrayList;
  * @since 29.01.2018
  */
 public class StreetlightLogic extends Thread {
-    private MultiConnection parent;
+    private Node parent;
     private ArrayList<Streetlight> streetlights = new ArrayList<>();
 
     //circular selection
     private static final int cycle = 10;
 
 
-    public StreetlightLogic(String name, MultiConnection parent) {
+    public StreetlightLogic(String name, Node parent) {
         super(name);
         this.parent = parent;
     }
@@ -116,7 +116,7 @@ public class StreetlightLogic extends Thread {
         return false;
     }
 
-    public MultiConnection getParent() {
+    public Node getParent() {
         return parent;
     }
 

@@ -5,7 +5,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
-import utils.PathUtils;
+import utils.PathGenerator;
 import utils.math.Position;
 
 import java.awt.*;
@@ -99,6 +99,7 @@ public class City extends Thread {
 
     /**
      * gives the city a name, then calls the basic constructor
+     *
      * @param name the name for the city
      */
     public City(String name) {
@@ -184,21 +185,23 @@ public class City extends Thread {
 
             new Lane(id, parent, reversed, index);
         }
+        System.out.println("City:" + new Timestamp(System.currentTimeMillis()) + " Sorting Lanes...");
         city.sortLanes();
-
-        PathUtils.getRandomPath(city);
+        //generate paths if they don´t exist
+        long time = System.currentTimeMillis();
+        PathGenerator.start(city);
         return city;
     }
 
     /**
      * Created the right NodeObject depending on the nodes type
      *
-     * @param className         type of the node
-     * @param city              reference to the city it will be part of
-     * @param pos               position of the node
-     * @param fame              how of the node, higher fame causes more cars to start or end their path on this node
-     * @param id                of the node
-     * @param trafficSignals    does the intersection have a traffic signal
+     * @param className      type of the node
+     * @param city           reference to the city it will be part of
+     * @param pos            position of the node
+     * @param fame           how of the node, higher fame causes more cars to start or end their path on this node
+     * @param id             of the node
+     * @param trafficSignals does the intersection have a traffic signal
      */
     private static void createNodeByClassName(String className,
                                               City city,
@@ -208,7 +211,7 @@ public class City extends Thread {
                                               boolean trafficSignals) {
         switch (className) {
             case "Connection":
-                new Connection(city, pos, fame, id);
+                new Connection(city, pos, fame, id, trafficSignals);
                 break;
             case "MultiConnection":
                 new MultiConnection(city, pos, fame, id, trafficSignals);
@@ -351,6 +354,7 @@ public class City extends Thread {
     /**
      * Adds a node to the city
      * <b>DO NOT ADD THE SAME NODE TWICE</b>
+     *
      * @param node the node to add
      */
     public void add(Node node) {
@@ -365,6 +369,7 @@ public class City extends Thread {
     /**
      * Adds a node to the city
      * <b>DO NOT REMOVE A NODE THAT DOES NOT EXIST</b>
+     *
      * @param node the node to add
      */
     public void remove(Node node) {
@@ -377,6 +382,7 @@ public class City extends Thread {
 
     /**
      * Checks weathrt a node is already in the city
+     *
      * @param node the node to check
      * @return true if the node is in the city, otherwise false
      */
@@ -398,6 +404,7 @@ public class City extends Thread {
 
     /**
      * searches for a node with the requested id
+     *
      * @param id the id of the wanted node
      * @return the wanted node, otherwise false
      */
@@ -579,7 +586,7 @@ public class City extends Thread {
             zeitvorsleep = System.currentTimeMillis();
             calcCity();
             int i = 0;
-            while (getVehicles().size() < VEHICLE_AMOUNT && i < 10) {
+            while (getVehicles().size() < VEHICLE_AMOUNT && i < 100) {
                 Vehicle vehicle = new Vehicle(this);
                 vehicle.setColor(new Color((int) ((Math.random() * 200) + 50), (int) (Math.random() * 200) + 50, (int) (Math.random() * 200) + 50));
                 i++;
@@ -621,12 +628,13 @@ public class City extends Thread {
 
     /**
      * returns the bounds of the city, determined with the position of the nodes
+     *
      * @return the bounds of the city
      */
     public Rectangle getBounds() {
         // FIXME: 12.03.2018 goes to JCity (for now parsed to int) bad!
         if (bounds == null)
-            return bounds = new Rectangle(0, 0, (int)getMaxWidth(), (int)getMaxHeight());
+            return bounds = new Rectangle(0, 0, (int) getMaxWidth(), (int) getMaxHeight());
         else
             return bounds;
     }
@@ -635,6 +643,7 @@ public class City extends Thread {
 
     /**
      * searches for the node with the greatest y coordinate
+     *
      * @return the greatest y coordinate
      */
     public double getMaxHeight() {
@@ -649,6 +658,7 @@ public class City extends Thread {
 
     /**
      * searches for the node with the greatest x coordinate
+     *
      * @return the greatest x coordinate
      */
     public double getMaxWidth() {
@@ -662,6 +672,7 @@ public class City extends Thread {
 
     /**
      * searches for the node with the smallest y coordinate
+     *
      * @return the smallest y coordinate
      */
     public double getMinHeight() {
@@ -676,6 +687,7 @@ public class City extends Thread {
 
     /**
      * searches for the node with the smallest x coordinate
+     *
      * @return the smallest x coordinate
      */
     public double getMinWidth() {

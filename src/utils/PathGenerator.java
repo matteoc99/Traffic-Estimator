@@ -4,18 +4,23 @@ import logic.city.City;
 import logic.city.Path;
 
 import java.io.*;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 
 /**
  * @author Matteo Cosi
  * @since 16.02.2018
  */
-public class PathUtils {
+public class PathGenerator extends Thread {
 
     private static ArrayList<Path> paths = new ArrayList<>();
 
+    static int preferredAmount = 30000;
+
+    static City city = null;
+
     private static void generatePaths(City city) {
-        generatePaths(city, 1000);
+        generatePaths(city, preferredAmount);
     }
 
     private static void generatePaths(City city, int count) {
@@ -40,8 +45,8 @@ public class PathUtils {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            if(i%(count/10)==0)
-                System.out.println(i+"von"+count);
+            if (i % (count / 10) == 0)
+                System.out.println(i + "von" + count);
         }
         try {
             bw.close();
@@ -68,9 +73,15 @@ public class PathUtils {
                     FileReader fileReader = new FileReader(pth);
                     BufferedReader bufferedReader = new BufferedReader(fileReader);
                     String line;
+                    System.out.println("Path:" + new Timestamp(System.currentTimeMillis()) + " Loading Paths...");
+                    int count = 0;
                     while ((line = bufferedReader.readLine()) != null) {
                         Path p = Path.pathFromString(line);
                         paths.add(p);
+                        count++;
+                        if (count % (preferredAmount / 10) == 0)
+                            System.out.println((double) count / preferredAmount * 100 + "%");
+
                     }
                     fileReader.close();
                 } catch (IOException e) {
@@ -78,7 +89,7 @@ public class PathUtils {
                 }
             }
             int randIndex = (int) (Math.random() * paths.size());
-            if(paths.size()==0){
+            if (paths.size() == 0) {
                 System.out.println("ALARM");
                 getRandomPath(city);
             }
@@ -89,4 +100,14 @@ public class PathUtils {
         }
     }
 
+    @Override
+    public void run() {
+        getRandomPath(PathGenerator.city);
+    }
+
+    public static void start(City city) {
+        PathGenerator.city = city;
+        new PathGenerator().start();
+
+    }
 }

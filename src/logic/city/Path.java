@@ -11,12 +11,12 @@ public class Path {
     /**
      * pth file constants
      */
-    public static String HEADER = "pth";
+    public static String HEADER = "p";
     public static String OPEN_PROPS = "{";
     public static String CLOSE_PROPS = "}";
-    public static String ATTR_MIN_KNOWLEGE = "min";
-    public static String ATTR_NODE = "id";
-    public static String NODE_DELIMITER = "-->";
+    public static String ATTR_MIN_KNOWLEGE = "m";
+    public static String ATTR_NODE = "i";
+    public static String NODE_DELIMITER = ">";
 
 
     /**

@@ -282,7 +282,7 @@ public class Overlay extends JPanel {
                     label = column.get(yIndex);
                 } catch (Exception e) {
                     label = new JLabel();
-                    label.setBorder(BorderFactory.createLineBorder(Color.RED, 1));
+                    label.setBorder(BorderFactory.createLineBorder(Color.RED, 0));
                 }
                 trySettingIcon(xIndex, yIndex, label);
                 newColumn.add(yIndex, label);

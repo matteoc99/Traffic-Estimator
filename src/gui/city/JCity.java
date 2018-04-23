@@ -174,8 +174,8 @@ public class JCity extends JPanel {
                     g2.setColor(Color.RED);
                 else
                     g2.setColor(Color.GREEN);
-                g2.fillRect((int) (getXYByOsmTileXY(lane.getPointByProgress(lane.getLength()).getX())) - (8) / 2 - (1 + i * 2) * dir,
-                        (int) (getXYByOsmTileXY(lane.getPointByProgress(lane.getLength()).getY())) - (8) / 2 - (1 + i * 2) * dir,
+                g2.fillRect((int) (getXYByOsmTileXY(lane.getPointByProgress(lane.getLength()).getX()))  - (1 + i * 2) * dir,
+                        (int) (getXYByOsmTileXY(lane.getPointByProgress(lane.getLength()).getY()))   - (1 + i * 2) * dir,
                         8, 8);
             }
         }

@@ -259,7 +259,7 @@ public class Lane {
             } else if (avgSpeed < 10) {
                 traffic += 0.65;
             }
-            traffic += getVehicles().size() / getLength() * 10;
+            traffic += getVehicles().size() / getLength()/10;
         }
         return (traffic);
     }

@@ -1,19 +1,17 @@
 package tests;
 
-import logic.city.City;
-import logic.city.Path;
-import utils.PathUtils;
-
-import java.util.concurrent.TimeUnit;
-
 /**
  * @author Matteo Cosi
  * @since 24.12.2017
  */
 public class Tester {
     public static void main(String[] args) throws InterruptedException {
-        for (int i = 0; i < 100; i++) {
-
+        double zoom = 1;
+        int level = 19;
+        while (level > 8) {
+            zoom /= 2;
+            level--;
         }
+        System.out.println(zoom);
     }
 }
