@@ -85,7 +85,7 @@ public class City extends Thread {
     /**
      * The amount of cars that should drive in this city
      */
-    public static int VEHICLE_AMOUNT = 1;
+    public static int VEHICLE_AMOUNT = 0;
 
 
     /**
@@ -231,7 +231,7 @@ public class City extends Thread {
      * @param vehicle that will take this path, not all vehicles may drive on all streets
      * @return the path
      */
-    public Path doAStar(Node from, Node to, Vehicle vehicle) {
+    public Path doAStar(Node from, Node to, Vehicle vehicle, boolean doActiveStreetCheck) {
         Path ret = new Path();
         ArrayList<Node> open = new ArrayList<>();
         ArrayList<Node> closed = new ArrayList<>();
@@ -265,7 +265,9 @@ public class City extends Thread {
             Iterator<Street> streets = current.getStreetIterator();
             while (streets.hasNext()) {
                 Street currentStreet = streets.next();
-
+                if (doActiveStreetCheck)
+                    if (!currentStreet.isActive())
+                        continue;
                 Node neighbour;
                 boolean isReachable = true;
                 if (currentStreet.getFrom().equals(current)) {
@@ -319,7 +321,7 @@ public class City extends Thread {
         while (to.equals(from)) {
             to = getRandomNode();
         }
-        Path path = doAStar(from, to, null);
+        Path path = doAStar(from, to, null,false);
         if (!path.isValid()) {
             path = getRandomPath(breaking + 1);
         }
@@ -418,8 +420,8 @@ public class City extends Thread {
     /**
      * performs a binary search on the nodeList
      *
-     * @param id to search for
-     * @param left startIndex
+     * @param id    to search for
+     * @param left  startIndex
      * @param right endIndex
      * @return the Node with the given id
      */
@@ -470,8 +472,8 @@ public class City extends Thread {
     /**
      * performs a binary search on the streetList
      *
-     * @param id to search for
-     * @param left startIndex
+     * @param id    to search for
+     * @param left  startIndex
      * @param right endIndex
      * @return the Street with the given id
      */

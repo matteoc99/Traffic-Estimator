@@ -48,6 +48,10 @@ public class Street extends StreetComponent {
     private ArrayList<Congestion> congestions;
 
 
+    private boolean active = true;
+
+
+
     public Street(String id, City parent, Node from, Node to, double maxSpeed, double unProminence) {
         super(from.getX(), to.getX(), from.getY(), to.getY());
         this.id = id;
@@ -117,7 +121,7 @@ public class Street extends StreetComponent {
                         Streetlight streetlight = new Streetlight(lane, ((MultiConnection) getFrom()).getLogic(), Streetlight.Direction.STRAIGHT);
                         ((MultiConnection) getFrom()).getLogic().addStreetlight(streetlight);
                     }
-                }else if (getFrom() instanceof Connection) {
+                } else if (getFrom() instanceof Connection) {
                     if (((Connection) getFrom()).getLogic() != null) {
                         Streetlight streetlight = new Streetlight(lane, ((Connection) getFrom()).getLogic(), Streetlight.Direction.STRAIGHT);
                         ((Connection) getFrom()).getLogic().addStreetlight(streetlight);
@@ -130,7 +134,7 @@ public class Street extends StreetComponent {
                         Streetlight streetlight = new Streetlight(lane, ((MultiConnection) getTo()).getLogic(), Streetlight.Direction.STRAIGHT);
                         ((MultiConnection) getTo()).getLogic().addStreetlight(streetlight);
                     }
-                }else if (getTo() instanceof Connection) {
+                } else if (getTo() instanceof Connection) {
                     if (((Connection) getTo()).getLogic() != null) {
                         Streetlight streetlight = new Streetlight(lane, ((Connection) getTo()).getLogic(), Streetlight.Direction.STRAIGHT);
                         ((Connection) getTo()).getLogic().addStreetlight(streetlight);
@@ -169,7 +173,17 @@ public class Street extends StreetComponent {
         }
         return false;
     }
+    public boolean isActive() {
+        return active;
+    }
 
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    public void toggleActive(){
+        this.active= !this.active;
+    }
     public String getId() {
         return id;
     }
@@ -333,6 +347,7 @@ public class Street extends StreetComponent {
                 "id='" + id + '\'' +
                 '}';
     }
+
 
 
 }

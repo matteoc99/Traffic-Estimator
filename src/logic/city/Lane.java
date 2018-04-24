@@ -61,7 +61,8 @@ public class Lane {
         this.parent = parent;
         this.reversed = reversed;
         this.index = index;
-        parent.addLane(this);
+        if (parent != null)
+            parent.addLane(this);
         vehicles = new ArrayList<>();
     }
 
@@ -122,13 +123,11 @@ public class Lane {
     }
 
 
-
-
     public void addVehicle(Vehicle vehicle) {
         if (!contains(vehicle))
             vehicles.add(vehicle);
         else
-            throw new RuntimeException("ALREADY CONTAINS Vehicle 44");
+            throw new RuntimeException("ALREADY CONTAINS Vehicle 130");
 
     }
 
@@ -136,7 +135,7 @@ public class Lane {
         if (contains(vehicle))
             vehicles.remove(vehicle);
         else
-            System.out.println("NO THING TO REMOVE 69");
+            System.out.println("NO THING TO REMOVE 138");
     }
 
     public boolean contains(Vehicle vehicle) {
@@ -166,6 +165,7 @@ public class Lane {
 
     /**
      * get the node that lays at the beginning of this lane
+     *
      * @return the node at the beginning of this lane
      */
     public Node getFromNode() {
@@ -180,6 +180,7 @@ public class Lane {
 
     /**
      * get the node that lays at the end of this lane
+     *
      * @return the node at the end of this lane
      */
     public Node getToNode() {
@@ -195,11 +196,16 @@ public class Lane {
 
     /**
      * calculates the length of this lane
+     *
      * @return the length of this lane
      */
     public double getLength() {
         if (length == -1)
-            length = parent.getLength();
+            if (parent == null) {
+                System.out.println("hopefully == 0:"+vehicles.size());
+                length = 1;
+            }else
+                length = parent.getLength();
         return length;
     }
 
@@ -240,12 +246,12 @@ public class Lane {
     public double getTraffic() {
         double traffic = 0;
         double avgSpeed = 0;
-        ArrayList<Vehicle>vehiclesList = new ArrayList<>(getVehicles());
+        ArrayList<Vehicle> vehiclesList = new ArrayList<>(getVehicles());
         for (Vehicle vehicle : vehiclesList) {
-            if(vehicle!=null)
+            if (vehicle != null)
                 avgSpeed += vehicle.getCurrentSpeed();
-        else
-            getVehicles().remove(vehicle);
+            else
+                getVehicles().remove(vehicle);
         }
         if (getVehicles().size() > 0) {
             avgSpeed = avgSpeed / getVehicles().size();
@@ -260,7 +266,7 @@ public class Lane {
             } else if (avgSpeed < 10) {
                 traffic += 0.65;
             }
-            traffic += getVehicles().size() / getLength()/10;
+            traffic += getVehicles().size() / getLength() / 10;
         }
         return (traffic);
     }
@@ -289,7 +295,10 @@ public class Lane {
             color = new Color(46, 2, 0);
         } else
             color = new Color(24, 0, 0);
-        return color;
+        if (parent.isActive())
+            return color;
+        else
+            return Color.GRAY;
     }
 
     public int getPriority() {
@@ -320,6 +329,6 @@ public class Lane {
     }
 
     public double getDegrees() {
-        return Utils.calcDegreesBetweenTwoPoint((int)Math.round(getFromNode().getX()),(int)Math.round(getFromNode().getY()),(int)Math.round(getToNode().getX()),(int)Math.round(getToNode().getY()));
+        return Utils.calcDegreesBetweenTwoPoint((int) Math.round(getFromNode().getX()), (int) Math.round(getFromNode().getY()), (int) Math.round(getToNode().getX()), (int) Math.round(getToNode().getY()));
     }
 }

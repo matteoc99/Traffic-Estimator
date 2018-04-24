@@ -97,7 +97,7 @@ public class Alpha extends JFrame {
         startFromJson.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                JFileChooser chooser=new JFileChooser();
+                JFileChooser chooser=new JFileChooser(System.getProperty("user.dir")+"\\src\\parsing\\res");
                 chooser.showSaveDialog(null);
                 String path=chooser.getSelectedFile().getAbsolutePath().substring(0,chooser.getSelectedFile().getAbsolutePath().lastIndexOf('\\'));
                 //getFileName

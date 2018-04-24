@@ -93,15 +93,21 @@ public class Beta extends JFrame {
 
                 String ending= chooser.getSelectedFile().getName().substring(chooser.getSelectedFile().getName().indexOf('.'));
 
-                if (ending.equals(".json")){
-                    dispose();
-                    Main main = new Main(City.createCityFromJson(new File(path +"/"+ name + ending)));
-                }else if(ending.equals(".osm")){
-                    dispose();
-                    OsmToJsonParser.parse(path+"/"+name+ending,path+"/"+name+".json");
-                    Main main = new Main(City.createCityFromJson(new File(path+"/"+ name + ".json")));
-                }else{
-                    new JOptionPane("The selected file is not an OSM or JSON file").createDialog("Warning").setVisible(true);
+                switch (ending) {
+                    case ".json": {
+                        dispose();
+                        Main main = new Main(City.createCityFromJson(new File(path + "/" + name + ending)));
+                        break;
+                    }
+                    case ".osm": {
+                        dispose();
+                        OsmToJsonParser.parse(path + "/" + name + ending, path + "/" + name + ".json");
+                        Main main = new Main(City.createCityFromJson(new File(path + "/" + name + ".json")));
+                        break;
+                    }
+                    default:
+                        new JOptionPane("The selected file is not an OSM or JSON file").createDialog("Warning").setVisible(true);
+                        break;
                 }
 
             }

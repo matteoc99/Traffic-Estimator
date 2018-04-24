@@ -198,18 +198,25 @@ public class Node {
     public Lane getLaneTo(Node currentGoal) {
         for (Street street : streets) {
             Iterator<Lane> bLanes = street.getBackwardLanesIterator();
-            for (int j = 0; bLanes.hasNext(); j++) {
-                Lane lane = bLanes.next();
-                if (lane.getToNode().equals(currentGoal)) {
-                    return lane;
-                }
-            }
+            Lane lane =iterateLanesForNextLane(currentGoal, street, bLanes);
+            if(lane!=null)
+                return lane;
             Iterator<Lane> fLanes = street.getForwardLanesIterator();
-            for (int j = 0; fLanes.hasNext(); j++) {
-                Lane lane = fLanes.next();
-                if (lane.getToNode().equals(currentGoal)) {
+            lane= iterateLanesForNextLane(currentGoal, street, fLanes);
+            if(lane!=null)
+                return lane;
+        }
+        return null;
+    }
+
+    private Lane iterateLanesForNextLane(Node currentGoal, Street street, Iterator<Lane> fLanes) {
+        for (int j = 0; fLanes.hasNext(); j++) {
+            Lane lane = fLanes.next();
+            if (lane.getToNode().equals(currentGoal)) {
+                if (street.isActive())
                     return lane;
-                }
+                else
+                    return new Lane("deactivated", null, false, 0);
             }
         }
         return null;

@@ -76,7 +76,8 @@ public class VehicleDriving implements DrivingInterface {
 
     public VehicleDriving(Vehicle vehicle) {
         this.vehicle = vehicle;
-        setUp();
+        Path path = PathGenerator.getRandomPath(vehicle.getCity());
+        setUp(path);
         generateRandomBehaviour();
 
         if (network == null) {
@@ -212,7 +213,7 @@ public class VehicleDriving implements DrivingInterface {
         considerative = Math.random();
         agressivity = Math.random();
         desiredSpeed = Math.random();
-        reactionTime = (int) (Math.random()*10);
+        reactionTime = (int) (Math.random() * 10);
     }
 
     @Override
@@ -220,10 +221,9 @@ public class VehicleDriving implements DrivingInterface {
         currentAction = Action.NO_ACTION;
     }
 
-    public void setUp() {
+    public void setUp(Path path) {
 
         vehicle.setProgressInLane(0);
-        Path path = PathGenerator.getRandomPath(vehicle.getCity());
 
         vehicle.setPath(path);
         if (vehicle.getPath() != null && vehicle.getPath().isValid()) {
@@ -234,18 +234,26 @@ public class VehicleDriving implements DrivingInterface {
 
             if (vehicle.getCurrentGoal() != null && vehicle.getPrevGoal() != null) {
                 Lane lane = vehicle.getPrevGoal().getLaneTo(vehicle.getCurrentGoal());
+                if (lane!=null && lane.getId().equals("deactivated")) {
+                    //straße wurde deaktiviert-> neuer weg 
+                    // TODO: 24.04.2018 Warning may lead to stack overflow 
+                    System.out.println("Vehicle is evaluating new way");
+                    setUp(vehicle.getCity().doAStar(vehicle.getPrevGoal(), vehicle.getCity().getNodeById(vehicle.getPath().getTo()), vehicle,true));
+                    return;
+                }
                 vehicle.changeLane(lane);
             } else {
                 System.out.println("BAD PATH:");
                 System.out.println(vehicle.getPrevGoal());
                 System.out.println(vehicle.getCurrentGoal());
-                System.out.println("\t"+path);
+                System.out.println("\t" + path);
                 path.resetProgress();
-                System.out.println(path.getGoalAndIncrement()+"::and::"+path.getGoal()+" dont exist");
-                setUp();
+                System.out.println(path.getGoalAndIncrement() + "::and::" + path.getGoal() + " dont exist");
+                setUp(PathGenerator.getRandomPath(vehicle.getCity()));
             }
-        } else
+        } else {
             System.out.println("DIE2");
+        }
 
 
     }
@@ -285,9 +293,15 @@ public class VehicleDriving implements DrivingInterface {
                 vehicle.getLane().removeVehicle(vehicle);
                 vehicle.getCity().getVehicles().remove(vehicle);
             } else {
-               canGo = vehicle.getPrevGoal().register(vehicle, vehicle.getCurrentGoal());
+                canGo = vehicle.getPrevGoal().register(vehicle, vehicle.getCurrentGoal());
                 if (canGo) {
                     Lane lane = vehicle.getPrevGoal().getLaneTo(vehicle.getCurrentGoal());
+                    if (lane!=null && lane.getId().equals("deactivated")) {
+                        //straße wurde deaktiviert-> neuer weg
+                        System.out.println("Vehicle is evaluating new way");
+                        setUp(vehicle.getCity().doAStar(vehicle.getPrevGoal(), vehicle.getCity().getNodeById(vehicle.getPath().getTo()), vehicle,true));
+                        return;
+                    }
                     vehicle.changeLane(lane);
                     vehicle.setProgressInLane(0);
                     if (!(vehicle.getPrevGoal() instanceof Connection))
@@ -332,10 +346,10 @@ public class VehicleDriving implements DrivingInterface {
         Vehicle nextVehicle = vehicle.getLane().getNextVehicle(vehicle.getProgressInLane());
         double nextVehiclePos = nextVehicle == null ? vehicle.getLane().getLength() : nextVehicle.getProgressInLane();
 
-        if (vehicle.getCurrentSpeed() > goalSpeed || nextVehiclePos < vehicle.getProgressInLane() + vehicle.getCurrentSpeed() + getSafetyDist() ) {
-            while (vehicle.getCurrentSpeed() > goalSpeed || nextVehiclePos < vehicle.getProgressInLane() + vehicle.getCurrentSpeed()/vehicle.speedTrimm + getSafetyDist() ) {
+        if (vehicle.getCurrentSpeed() > goalSpeed || nextVehiclePos < vehicle.getProgressInLane() + vehicle.getCurrentSpeed() + getSafetyDist()) {
+            while (vehicle.getCurrentSpeed() > goalSpeed || nextVehiclePos < vehicle.getProgressInLane() + vehicle.getCurrentSpeed() / vehicle.speedTrimm + getSafetyDist()) {
                 vehicle.incrementCurrentSpeed(-Math.log(goalSpeed));
-                if(vehicle.getCurrentSpeed()==0)
+                if (vehicle.getCurrentSpeed() == 0)
                     break;
             }
         } else {
@@ -450,8 +464,8 @@ public class VehicleDriving implements DrivingInterface {
         return network;
     }
 
-    public int getSafetyDist(){
-        int ret= (int) ((int) (vehicle.getCurrentSpeed()/100)+0.01);
+    public int getSafetyDist() {
+        int ret = (int) ((int) (vehicle.getCurrentSpeed() / 100) + 0.01);
         return ret;
     }
 }

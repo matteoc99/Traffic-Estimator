@@ -39,6 +39,7 @@ public class JCity extends JPanel {
     public double maxZoom = 1;
     public double minZoom = 1 / Math.pow(2, 10);
 
+    private int zoomLevel =19;
     JFrame container;
 
     /**
@@ -133,14 +134,14 @@ public class JCity extends JPanel {
         int dir = isBackward ? -1 : 1;
         //draw lanes
         g2.setColor(lane.getColorByTraffic());
-        int stroke = 1;
+        g2.setStroke(new BasicStroke(zoomLevel/8));
         if (showStreets)
-            g2.drawLine((int) (getXYByOsmTileXY(lane.getParent().getxFrom()) * zoom) - (1 + i * 2) * dir,
-                    (int) (getXYByOsmTileXY(lane.getParent().getyFrom()) * zoom) - (1 + i * 2) * dir,
-                    (int) (getXYByOsmTileXY(lane.getParent().getxTo()) * zoom) - (1 + i * 2) * dir,
-                    (int) (getXYByOsmTileXY(lane.getParent().getyTo()) * zoom) - (1 + i * 2) * dir);
+            g2.drawLine((int) (getXYByOsmTileXY(lane.getParent().getxFrom()) * zoom) - (zoomLevel/8 + i * 2) * dir,
+                    (int) (getXYByOsmTileXY(lane.getParent().getyFrom()) * zoom) - (zoomLevel/8 + i * 2) * dir,
+                    (int) (getXYByOsmTileXY(lane.getParent().getxTo()) * zoom) - (zoomLevel/8 + i * 2) * dir,
+                    (int) (getXYByOsmTileXY(lane.getParent().getyTo()) * zoom) - (zoomLevel/8 + i * 2) * dir);
 
-
+        g2.setStroke(new BasicStroke(1));
         ArrayList<Vehicle> vehicles = lane.getVehicles();
         //anti duplicate
         if (showCars) {
@@ -149,9 +150,9 @@ public class JCity extends JPanel {
                 g2.setColor(vehicle.getColor());
                 // FIXME: 22.04.2018 Vehicle can be null
                 // draw cars
-                g2.fillOval((int) ((int) ((getXYByOsmTileXY(vehicle.currentPositionOnLane().getX())) * zoom) - (8) / 2 - (1 + i * 2) * dir),
-                        (int) ((int) ((getXYByOsmTileXY(vehicle.currentPositionOnLane().getY())) * zoom) - (8) / 2 - (1 + i * 2) * dir),
-                        8, 8);
+                g2.fillOval((int) ((int) ((getXYByOsmTileXY(vehicle.currentPositionOnLane().getX())) * zoom) - (zoomLevel/2) / 2 - (1 + i * 2) * dir),
+                        (int) ((int) ((getXYByOsmTileXY(vehicle.currentPositionOnLane().getY())) * zoom) - (zoomLevel/2) / 2 - (1 + i * 2) * dir),
+                        zoomLevel/2, zoomLevel/2);
             }
         }
         //draw streetlights
@@ -162,13 +163,13 @@ public class JCity extends JPanel {
                 else
                     g2.setColor(Color.GREEN);
                 if(dir<0)
-                g2.fillRect((getXYByOsmTileXY(lane.getPointByProgress(lane.getLength()).getX()*zoom)) -6,
-                        (getXYByOsmTileXY(lane.getPointByProgress(lane.getLength()).getY()*zoom))-6,
-                        8, 8);
+                g2.fillRect((int) ((getXYByOsmTileXY(lane.getPointByProgress(lane.getLength()).getX()*zoom)) - (zoomLevel/2*0.75)),
+                        (int)((getXYByOsmTileXY(lane.getPointByProgress(lane.getLength()).getY()*zoom))- (zoomLevel/2*0.75)),
+                        zoomLevel/2, zoomLevel/2);
                 else
-                    g2.fillRect((getXYByOsmTileXY(lane.getPointByProgress(lane.getLength()).getX()*zoom)) + (2),
-                            (getXYByOsmTileXY(lane.getPointByProgress(lane.getLength()).getY()*zoom))+ (2),
-                            8, 8);
+                    g2.fillRect((getXYByOsmTileXY(lane.getPointByProgress(lane.getLength()).getX()*zoom)) + (zoomLevel/2/4),
+                            (getXYByOsmTileXY(lane.getPointByProgress(lane.getLength()).getY()*zoom))+ (zoomLevel/2/4),
+                            zoomLevel/2, zoomLevel/2);
             }
         }
     }
@@ -233,6 +234,7 @@ public class JCity extends JPanel {
     public void zoomIn() {
         if (zoom == maxZoom)
             return;
+        zoomLevel++;
         Point mousePoint = MouseInfo.getPointerInfo().getLocation();
         mousePoint.x = mousePoint.x - container.getX() - getX();
         mousePoint.y = mousePoint.y - container.getY() - getY();
@@ -243,9 +245,9 @@ public class JCity extends JPanel {
     }
 
     public void zoomOut() {
-        System.out.println(minZoom);
         if (zoom == minZoom)
             return;
+        zoomLevel--;
         Point mousePoint = MouseInfo.getPointerInfo().getLocation();
         mousePoint.x -= container.getX() + getX();
         mousePoint.y -= container.getY() + getY();

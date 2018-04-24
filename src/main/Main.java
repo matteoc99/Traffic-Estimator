@@ -22,7 +22,6 @@ public class Main extends JFrame {
     public static int FPS = 20;
 
 
-    private static JCity jCity;
     private ControlPanel controlPanel;
     private Container c;
 
@@ -42,20 +41,8 @@ public class Main extends JFrame {
         cityMap.setBounds(0, 0, getWidth()-getWidth()/6, getHeight());
         c.add(cityMap);
         c.add(controlPanel,0);
-
         setResizable(false);
-
-        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-
-        repaint();
-
-
-        requestFocus();
-
-
-
-
-
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         city.start();
     }
 
@@ -117,7 +104,7 @@ public class Main extends JFrame {
         });
 
         traffic.addChangeListener(e -> {
-            City.VEHICLE_AMOUNT = traffic.getValue() + 1;
+            City.VEHICLE_AMOUNT = traffic.getValue();
             cityMap.repaint();
             requestFocus();
         });

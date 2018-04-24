@@ -2,6 +2,8 @@ package logic.city;
 
 import java.util.ArrayList;
 
+import static logic.city.City.SPEED;
+
 /**
  * @author Matteo Cosi
  * @since 29.01.2018
@@ -28,7 +30,7 @@ public class StreetlightLogic extends Thread {
                 getNextGreen().toggle();
 
                 try {
-                    Thread.sleep(cycle * 1000 / streetlights.size());
+                    Thread.sleep(cycle * 1000 / streetlights.size()-(SPEED-20));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

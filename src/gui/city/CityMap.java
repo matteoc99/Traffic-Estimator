@@ -136,7 +136,10 @@ public class CityMap extends JPanel {
                         JCity.getOSMTileXYByXY((int) (mousePositionRvCity.getY() / JCity.zoom))
                 );
 
-                System.out.println(jCity.getCity().getStreetByPoint(osmPosition));
+                if (e.getButton() == 3) {
+                    System.out.println(jCity.getCity().getStreetByPoint(osmPosition));
+                    jCity.getCity().getStreetByPoint(osmPosition).toggleActive();
+                }
             }
 
             jFrame.setCursor(blankCursor);
