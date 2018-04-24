@@ -230,7 +230,7 @@ public class Node {
      * @return true if the vehicle can drive, otherwise false
      */
     public boolean register(Vehicle vehicle, Node nextNode) {
-        if (vehicle.getLane().getStreetlight() == null)
+        if (vehicle.getLane().getStreetlight() == null||(vehicle.getPrevGoal().getLaneTo(nextNode)!=null&&!vehicle.getPrevGoal().getLaneTo(nextNode).isFull()))
             return true;
         return vehicle.getLane().getStreetlight().getState() != 0;
     }

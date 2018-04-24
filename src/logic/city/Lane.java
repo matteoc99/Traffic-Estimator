@@ -331,4 +331,9 @@ public class Lane {
     public double getDegrees() {
         return Utils.calcDegreesBetweenTwoPoint((int) Math.round(getFromNode().getX()), (int) Math.round(getFromNode().getY()), (int) Math.round(getToNode().getX()), (int) Math.round(getToNode().getY()));
     }
+
+    public boolean isFull(){
+        //0.007 safety distance
+        return 0.008*vehicles.size()>getLength();
+    }
 }

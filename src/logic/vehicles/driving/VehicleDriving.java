@@ -13,6 +13,7 @@ import java.util.ArrayList;
 /**
  * @author Matteo Cosi
  * @since 21.02.2018
+ * todo bug: first lane is driven twice
  */
 public class VehicleDriving implements DrivingInterface {
 
@@ -236,7 +237,7 @@ public class VehicleDriving implements DrivingInterface {
                 Lane lane = vehicle.getPrevGoal().getLaneTo(vehicle.getCurrentGoal());
                 if (lane!=null && lane.getId().equals("deactivated")) {
                     //straße wurde deaktiviert-> neuer weg 
-                    // TODO: 24.04.2018 Warning may lead to stack overflow 
+                    // TODO: 24.04.2018 Warning may lead to stack overflow
                     System.out.println("Vehicle is evaluating new way");
                     setUp(vehicle.getCity().doAStar(vehicle.getPrevGoal(), vehicle.getCity().getNodeById(vehicle.getPath().getTo()), vehicle,true));
                     return;
@@ -464,8 +465,7 @@ public class VehicleDriving implements DrivingInterface {
         return network;
     }
 
-    public int getSafetyDist() {
-        int ret = (int) ((int) (vehicle.getCurrentSpeed() / 100) + 0.01);
-        return ret;
+    public double getSafetyDist() {
+        return 0.007;
     }
 }
