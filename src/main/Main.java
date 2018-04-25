@@ -40,7 +40,7 @@ public class Main extends JFrame {
         cityMap.setBounds(0, 0, getWidth()-getWidth()/6, getHeight());
         c.add(cityMap);
         controlPanel = setUpControlPanel();
-        c.add(controlPanel,0);
+        cityMap.add(controlPanel,0);
         setResizable(false);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         city.start();
@@ -125,7 +125,11 @@ public class Main extends JFrame {
                 new File(System.getProperty("user.dir") + "\\src\\parsing\\res\\bozen.json"));
         System.out.println("Main:" + new Timestamp(System.currentTimeMillis()) + " Starting GUI...");
         Main main = new Main(city);
-        System.out.println(city.getShortestStreet().getLength());
     }
 
+    public static void start(City cityFromJson) {
+        System.out.println("Main:" + new Timestamp(System.currentTimeMillis()) + " Starting GUI...");
+        Main main = new Main(cityFromJson);
+
+    }
 }

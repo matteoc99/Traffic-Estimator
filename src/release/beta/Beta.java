@@ -85,7 +85,7 @@ public class Beta extends JFrame {
         startFromJson.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                JFileChooser chooser=new JFileChooser(System.getProperty("user.dir")+"\\src\\parsing\\res");
+                JFileChooser chooser=new JFileChooser(System.getProperty("user.dir"));
                 chooser.showSaveDialog(null);
                 String path=chooser.getSelectedFile().getAbsolutePath().substring(0,chooser.getSelectedFile().getAbsolutePath().lastIndexOf('\\'));
                 //getFileName
@@ -96,13 +96,13 @@ public class Beta extends JFrame {
                 switch (ending) {
                     case ".json": {
                         dispose();
-                        Main main = new Main(City.createCityFromJson(new File(path + "/" + name + ending)));
+                        Main.start(City.createCityFromJson(new File(path + "/" + name + ending)));
                         break;
                     }
                     case ".osm": {
                         dispose();
                         OsmToJsonParser.parse(path + "/" + name + ending, path + "/" + name + ".json");
-                        Main main = new Main(City.createCityFromJson(new File(path + "/" + name + ".json")));
+                        Main.start(City.createCityFromJson(new File(path + "/" + name + ".json")));
                         break;
                     }
                     default:

@@ -29,8 +29,8 @@ public final class OsmToJsonParser {
     private static Map<String, Integer> streetsOnNode = new HashMap<>();
 
     public static void main(String[] args) {
-        parse(System.getProperty("user.dir") + "\\src\\parsing\\res\\eppan.osm",
-                System.getProperty("user.dir") + "\\src\\parsing\\res\\eppan.json");
+        parse(System.getProperty("user.dir") + "\\src\\parsing\\res\\suedtirol.osm",
+                System.getProperty("user.dir") + "\\src\\parsing\\res\\suedtirol.json");
     }
 
     /**
@@ -241,6 +241,7 @@ public final class OsmToJsonParser {
             JSONObject jNode = nodes.getJSONObject(pointer);
             String nodeId = jNode.getString("id");
 
+
             int streetCount = streetsOnNode.getOrDefault(nodeId, 0);
 
             switch (streetCount) {
@@ -257,6 +258,9 @@ public final class OsmToJsonParser {
                 default:
                     jNode.put("type", "MultiConnection");
             }
+            if (pointer % (nodes.length() / 100) == 0)
+                System.out.println((double) pointer / nodes.length()* 100 + "%");
+
         }
     }
 
@@ -285,6 +289,8 @@ public final class OsmToJsonParser {
 
             jNode.put("x", x);
             jNode.put("y", y);
+            if (1 % (nodes.length() / 10) == 0)
+                System.out.println((double) 1 / nodes.length()* 100 + "%");
         }
 
         JSONObject jBounds = new JSONObject();

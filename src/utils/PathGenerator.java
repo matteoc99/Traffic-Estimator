@@ -25,7 +25,7 @@ public class PathGenerator extends Thread {
 
     private static void generatePaths(City city, int count) {
         // FIXME: 12.04.2018 Exception when package:paths is not created yet
-        File pth = new File(System.getProperty("user.dir") + "/src/logic/paths/" + city.getName() + ".pth");
+        File pth = new File("C:\\TrafficEstimator\\Paths\\" + city.getName() + ".pth");
         FileOutputStream fos = null;
         try {
             fos = new FileOutputStream(pth);
@@ -66,7 +66,7 @@ public class PathGenerator extends Thread {
 
     public static Path getRandomPath(City city) {
         //check if paths are already generated
-        File pth = new File(System.getProperty("user.dir") + "/src/logic/paths/" + city.getName() + ".pth");
+        File pth = new File("C:\\TrafficEstimator\\Paths\\" + city.getName() + ".pth");
         if (pth.exists()) {
             if (paths.isEmpty()) {
                 try {
@@ -108,6 +108,25 @@ public class PathGenerator extends Thread {
     public static void start(City city) {
         PathGenerator.city = city;
         new PathGenerator().start();
+        makedir();
+    }
 
+
+    private static void makedir() {
+        File theDir = new File("C:\\TrafficEstimator");
+        checkDir(theDir);
+        theDir = new File("C:\\TrafficEstimator\\Paths");
+        checkDir(theDir);
+    }
+
+    private static void checkDir(File theDir) {
+        if (!theDir.exists()) {
+            try {
+                theDir.mkdir();
+            } catch (SecurityException se) {
+                se.printStackTrace();
+            }
+
+        }
     }
 }

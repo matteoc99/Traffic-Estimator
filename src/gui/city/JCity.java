@@ -244,7 +244,6 @@ public class JCity extends JPanel {
         zoom *= 2;
         resizeAfterZoom();
 
-        System.out.println(zoom);
     }
 
     public void zoomOut() {
@@ -257,7 +256,6 @@ public class JCity extends JPanel {
         zoom /= 2;
         resizeAfterZoom();
 
-        System.out.println(zoom);
     }
 
     public void moveCordsVisibleAt(double lon, double lat, int visibleAtX, int visibleAtY) {
