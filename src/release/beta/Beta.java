@@ -21,7 +21,6 @@ public class Beta extends JFrame {
 
     Container c;
 
-    // TODO: 05.03.2018 All the files should be replaced with directories that exist on every pc! not vehicles/driving. etc
 
     public Beta() {
         setTitle("Traffic-Estimator");

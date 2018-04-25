@@ -68,7 +68,7 @@ public class TileBuffer implements Runnable {
             //osmTileManager.overlay.fillLabel(input.getKey());
             osmTileManager.overlay.fillLabels();
         } catch (Exception e) {
-            // TODO: 21.03.2018  e.printStackTrace();
+            e.printStackTrace();
         }
     }
 
@@ -79,7 +79,7 @@ public class TileBuffer implements Runnable {
             BufferedImage bufferedImage = ImageIO.read(new URL(osmTileManager.getTileLink(point, zoom)));
             osmTileManager.addImage(bufferedImage, zoom, point);
         } catch (Exception e) {
-            // TODO: 21.03.2018  e.printStackTrace();
+            e.printStackTrace();
         }
     }
 

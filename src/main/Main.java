@@ -25,9 +25,6 @@ public class Main extends JFrame {
     private ControlPanel controlPanel;
     private Container c;
 
-    // FIXME: 13.03.2018 yep; effizienz gleich 0 xD ... nana jk
-    int effizienz = 0;
-
     CityMap cityMap;
 
 
@@ -119,6 +116,7 @@ public class Main extends JFrame {
         return ret;
     }
 
+    @Deprecated
     public static void main(String[] args) {
         System.out.println("Main:" + new Timestamp(System.currentTimeMillis()) + " Creating City from .json...");
         City city = City.createCityFromJson(

@@ -70,6 +70,8 @@ public class City extends Thread {
      */
     private double minLon, minLat, maxLon, maxLat;
 
+    private double maxWidth=-1,maxHeight=-1;
+
     /**
      * contains all the vehicles of a city
      */
@@ -585,7 +587,6 @@ public class City extends Thread {
     public void calcCity() {
         ArrayList<Vehicle> vehicleList = new ArrayList<>(vehicles);
         for (Vehicle vehicle : vehicleList) {
-            // TODO: 20.02.2018 calc by ordered lane.priority. higher priority = first evaluation
             vehicle.move();
         }
     }
@@ -653,20 +654,21 @@ public class City extends Thread {
             return bounds;
     }
 
-    // fixme finders are very inefficient
-
     /**
      * searches for the node with the greatest y coordinate
      *
      * @return the greatest y coordinate
      */
     public double getMaxHeight() {
-        double ret = 0;
-        for (Node node : nodes) {
-            if (node.getY() > ret)
-                ret = node.getY();
+        if(maxHeight<0) {
+            double ret = 0;
+            for (Node node : nodes) {
+                if (node.getY() > ret)
+                    ret = node.getY();
+            }
+            return maxHeight = ret;
         }
-        return ret;
+        return maxHeight;
     }
 
 
@@ -676,12 +678,15 @@ public class City extends Thread {
      * @return the greatest x coordinate
      */
     public double getMaxWidth() {
-        double ret = 0;
-        for (Node node : nodes) {
-            if (node.getX() > ret)
-                ret = node.getX();
+        if(maxWidth<0) {
+            double ret = 0;
+            for (Node node : nodes) {
+                if (node.getX() > ret)
+                    ret = node.getX();
+            }
+            return maxWidth=ret;
         }
-        return ret;
+        return maxWidth;
     }
 
     /**

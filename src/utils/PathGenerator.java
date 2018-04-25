@@ -11,6 +11,7 @@ import java.util.ArrayList;
  * @author Matteo Cosi
  * @since 16.02.2018
  */
+//TODO BUG: write paths in .pth only after all are genratet. Otherwise .pth is corrupted
 public class PathGenerator extends Thread {
 
     private static ArrayList<Path> paths = new ArrayList<>();
@@ -24,7 +25,6 @@ public class PathGenerator extends Thread {
     }
 
     private static void generatePaths(City city, int count) {
-        // FIXME: 12.04.2018 Exception when package:paths is not created yet
         File pth = new File("C:\\TrafficEstimator\\Paths\\" + city.getName() + ".pth");
         FileOutputStream fos = null;
         try {
@@ -33,7 +33,7 @@ public class PathGenerator extends Thread {
             e.printStackTrace();
         }
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos));
-        System.out.println("generating");
+        System.out.println("Path:" + new Timestamp(System.currentTimeMillis()) + " Generating Paths...");
         for (int i = 0; i < count; i++) {
             Path path = city.getRandomPath(0);
             try {
@@ -76,12 +76,25 @@ public class PathGenerator extends Thread {
                     System.out.println("Path:" + new Timestamp(System.currentTimeMillis()) + " Loading Paths...");
                     int count = 0;
                     while ((line = bufferedReader.readLine()) != null) {
-                        Path p = Path.pathFromString(line);
-                        paths.add(p);
-                        count++;
-                        if (count % (preferredAmount / 10) == 0)
-                            System.out.println((double) count / preferredAmount * 100 + "%");
+                        try {
+                            Path p = Path.pathFromString(line);
+                            paths.add(p);
+                            count++;
+                            if (count % (preferredAmount / 10) == 0)
+                                System.out.println((double) count / preferredAmount * 100 + "%");
+                        }catch (Exception e){
+                            bufferedReader.close();
+                            pth.delete();
+                            System.out.println("Path:" + new Timestamp(System.currentTimeMillis()) + " Delete Corrupted Paths...1");
+                            return getRandomPath(city);
+                        }
 
+                    }
+                    if(paths.size()<preferredAmount-10){
+                        bufferedReader.close();
+                        pth.delete();
+                        System.out.println("Path:" + new Timestamp(System.currentTimeMillis()) + " Delete Corrupted Paths...2");
+                        return getRandomPath(city);
                     }
                     fileReader.close();
                 } catch (IOException e) {
