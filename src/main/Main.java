@@ -35,11 +35,11 @@ public class Main extends JFrame {
         setupWindow();
         c = getContentPane();
 
-        controlPanel = setUpControlPanel();
 
         cityMap = new CityMap(this, city);
         cityMap.setBounds(0, 0, getWidth()-getWidth()/6, getHeight());
         c.add(cityMap);
+        controlPanel = setUpControlPanel();
         c.add(controlPanel,0);
         setResizable(false);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -66,9 +66,9 @@ public class Main extends JFrame {
         ret.setBackground(new Color(86, 90, 200));
         ret.setBounds(getWidth() - getWidth() / 6, 0, getWidth() / 6, getHeight());
 
-        CustomSlider speed = new CustomSlider(JSlider.HORIZONTAL, 20, 1500, City.SPEED);
-        CustomSlider traffic = new CustomSlider(JSlider.HORIZONTAL, 0, 10000, City.VEHICLE_AMOUNT);
-        CustomSlider fps = new CustomSlider(JSlider.HORIZONTAL, 0, 80, FPS);
+        CustomSlider speed = new CustomSlider(JSlider.HORIZONTAL, 10, 1500, City.SPEED);
+        CustomSlider traffic = new CustomSlider(JSlider.HORIZONTAL, 0, cityMap.jCity.getCity().getNodeSize(), City.VEHICLE_AMOUNT);
+        CustomSlider fps = new CustomSlider(JSlider.HORIZONTAL, 0, 120, FPS);
 
 
         int xOff = ret.getWidth() / 4;
@@ -91,12 +91,12 @@ public class Main extends JFrame {
         fps.setBounds(xOff, 10 + (ret.getHeight() / 12) * 2, ret.getWidth() - xOff - 20, ret.getHeight() / 10);
 
         speed.setMajorTickSpacing(500);
-        traffic.setMajorTickSpacing(5000);
-        fps.setMajorTickSpacing(20);
+        traffic.setMajorTickSpacing(cityMap.jCity.getCity().getNodeSize()/4);
+        fps.setMajorTickSpacing(40);
 
         speed.setMinorTickSpacing(250);
-        traffic.setMinorTickSpacing(1000);
-        fps.setMinorTickSpacing(5);
+        traffic.setMinorTickSpacing(cityMap.jCity.getCity().getNodeSize()/20);
+        fps.setMinorTickSpacing(10);
         speed.addChangeListener(e -> {
             City.SPEED = speed.getValue() + 1;
             cityMap.repaint();
@@ -125,6 +125,7 @@ public class Main extends JFrame {
                 new File(System.getProperty("user.dir") + "\\src\\parsing\\res\\bozen.json"));
         System.out.println("Main:" + new Timestamp(System.currentTimeMillis()) + " Starting GUI...");
         Main main = new Main(city);
+        System.out.println(city.getShortestStreet().getLength());
     }
 
 }

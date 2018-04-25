@@ -78,7 +78,7 @@ public class Vehicle {
      */
     private City city;
 
-    public int speedTrimm = 120;
+    public int speedTrimm = 120; // TODO: 24.04.2018 if decreased bug goes away...why??
 
     public Vehicle(City city) {
         this.city = city;

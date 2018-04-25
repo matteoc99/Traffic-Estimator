@@ -266,7 +266,7 @@ public class Lane {
             } else if (avgSpeed < 10) {
                 traffic += 0.65;
             }
-            traffic += getVehicles().size() / getLength() / 10;
+            traffic += getVehicles().size()*0.005/getLength() ;
         }
         return (traffic);
     }
@@ -293,8 +293,10 @@ public class Lane {
             color = new Color(91, 3, 0);
         } else if (traffic < 2) {
             color = new Color(46, 2, 0);
-        } else
+        } else if (traffic < 4)
             color = new Color(24, 0, 0);
+        else
+            color = new Color(0,0,0);
         if (parent.isActive())
             return color;
         else
@@ -333,7 +335,7 @@ public class Lane {
     }
 
     public boolean isFull(){
-        //0.007 safety distance
-        return 0.008*vehicles.size()>getLength();
+        //0.009 safety distance
+        return false;// 0.009*vehicles.size()>getLength();
     }
 }

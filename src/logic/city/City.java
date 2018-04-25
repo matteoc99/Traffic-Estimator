@@ -462,6 +462,18 @@ public class City extends Thread {
         streetsSorted = true;
     }
 
+    public Street getShortestStreet(){
+        int smallestIndex =-1;
+        double smallestVal =1000;
+        for (int i = 0; i < streets.size(); i++) {
+            if(smallestVal>streets.get(i).getLength()){
+                smallestIndex=i;
+                smallestVal = streets.get(i).getLength();
+            }
+        }
+        return streets.get(smallestIndex);
+    }
+
     public Street getStreetById(String id) {
         if (id == null) return null;
         if (!streetsSorted)

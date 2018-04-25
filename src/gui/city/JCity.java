@@ -136,6 +136,9 @@ public class JCity extends JPanel {
         g2.setColor(lane.getColorByTraffic());
         g2.setStroke(new BasicStroke(zoomLevel/8));
         if (showStreets)
+            if(zoomLevel<=15){
+                g2.setStroke(new BasicStroke((float) (lane.getTraffic()*10)));
+            }
             g2.drawLine((int) (getXYByOsmTileXY(lane.getParent().getxFrom()) * zoom) - (zoomLevel/8 + i * 2) * dir,
                     (int) (getXYByOsmTileXY(lane.getParent().getyFrom()) * zoom) - (zoomLevel/8 + i * 2) * dir,
                     (int) (getXYByOsmTileXY(lane.getParent().getxTo()) * zoom) - (zoomLevel/8 + i * 2) * dir,
@@ -144,7 +147,7 @@ public class JCity extends JPanel {
         g2.setStroke(new BasicStroke(1));
         ArrayList<Vehicle> vehicles = lane.getVehicles();
         //anti duplicate
-        if (showCars) {
+        if (showCars&&zoomLevel>15) {
             ArrayList<Vehicle> cars = new ArrayList<>(vehicles);
             for (Vehicle vehicle : cars) {
                 g2.setColor(vehicle.getColor());
@@ -156,7 +159,7 @@ public class JCity extends JPanel {
             }
         }
         //draw streetlights
-        if (showLights) {
+        if (showLights&&zoomLevel>15) {
             if (lane.getStreetlight() != null) {
                 if (lane.getStreetlight().getState() == 0)
                     g2.setColor(Color.RED);
