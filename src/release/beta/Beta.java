@@ -34,6 +34,11 @@ public class Beta extends JFrame {
         c.setLayout(null);
 
 
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         JLabel background = new JLabel(new ImageIcon(Toolkit.getDefaultToolkit().getImage(getClass().getResource("res/rom.PNG"))));
         background.setLocation(0, 0);
@@ -84,30 +89,34 @@ public class Beta extends JFrame {
         startFromJson.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                JFileChooser chooser=new JFileChooser(System.getProperty("user.dir"));
+                JFileChooser chooser = new JFileChooser(System.getProperty("user.dir"));
                 chooser.showSaveDialog(null);
-                String path=chooser.getSelectedFile().getAbsolutePath().substring(0,chooser.getSelectedFile().getAbsolutePath().lastIndexOf('\\'));
+                if (chooser.getSelectedFile()==null)
+                    return;
+
+                String path = chooser.getSelectedFile().getAbsolutePath().substring(0, chooser.getSelectedFile().getAbsolutePath().lastIndexOf('\\'));
                 //getFileName
-                String name = chooser.getSelectedFile().getName().substring(0,chooser.getSelectedFile().getName().indexOf('.'));
 
-                String ending= chooser.getSelectedFile().getName().substring(chooser.getSelectedFile().getName().indexOf('.'));
+                String name = chooser.getSelectedFile().getName().substring(0, chooser.getSelectedFile().getName().indexOf('.'));
 
-                switch (ending) {
-                    case ".json": {
-                        dispose();
-                        Main.start(City.createCityFromJson(new File(path + "/" + name + ending)));
-                        break;
+                String ending = chooser.getSelectedFile().getName().substring(chooser.getSelectedFile().getName().indexOf('.'));
+
+                    switch (ending) {
+                        case ".json": {
+                            dispose();
+                            Main.start(City.createCityFromJson(new File(path + "/" + name + ending)));
+                            break;
+                        }
+                        case ".osm": {
+                            dispose();
+                            OsmToJsonParser.parse(path + "/" + name + ending, path + "/" + name + ".json");
+                            Main.start(City.createCityFromJson(new File(path + "/" + name + ".json")));
+                            break;
+                        }
+                        default:
+                            new JOptionPane("The selected file is not an OSM or JSON file").createDialog("Warning").setVisible(true);
+                            break;
                     }
-                    case ".osm": {
-                        dispose();
-                        OsmToJsonParser.parse(path + "/" + name + ending, path + "/" + name + ".json");
-                        Main.start(City.createCityFromJson(new File(path + "/" + name + ".json")));
-                        break;
-                    }
-                    default:
-                        new JOptionPane("The selected file is not an OSM or JSON file").createDialog("Warning").setVisible(true);
-                        break;
-                }
 
             }
 
@@ -130,7 +139,10 @@ public class Beta extends JFrame {
             public void mouseClicked(MouseEvent e) {
                 new JOptionPane("STEP 1: go to the open street map website\n" +
                         "STEP 2: click export and select the desired square to export\n" +
-                        "STEP 3: come back to this application and click: "+startFromJson.getText()).createDialog("Instructions").setVisible(true);
+                        "STEP 3: come back to this application and click: " + startFromJson.getText() + "\n" +
+                        "Warning: if you have only 4GB of ram use only .osm Files that are smaller than 150MB.\n" +
+                        "Info: loading files may take a while depending on their size. Be patient!!\n" +
+                        "if you want to have information about how long it takes to start, run the JAR from the command line").createDialog("Instructions").setVisible(true);
                 if (Desktop.isDesktopSupported()) {
                     try {
                         Desktop.getDesktop().browse(new URI("https://www.openstreetmap.org"));

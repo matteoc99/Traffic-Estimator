@@ -39,7 +39,7 @@ public class JCity extends JPanel {
     public double maxZoom = 1;
     public double minZoom = 1 / Math.pow(2, 10);
 
-    private int zoomLevel =19;
+    private int zoomLevel = 19;
     JFrame container;
 
     /**
@@ -134,45 +134,54 @@ public class JCity extends JPanel {
         int dir = isBackward ? -1 : 1;
         //draw lanes
         g2.setColor(lane.getColorByTraffic());
-        g2.setStroke(new BasicStroke(zoomLevel/8));
         if (showStreets)
-            if(zoomLevel<=15){
-                g2.setStroke(new BasicStroke((float) (lane.getTraffic()*10)));
+            g2.setStroke(new BasicStroke(zoomLevel/8));
+            if (zoomLevel <= 14) {
+                if (lane.isFull()) {
+                    g2.setColor(Color.MAGENTA);
+                    g2.setStroke(new BasicStroke(zoomLevel/8+5));
+                } else if (lane.getTraffic() > 1.3){
+                        g2.setStroke(new BasicStroke(zoomLevel/8+3));
+
+                }else if (lane.getTraffic() > 0.8){
+                    g2.setStroke(new BasicStroke(zoomLevel/8+2));
+
+                }
             }
-            g2.drawLine((int) (getXYByOsmTileXY(lane.getParent().getxFrom()) * zoom) - (zoomLevel/8 + i * 2) * dir,
-                    (int) (getXYByOsmTileXY(lane.getParent().getyFrom()) * zoom) - (zoomLevel/8 + i * 2) * dir,
-                    (int) (getXYByOsmTileXY(lane.getParent().getxTo()) * zoom) - (zoomLevel/8 + i * 2) * dir,
-                    (int) (getXYByOsmTileXY(lane.getParent().getyTo()) * zoom) - (zoomLevel/8 + i * 2) * dir);
+        g2.drawLine((int) (getXYByOsmTileXY(lane.getParent().getxFrom()) * zoom) - (zoomLevel / 8 + i * 2) * dir,
+                (int) (getXYByOsmTileXY(lane.getParent().getyFrom()) * zoom) - (zoomLevel / 8 + i * 2) * dir,
+                (int) (getXYByOsmTileXY(lane.getParent().getxTo()) * zoom) - (zoomLevel / 8 + i * 2) * dir,
+                (int) (getXYByOsmTileXY(lane.getParent().getyTo()) * zoom) - (zoomLevel / 8 + i * 2) * dir);
 
         g2.setStroke(new BasicStroke(1));
         ArrayList<Vehicle> vehicles = lane.getVehicles();
         //anti duplicate
-        if (showCars&&zoomLevel>15) {
+        if (showCars && zoomLevel > 14) {
             ArrayList<Vehicle> cars = new ArrayList<>(vehicles);
             for (Vehicle vehicle : cars) {
                 g2.setColor(vehicle.getColor());
                 // FIXME: 22.04.2018 Vehicle can be null
                 // draw cars
-                g2.fillOval((int) ((int) ((getXYByOsmTileXY(vehicle.currentPositionOnLane().getX())) * zoom) - (zoomLevel/2) / 2 - (1 + i * 2) * dir),
-                        (int) ((int) ((getXYByOsmTileXY(vehicle.currentPositionOnLane().getY())) * zoom) - (zoomLevel/2) / 2 - (1 + i * 2) * dir),
-                        zoomLevel/2, zoomLevel/2);
+                g2.fillOval((int) ((int) ((getXYByOsmTileXY(vehicle.currentPositionOnLane().getX())) * zoom) - (zoomLevel / 2) / 2 - (1 + i * 2) * dir),
+                        (int) ((int) ((getXYByOsmTileXY(vehicle.currentPositionOnLane().getY())) * zoom) - (zoomLevel / 2) / 2 - (1 + i * 2) * dir),
+                        zoomLevel / 2, zoomLevel / 2);
             }
         }
         //draw streetlights
-        if (showLights&&zoomLevel>15) {
+        if (showLights && zoomLevel > 14) {
             if (lane.getStreetlight() != null) {
                 if (lane.getStreetlight().getState() == 0)
                     g2.setColor(Color.RED);
                 else
                     g2.setColor(Color.GREEN);
-                if(dir<0)
-                g2.fillRect((int) ((getXYByOsmTileXY(lane.getPointByProgress(lane.getLength()).getX()*zoom)) - (zoomLevel/2*0.75)),
-                        (int)((getXYByOsmTileXY(lane.getPointByProgress(lane.getLength()).getY()*zoom))- (zoomLevel/2*0.75)),
-                        zoomLevel/2, zoomLevel/2);
+                if (dir < 0)
+                    g2.fillRect((int) ((getXYByOsmTileXY(lane.getPointByProgress(lane.getLength()).getX() * zoom)) - (zoomLevel / 2 * 0.75)),
+                            (int) ((getXYByOsmTileXY(lane.getPointByProgress(lane.getLength()).getY() * zoom)) - (zoomLevel / 2 * 0.75)),
+                            zoomLevel / 2, zoomLevel / 2);
                 else
-                    g2.fillRect((getXYByOsmTileXY(lane.getPointByProgress(lane.getLength()).getX()*zoom)) + (zoomLevel/2/4),
-                            (getXYByOsmTileXY(lane.getPointByProgress(lane.getLength()).getY()*zoom))+ (zoomLevel/2/4),
-                            zoomLevel/2, zoomLevel/2);
+                    g2.fillRect((getXYByOsmTileXY(lane.getPointByProgress(lane.getLength()).getX() * zoom)) + (zoomLevel / 2 / 4),
+                            (getXYByOsmTileXY(lane.getPointByProgress(lane.getLength()).getY() * zoom)) + (zoomLevel / 2 / 4),
+                            zoomLevel / 2, zoomLevel / 2);
             }
         }
     }

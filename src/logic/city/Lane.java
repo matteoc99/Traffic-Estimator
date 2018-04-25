@@ -202,9 +202,9 @@ public class Lane {
     public double getLength() {
         if (length == -1)
             if (parent == null) {
-                System.out.println("hopefully == 0:"+vehicles.size());
+                System.out.println("hopefully == 0:" + vehicles.size());
                 length = 1;
-            }else
+            } else
                 length = parent.getLength();
         return length;
     }
@@ -266,7 +266,7 @@ public class Lane {
             } else if (avgSpeed < 10) {
                 traffic += 0.65;
             }
-            traffic += getVehicles().size()*0.005/getLength() ;
+            traffic += getVehicles().size() * 0.005 / getLength();
         }
         return (traffic);
     }
@@ -296,7 +296,7 @@ public class Lane {
         } else if (traffic < 4)
             color = new Color(24, 0, 0);
         else
-            color = new Color(0,0,0);
+            color = new Color(0, 0, 0);
         if (parent.isActive())
             return color;
         else
@@ -334,8 +334,22 @@ public class Lane {
         return Utils.calcDegreesBetweenTwoPoint((int) Math.round(getFromNode().getX()), (int) Math.round(getFromNode().getY()), (int) Math.round(getToNode().getX()), (int) Math.round(getToNode().getY()));
     }
 
-    public boolean isFull(){
-        //0.009 safety distance
-        return false;// 0.009*vehicles.size()>getLength();
+    public boolean isFull() {
+        try {
+            //0.009 safety distance
+            if(vehicles.isEmpty()||vehicles.size()<3)
+                return false;
+            if (vehicles.get(0).getVehicleDriving().getSafetyDist() * vehicles.size() > getLength()) {
+                return true;
+            } else return false;
+        }catch (NullPointerException e){
+            e.printStackTrace();
+            System.out.println(vehicles);
+            System.out.println(vehicles.get(0));
+            System.out.println(vehicles.get(0).getVehicleDriving().getSafetyDist());
+            System.out.println(vehicles.get(0).getVehicleDriving());
+            System.out.println(getLength());
+            return false;
+        }
     }
 }

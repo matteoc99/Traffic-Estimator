@@ -64,7 +64,7 @@ public class Main extends JFrame {
         ret.setBounds(getWidth() - getWidth() / 6, 0, getWidth() / 6, getHeight());
 
         CustomSlider speed = new CustomSlider(JSlider.HORIZONTAL, 10, 1500, City.SPEED);
-        CustomSlider traffic = new CustomSlider(JSlider.HORIZONTAL, 0, cityMap.jCity.getCity().getNodeSize(), City.VEHICLE_AMOUNT);
+        CustomSlider traffic = new CustomSlider(JSlider.HORIZONTAL, 0, cityMap.jCity.getCity().getNodeSize()*2, City.VEHICLE_AMOUNT);
         CustomSlider fps = new CustomSlider(JSlider.HORIZONTAL, 0, 120, FPS);
 
 
@@ -88,11 +88,11 @@ public class Main extends JFrame {
         fps.setBounds(xOff, 10 + (ret.getHeight() / 12) * 2, ret.getWidth() - xOff - 20, ret.getHeight() / 10);
 
         speed.setMajorTickSpacing(500);
-        traffic.setMajorTickSpacing(cityMap.jCity.getCity().getNodeSize()/4);
+        traffic.setMajorTickSpacing(cityMap.jCity.getCity().getNodeSize()/2);
         fps.setMajorTickSpacing(40);
 
         speed.setMinorTickSpacing(250);
-        traffic.setMinorTickSpacing(cityMap.jCity.getCity().getNodeSize()/20);
+        traffic.setMinorTickSpacing(cityMap.jCity.getCity().getNodeSize()/10);
         fps.setMinorTickSpacing(10);
         speed.addChangeListener(e -> {
             City.SPEED = speed.getValue() + 1;
@@ -126,6 +126,7 @@ public class Main extends JFrame {
     }
 
     public static void start(City cityFromJson) {
+
         System.out.println("Main:" + new Timestamp(System.currentTimeMillis()) + " Starting GUI...");
         Main main = new Main(cityFromJson);
 

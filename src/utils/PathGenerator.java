@@ -11,7 +11,6 @@ import java.util.ArrayList;
  * @author Matteo Cosi
  * @since 16.02.2018
  */
-//TODO BUG: write paths in .pth only after all are genratet. Otherwise .pth is corrupted
 public class PathGenerator extends Thread {
 
     private static ArrayList<Path> paths = new ArrayList<>();

@@ -258,8 +258,8 @@ public final class OsmToJsonParser {
                 default:
                     jNode.put("type", "MultiConnection");
             }
-            if (pointer % (nodes.length() / 100) == 0)
-                System.out.println((double) pointer / nodes.length()* 100 + "%");
+           // if (pointer % (nodes.length() / 100) == 0)
+             //   System.out.println((double) pointer / nodes.length()* 100 + "%");
 
         }
     }
@@ -289,8 +289,8 @@ public final class OsmToJsonParser {
 
             jNode.put("x", x);
             jNode.put("y", y);
-            if (1 % (nodes.length() / 10) == 0)
-                System.out.println((double) 1 / nodes.length()* 100 + "%");
+          //  if (1 % (nodes.length() / 10) == 0)
+            //    System.out.println((double) 1 / nodes.length()* 100 + "%");
         }
 
         JSONObject jBounds = new JSONObject();

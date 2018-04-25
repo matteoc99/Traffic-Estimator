@@ -145,7 +145,6 @@ public class Node {
     }
 
     public void clearStreets() {
-        // TODO: 18.02.2018
         System.out.println("Error: Streets cannot be cleared yet");
     }
 
@@ -164,7 +163,6 @@ public class Node {
     }
 
     public void setDistanceCost(Node goal) {
-        // TODO: 12.03.2018 test :P
         this.distanceCost = getPosition().distanceTo(goal.getPosition());
     }
 
@@ -196,6 +194,7 @@ public class Node {
      * returns the lane for a new goal
      */
     public Lane getLaneTo(Node currentGoal) {
+        assert !currentGoal.equals(this);
         for (Street street : streets) {
             Iterator<Lane> bLanes = street.getBackwardLanesIterator();
             Lane lane =iterateLanesForNextLane(currentGoal, street, bLanes);
@@ -227,12 +226,14 @@ public class Node {
      *
      * @param vehicle  the vehicle that does the request
      * @param nextNode the desiered goal
+     * @param futureNode
      * @return true if the vehicle can drive, otherwise false
      */
-    public boolean register(Vehicle vehicle, Node nextNode) {
-        if (vehicle.getLane().getStreetlight() == null||(vehicle.getPrevGoal().getLaneTo(nextNode)!=null&&!vehicle.getPrevGoal().getLaneTo(nextNode).isFull()))
-            return true;
-        return vehicle.getLane().getStreetlight().getState() != 0;
+    public boolean register(Vehicle vehicle, Node nextNode, Node futureNode) {
+        if (nextNode.getLaneTo(futureNode) != null && nextNode.getLaneTo(futureNode).isFull())
+            return false;
+        return vehicle.getLane().getStreetlight() == null || vehicle.getLane().getStreetlight().getState() != 0;
+
     }
 
     /**
