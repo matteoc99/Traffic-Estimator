@@ -48,6 +48,7 @@ public class Beta extends JFrame {
 
         JButton startFromJson = new JButton("Create city from JSON/OSM");
         JButton getOsmFile = new JButton("Get an OSM file");
+        JButton bolzano = new JButton("Quick-start Bolzano");
 
         Insets i = getInsets();
 
@@ -55,29 +56,36 @@ public class Beta extends JFrame {
 
         startFromJson.setBounds(16 - i.left, (getHeight() / 4) + 16 - i.top, getWidth() - 32 - i.left + i.right, 80);
         getOsmFile.setBounds(16 - i.left, (getHeight() / 4) * 2 + 16 - i.top, getWidth() - 32 - i.left + i.right, 80);
+        bolzano.setBounds(16 - i.left, (getHeight() / 4) * 3 + 16 - i.top, getWidth() - 32 - i.left + i.right, 80);
 
         startFromJson.setBackground(new Color(55, 55, 55));
         getOsmFile.setBackground(new Color(55, 55, 55));
+        bolzano.setBackground(new Color(55, 55, 55));
 
         Font buttonFont = new Font("Arial", Font.BOLD, 25);
         Font titleFont = new Font("Arial", Font.BOLD, 40);
 
         startFromJson.setFont(buttonFont);
         getOsmFile.setFont(buttonFont);
+        bolzano.setFont(buttonFont);
         title.setFont(titleFont);
         title.setHorizontalAlignment(SwingConstants.CENTER);
         title.setVerticalAlignment(SwingConstants.CENTER);
 
         startFromJson.setOpaque(false);
         getOsmFile.setOpaque(false);
+        bolzano.setOpaque(false);
         startFromJson.setContentAreaFilled(false);
         getOsmFile.setContentAreaFilled(false);
+        bolzano.setContentAreaFilled(false);
         startFromJson.setBorderPainted(false);
         getOsmFile.setBorderPainted(false);
+        bolzano.setBorderPainted(false);
 
         title.setForeground(Color.WHITE);
         startFromJson.setForeground(Color.WHITE);
         getOsmFile.setForeground(Color.WHITE);
+        bolzano.setForeground(Color.WHITE);
 
 
         c.add(background, 0);
@@ -91,7 +99,7 @@ public class Beta extends JFrame {
             public void mouseClicked(MouseEvent e) {
                 JFileChooser chooser = new JFileChooser(System.getProperty("user.dir"));
                 chooser.showSaveDialog(null);
-                if (chooser.getSelectedFile()==null)
+                if (chooser.getSelectedFile() == null)
                     return;
 
                 String path = chooser.getSelectedFile().getAbsolutePath().substring(0, chooser.getSelectedFile().getAbsolutePath().lastIndexOf('\\'));
@@ -101,22 +109,22 @@ public class Beta extends JFrame {
 
                 String ending = chooser.getSelectedFile().getName().substring(chooser.getSelectedFile().getName().indexOf('.'));
 
-                    switch (ending) {
-                        case ".json": {
-                            dispose();
-                            Main.start(City.createCityFromJson(new File(path + "/" + name + ending)));
-                            break;
-                        }
-                        case ".osm": {
-                            dispose();
-                            OsmToJsonParser.parse(path + "/" + name + ending, path + "/" + name + ".json");
-                            Main.start(City.createCityFromJson(new File(path + "/" + name + ".json")));
-                            break;
-                        }
-                        default:
-                            new JOptionPane("The selected file is not an OSM or JSON file").createDialog("Warning").setVisible(true);
-                            break;
+                switch (ending) {
+                    case ".json": {
+                        dispose();
+                        Main.start(City.createCityFromJson(new File(path + "/" + name + ending)));
+                        break;
                     }
+                    case ".osm": {
+                        dispose();
+                        OsmToJsonParser.parse(path + "/" + name + ending, path + "/" + name + ".json");
+                        Main.start(City.createCityFromJson(new File(path + "/" + name + ".json")));
+                        break;
+                    }
+                    default:
+                        new JOptionPane("The selected file is not an OSM or JSON file").createDialog("Warning").setVisible(true);
+                        break;
+                }
 
             }
 
@@ -132,6 +140,9 @@ public class Beta extends JFrame {
                 startFromJson.setForeground(Color.white);
             }
         });
+
+
+
 
 
         getOsmFile.addMouseListener(new MouseAdapter() {

@@ -19,7 +19,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class Main extends JFrame {
 
     //fps stuff
-    public static int FPS = 20;
+    public static int FPS = 120;
 
 
     private ControlPanel controlPanel;
@@ -63,9 +63,9 @@ public class Main extends JFrame {
         ret.setBackground(new Color(86, 90, 200));
         ret.setBounds(getWidth() - getWidth() / 6, 0, getWidth() / 6, getHeight());
 
-        CustomSlider speed = new CustomSlider(JSlider.HORIZONTAL, 10, 1500, City.SPEED);
+        CustomSlider speed = new CustomSlider(JSlider.HORIZONTAL, 1, 1500, City.SPEED);
         CustomSlider traffic = new CustomSlider(JSlider.HORIZONTAL, 0, cityMap.jCity.getCity().getNodeSize()*2, City.VEHICLE_AMOUNT);
-        CustomSlider fps = new CustomSlider(JSlider.HORIZONTAL, 0, 120, FPS);
+        CustomSlider fps = new CustomSlider(JSlider.HORIZONTAL, 1, 120, FPS);
 
 
         int xOff = ret.getWidth() / 4;
@@ -95,7 +95,7 @@ public class Main extends JFrame {
         traffic.setMinorTickSpacing(cityMap.jCity.getCity().getNodeSize()/10);
         fps.setMinorTickSpacing(10);
         speed.addChangeListener(e -> {
-            City.SPEED = speed.getValue() + 1;
+            City.SPEED = speed.getValue() ;
             cityMap.repaint();
             requestFocus();
         });
@@ -106,7 +106,7 @@ public class Main extends JFrame {
             requestFocus();
         });
         fps.addChangeListener(e -> {
-            FPS = fps.getValue() + 1;
+            FPS = fps.getValue();
             cityMap.repaint();
             requestFocus();
         });

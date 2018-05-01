@@ -335,20 +335,15 @@ public class Lane {
     }
 
     public boolean isFull() {
+
         try {
-            //0.009 safety distance
-            if(vehicles.isEmpty()||vehicles.size()<3)
+            if (vehicles.isEmpty() || vehicles.size() < 3)
                 return false;
             if (vehicles.get(0).getVehicleDriving().getSafetyDist() * vehicles.size() > getLength()) {
                 return true;
             } else return false;
-        }catch (NullPointerException e){
+        } catch (NullPointerException e) {
             e.printStackTrace();
-            System.out.println(vehicles);
-            System.out.println(vehicles.get(0));
-            System.out.println(vehicles.get(0).getVehicleDriving().getSafetyDist());
-            System.out.println(vehicles.get(0).getVehicleDriving());
-            System.out.println(getLength());
             return false;
         }
     }

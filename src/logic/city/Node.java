@@ -197,12 +197,12 @@ public class Node {
         assert !currentGoal.equals(this);
         for (Street street : streets) {
             Iterator<Lane> bLanes = street.getBackwardLanesIterator();
-            Lane lane =iterateLanesForNextLane(currentGoal, street, bLanes);
-            if(lane!=null)
+            Lane lane = iterateLanesForNextLane(currentGoal, street, bLanes);
+            if (lane != null)
                 return lane;
             Iterator<Lane> fLanes = street.getForwardLanesIterator();
-            lane= iterateLanesForNextLane(currentGoal, street, fLanes);
-            if(lane!=null)
+            lane = iterateLanesForNextLane(currentGoal, street, fLanes);
+            if (lane != null)
                 return lane;
         }
         return null;
@@ -224,15 +224,23 @@ public class Node {
     /**
      * This method is called when a Vehicle wants to drive over this node to another Node
      *
-     * @param vehicle  the vehicle that does the request
-     * @param nextNode the desiered goal
+     * @param vehicle    the vehicle that does the request
+     * @param nextNode   the desiered goal
      * @param futureNode
      * @return true if the vehicle can drive, otherwise false
      */
     public boolean register(Vehicle vehicle, Node nextNode, Node futureNode) {
-        if (nextNode.getLaneTo(futureNode) != null && nextNode.getLaneTo(futureNode).isFull())
+        assert !nextNode.equals(futureNode);
+        if (futureNode != null)
+            if (nextNode.getLaneTo(futureNode) != null && nextNode.getLaneTo(futureNode).isFull()) {
+                assert !nextNode.getLaneTo(futureNode).equals(vehicle.getLane());
+                return false;
+            }
+        if (vehicle.getLane().getStreetlight() == null || vehicle.getLane().getStreetlight().getState() == Streetlight.GREEN) {
+            return true;
+        } else {
             return false;
-        return vehicle.getLane().getStreetlight() == null || vehicle.getLane().getStreetlight().getState() != 0;
+        }
 
     }
 

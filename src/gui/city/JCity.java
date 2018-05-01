@@ -135,19 +135,18 @@ public class JCity extends JPanel {
         //draw lanes
         g2.setColor(lane.getColorByTraffic());
         if (showStreets)
-            g2.setStroke(new BasicStroke(zoomLevel/8));
-            if (zoomLevel <= 14) {
-                if (lane.isFull()) {
-                    g2.setColor(Color.MAGENTA);
-                    g2.setStroke(new BasicStroke(zoomLevel/8+5));
-                } else if (lane.getTraffic() > 1.3){
-                        g2.setStroke(new BasicStroke(zoomLevel/8+3));
+            g2.setStroke(new BasicStroke(zoomLevel / 8));
+        if (zoomLevel <= 14) {
+            if (lane.isFull()) {
+                g2.setStroke(new BasicStroke(zoomLevel / 8 + 5));
+            } else if (lane.getTraffic() > 1.3) {
+                g2.setStroke(new BasicStroke(zoomLevel / 8 + 3));
 
-                }else if (lane.getTraffic() > 0.8){
-                    g2.setStroke(new BasicStroke(zoomLevel/8+2));
+            } else if (lane.getTraffic() > 0.8) {
+                g2.setStroke(new BasicStroke(zoomLevel / 8 + 2));
 
-                }
             }
+        }
         g2.drawLine((int) (getXYByOsmTileXY(lane.getParent().getxFrom()) * zoom) - (zoomLevel / 8 + i * 2) * dir,
                 (int) (getXYByOsmTileXY(lane.getParent().getyFrom()) * zoom) - (zoomLevel / 8 + i * 2) * dir,
                 (int) (getXYByOsmTileXY(lane.getParent().getxTo()) * zoom) - (zoomLevel / 8 + i * 2) * dir,
@@ -155,19 +154,18 @@ public class JCity extends JPanel {
 
         g2.setStroke(new BasicStroke(1));
         ArrayList<Vehicle> vehicles = lane.getVehicles();
-        //anti duplicate
+
         if (showCars && zoomLevel > 14) {
             ArrayList<Vehicle> cars = new ArrayList<>(vehicles);
             for (Vehicle vehicle : cars) {
-                g2.setColor(vehicle.getColor());
-                // FIXME: 22.04.2018 Vehicle can be null
-                // draw cars
-                g2.fillOval((int) ((int) ((getXYByOsmTileXY(vehicle.currentPositionOnLane().getX())) * zoom) - (zoomLevel / 2) / 2 - (1 + i * 2) * dir),
-                        (int) ((int) ((getXYByOsmTileXY(vehicle.currentPositionOnLane().getY())) * zoom) - (zoomLevel / 2) / 2 - (1 + i * 2) * dir),
-                        zoomLevel / 2, zoomLevel / 2);
+                if (vehicle != null) {
+                    g2.setColor(vehicle.getColor());
+                    g2.fillOval((int) ((int) ((getXYByOsmTileXY(vehicle.currentPositionOnLane().getX())) * zoom) - (zoomLevel / 2) / 2 - (1 + i * 2) * dir),
+                            (int) ((int) ((getXYByOsmTileXY(vehicle.currentPositionOnLane().getY())) * zoom) - (zoomLevel / 2) / 2 - (1 + i * 2) * dir),
+                            zoomLevel / 2, zoomLevel / 2);
+                }
             }
         }
-        //draw streetlights
         if (showLights && zoomLevel > 14) {
             if (lane.getStreetlight() != null) {
                 if (lane.getStreetlight().getState() == 0)

@@ -56,6 +56,7 @@ public class CityMap extends JPanel {
             while (true) {
                 long zeitvorsleep = System.currentTimeMillis();
                 repaint();
+
                 long zeitvergangen = (System.currentTimeMillis() - zeitvorsleep);
                 if (zeitvergangen < 1000.0 / Main.FPS) {
                     try {

@@ -43,7 +43,7 @@ public class Streetlight {
     }
 
     public Streetlight(Lane parentLane, StreetlightLogic parentLogic, Direction direction) {
-        this(0,parentLane,parentLogic,direction);
+        this(RED,parentLane,parentLogic,direction);
     }
 
     public enum Direction {
@@ -51,7 +51,7 @@ public class Streetlight {
     }
 
     public void toggle(){
-        state = (state == 1 ? 0 : 1);
+        state = (state == GREEN? RED : GREEN);
     }
 
     public int getState() {
