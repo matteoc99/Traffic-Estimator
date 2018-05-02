@@ -217,7 +217,7 @@ public class VehicleDriving implements DrivingInterface {
         considerative = Math.random();
         agressivity = Math.random();
         desiredSpeed = Math.random();
-        reactionTime = (int) (Math.random() * 40);
+        reactionTime = (int) (Math.random() * 40)+5 ;
     }
 
     @Override

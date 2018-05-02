@@ -34,8 +34,7 @@ public class TileBuffer implements Runnable {
     TileBuffer(OSMTileManager osmTileManager, int threadCount) {
         this.osmTileManager = osmTileManager;
         for (int i = 0; i < threadCount; i++) {
-            // TODO: 02.05.2018
-            //new Thread(this).start();
+            new Thread(this).start();
         }
     }
 

@@ -319,7 +319,7 @@ public class Overlay extends JPanel {
             BufferedImage tempBI = new BufferedImage(256, 256, BufferedImage.TYPE_INT_RGB);
             Graphics2D    graphics = tempBI.createGraphics();
 
-            graphics.setPaint ( Color.gray );
+            graphics.setPaint ( new Color(55,55,55));
             graphics.fillRect ( 0, 0, tempBI.getWidth(), tempBI.getHeight() );
 
             //tempBI.getGraphics().drawString(p.toString(), 10, 128);

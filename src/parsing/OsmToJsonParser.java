@@ -142,8 +142,9 @@ public final class OsmToJsonParser {
                 Element eNdsElement = (Element) nTag;
 
                 String value = eNdsElement.getAttribute("v");
+                String key = eNdsElement.getAttribute("k");
 
-                if (value.equals("traffic_signals")) {
+                if (value.equals("traffic_signals")&&key.equals("highway")) {
                     jNode.put("traffic_signal", true);
                     break;
                 }
