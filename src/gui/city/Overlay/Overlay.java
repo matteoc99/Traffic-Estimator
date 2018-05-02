@@ -317,7 +317,12 @@ public class Overlay extends JPanel {
         } else {
             Point p = getTilePointWithExtraOffset(xIndex, yIndex);
             BufferedImage tempBI = new BufferedImage(256, 256, BufferedImage.TYPE_INT_RGB);
-            tempBI.getGraphics().drawString(p.toString(), 10, 128);
+            Graphics2D    graphics = tempBI.createGraphics();
+
+            graphics.setPaint ( Color.gray );
+            graphics.fillRect ( 0, 0, tempBI.getWidth(), tempBI.getHeight() );
+
+            //tempBI.getGraphics().drawString(p.toString(), 10, 128);
             label.setIcon(new ImageIcon(tempBI));
             tileManager.buffer(currentZoomLevel, p, label);
         }

@@ -11,6 +11,8 @@ import utils.math.Position;
 
 import java.awt.*;
 
+import static main.Main.SPEED_TRIM;
+
 /**
  * @author Matteo Cosi
  * @since 15.12.2017
@@ -78,7 +80,6 @@ public class Vehicle {
      */
     private City city;
 
-    public int speedTrimm = 300; // TODO: 24.04.2018 if increase bug goes away...why??
 
     public Vehicle(City city) {
         this.city = city;
@@ -225,7 +226,7 @@ public class Vehicle {
     }
 
     public void incrementProgressInLane(double currentSpeed) {
-        progressInLane += currentSpeed / speedTrimm; // TODO: 28.02.2018 trimm
+        progressInLane += currentSpeed / SPEED_TRIM;
     }
 
     public City getCity() {

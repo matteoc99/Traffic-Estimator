@@ -80,7 +80,7 @@ public class City extends Thread {
     /**
      * These two variables are used to determine the speed of the city calculation
      */
-    public static int SPEED = 20;
+    public static int SPEED = 60;
     public static long zeitvorsleep;
 
 

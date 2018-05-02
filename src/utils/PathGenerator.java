@@ -64,6 +64,8 @@ public class PathGenerator extends Thread {
     }
 
     public static Path getRandomPath(City city) {
+        if(city==null)
+            return null;
         //check if paths are already generated
         File pth = new File("C:\\TrafficEstimator\\Paths\\" + city.getName() + ".pth");
         if (pth.exists()) {

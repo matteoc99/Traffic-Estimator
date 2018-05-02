@@ -134,25 +134,26 @@ public class JCity extends JPanel {
         int dir = isBackward ? -1 : 1;
         //draw lanes
         g2.setColor(lane.getColorByTraffic());
-        if (showStreets)
+        if (showStreets) {
             g2.setStroke(new BasicStroke(zoomLevel / 8));
-        if (zoomLevel <= 14) {
-            if (lane.isFull()) {
-                g2.setStroke(new BasicStroke(zoomLevel / 8 + 5));
-            } else if (lane.getTraffic() > 1.3) {
-                g2.setStroke(new BasicStroke(zoomLevel / 8 + 3));
+            if (zoomLevel <= 14) {
+                if (lane.isFull()) {
+                    g2.setStroke(new BasicStroke(zoomLevel / 8 + 5));
+                } else if (lane.getTraffic() > 1.3) {
+                    g2.setStroke(new BasicStroke(zoomLevel / 8 + 3));
 
-            } else if (lane.getTraffic() > 0.8) {
-                g2.setStroke(new BasicStroke(zoomLevel / 8 + 2));
+                } else if (lane.getTraffic() > 0.8) {
+                    g2.setStroke(new BasicStroke(zoomLevel / 8 + 2));
 
+                }
             }
-        }
-        g2.drawLine((int) (getXYByOsmTileXY(lane.getParent().getxFrom()) * zoom) - (zoomLevel / 8 + i * 2) * dir,
-                (int) (getXYByOsmTileXY(lane.getParent().getyFrom()) * zoom) - (zoomLevel / 8 + i * 2) * dir,
-                (int) (getXYByOsmTileXY(lane.getParent().getxTo()) * zoom) - (zoomLevel / 8 + i * 2) * dir,
-                (int) (getXYByOsmTileXY(lane.getParent().getyTo()) * zoom) - (zoomLevel / 8 + i * 2) * dir);
+            g2.drawLine((int) (getXYByOsmTileXY(lane.getParent().getxFrom()) * zoom) - (zoomLevel / 8 + i * 2) * dir,
+                    (int) (getXYByOsmTileXY(lane.getParent().getyFrom()) * zoom) - (zoomLevel / 8 + i * 2) * dir,
+                    (int) (getXYByOsmTileXY(lane.getParent().getxTo()) * zoom) - (zoomLevel / 8 + i * 2) * dir,
+                    (int) (getXYByOsmTileXY(lane.getParent().getyTo()) * zoom) - (zoomLevel / 8 + i * 2) * dir);
 
-        g2.setStroke(new BasicStroke(1));
+            g2.setStroke(new BasicStroke(1));
+        }
         ArrayList<Vehicle> vehicles = lane.getVehicles();
 
         if (showCars && zoomLevel > 14) {

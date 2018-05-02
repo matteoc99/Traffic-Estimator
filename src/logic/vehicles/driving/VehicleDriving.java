@@ -10,6 +10,9 @@ import utils.PathGenerator;
 
 import java.util.ArrayList;
 
+import static main.Main.SAFETY_KONST;
+import static main.Main.SPEED_TRIM;
+
 /**
  * @author Matteo Cosi
  * @since 21.02.2018
@@ -214,7 +217,7 @@ public class VehicleDriving implements DrivingInterface {
         considerative = Math.random();
         agressivity = Math.random();
         desiredSpeed = Math.random();
-        reactionTime = (int) (Math.random() * 10);
+        reactionTime = (int) (Math.random() * 40);
     }
 
     @Override
@@ -289,7 +292,7 @@ public class VehicleDriving implements DrivingInterface {
         //todo from time to time evaluate other actions because --> once follow lane u are stuck until lane change
         // TODO: 18.04.2018 BUG  if not can go and need to stop. Next goal is taken and evaluated.##
 
-        if (vehicle.getProgressInLane() + vehicle.getCurrentSpeed() / vehicle.speedTrimm + getSafetyDist() >= vehicle.getLane().getLength()) {
+        if (vehicle.getProgressInLane() +getSafetyDist() >= vehicle.getLane().getLength()) {
             //change lane or die if path end is reached
             canGo = vehicle.getPrevGoal().register(vehicle, vehicle.getCurrentGoal(), vehicle.getCity().getNodeById(vehicle.getPath().getGoal()));
             if (canGo) {
@@ -352,14 +355,14 @@ public class VehicleDriving implements DrivingInterface {
         Vehicle nextVehicle = vehicle.getLane().getNextVehicle(vehicle.getProgressInLane());
         double nextVehiclePos = nextVehicle == null ? vehicle.getLane().getLength() : nextVehicle.getProgressInLane();
 
-        if (vehicle.getCurrentSpeed() > goalSpeed || nextVehiclePos < vehicle.getProgressInLane() + vehicle.getCurrentSpeed() / vehicle.speedTrimm + getSafetyDist()) {
-            while (vehicle.getCurrentSpeed() > goalSpeed || nextVehiclePos < vehicle.getProgressInLane() + vehicle.getCurrentSpeed() / vehicle.speedTrimm + getSafetyDist()) {
-                vehicle.incrementCurrentSpeed(-Math.log(goalSpeed));
+        if (vehicle.getCurrentSpeed() > goalSpeed || nextVehiclePos < vehicle.getProgressInLane() + vehicle.getCurrentSpeed() / SPEED_TRIM + getSafetyDist()) {
+            while (vehicle.getCurrentSpeed() > goalSpeed || nextVehiclePos < vehicle.getProgressInLane() + vehicle.getCurrentSpeed() / SPEED_TRIM + getSafetyDist()) {
+                vehicle.incrementCurrentSpeed(-Math.log(goalSpeed)/reactionTime);
                 if (vehicle.getCurrentSpeed() == 0)
                     break;
             }
         } else {
-            vehicle.incrementCurrentSpeed(Math.log(goalSpeed));
+            vehicle.incrementCurrentSpeed(Math.log(goalSpeed)/reactionTime);
         }
         actionCompleted();
     }
@@ -450,8 +453,8 @@ public class VehicleDriving implements DrivingInterface {
         Vehicle prev = lane.getPrevVehicle(vehicle.getProgressInLane());
         Vehicle next = lane.getNextVehicle(vehicle.getProgressInLane());
 
-        if (prev != null && prev.getProgressInLane() + vehicle.getCurrentSpeed() / vehicle.speedTrimm + getSafetyDist() < vehicle.getProgressInLane()
-                || next != null && next.getProgressInLane() - vehicle.getCurrentSpeed() / vehicle.speedTrimm - getSafetyDist() > vehicle.getProgressInLane()) {
+        if (prev != null && prev.getProgressInLane() + vehicle.getCurrentSpeed() / SPEED_TRIM + getSafetyDist() < vehicle.getProgressInLane()
+                || next != null && next.getProgressInLane() - vehicle.getCurrentSpeed() / SPEED_TRIM - getSafetyDist() > vehicle.getProgressInLane()) {
             return true;
         }
         return false;
@@ -471,6 +474,7 @@ public class VehicleDriving implements DrivingInterface {
     }
 
     public double getSafetyDist() {
-        return 0.008 + vehicle.getCurrentSpeed() / vehicle.speedTrimm;
+        return SAFETY_KONST/100000.0 + vehicle.getCurrentSpeed() /100;
+
     }
 }

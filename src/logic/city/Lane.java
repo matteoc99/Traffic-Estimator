@@ -61,9 +61,10 @@ public class Lane {
         this.parent = parent;
         this.reversed = reversed;
         this.index = index;
-        if (parent != null)
-            parent.addLane(this);
         vehicles = new ArrayList<>();
+        if (parent != null) {
+            parent.addLane(this);
+        }
     }
 
     /**
@@ -266,7 +267,11 @@ public class Lane {
             } else if (avgSpeed < 10) {
                 traffic += 0.65;
             }
-            traffic += getVehicles().size() * 0.005 / getLength();
+            try {
+                traffic += getVehicles().size() * (getVehicles() == null || getVehicles().isEmpty() ? 0 : getVehicles().get(0).getVehicleDriving().getSafetyDist()) / getLength();
+            } catch (NullPointerException e) {
+                //TODO ignored
+            }
         }
         return (traffic);
     }
