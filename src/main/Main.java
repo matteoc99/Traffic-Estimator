@@ -145,7 +145,7 @@ public class Main extends JFrame {
     public static void main(String[] args) {
         System.out.println("Main:" + new Timestamp(System.currentTimeMillis()) + " Creating City from .json...");
         City city = City.createCityFromJson(
-                new File(System.getProperty("user.dir") + "\\src\\parsing\\res\\bozenLargeMSTest.json"));
+                new File(System.getProperty("user.dir") + "\\src\\parsing\\res\\bozenLargeLaneTest.json"));
         System.out.println("Main:" + new Timestamp(System.currentTimeMillis()) + " Starting GUI...");
         new Main(city);
     }

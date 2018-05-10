@@ -30,7 +30,7 @@ public final class OsmToJsonParser {
 
     public static void main(String[] args) {
         parse(System.getProperty("user.dir") + "\\src\\parsing\\res\\bozenLarge.osm",
-                System.getProperty("user.dir") + "\\src\\parsing\\res\\bozenLargeMSTest.json");
+                System.getProperty("user.dir") + "\\src\\parsing\\res\\bozenLargeLaneTest.json");
     }
 
     /**
@@ -176,7 +176,7 @@ public final class OsmToJsonParser {
 
             int maxSpeed = 50;
             boolean oneWay = false;
-            int totalLanes = 1;
+            int totalLanes = 2;
             int forwardLanes = -1;
             int backwardLanes = -1;
 
@@ -256,22 +256,35 @@ public final class OsmToJsonParser {
 
                 lastNodeId = nodeRef;
 
-                // TODO: 02.02.2018 always 2 lanes on street
-                JSONObject jLane = new JSONObject();
-                JSONObject jLaneR = new JSONObject();
+                if (oneWay || forwardLanes == totalLanes || totalLanes == 1) {
+                    forwardLanes = totalLanes;
+                    backwardLanes = 0;
+                } else if (forwardLanes != -1)
+                    backwardLanes = totalLanes - forwardLanes;
+                else if (backwardLanes != -1)
+                    forwardLanes = totalLanes - backwardLanes;
+                else {
+                    forwardLanes = totalLanes/2;
+                    backwardLanes = totalLanes/2;
+                }
 
-                jLane.put("id", jStreetID + "_f_0");
-                jLane.put("parent", jStreetID);
-                jLane.put("index", 0);
-                jLane.put("reversed", false);
+                for (int laneIndex = 0; laneIndex < forwardLanes; laneIndex++) {
+                    JSONObject jLane = new JSONObject();
+                    jLane.put("id", jStreetID + "_f_0");
+                    jLane.put("parent", jStreetID);
+                    jLane.put("index", laneIndex);
+                    jLane.put("reversed", false);
+                    jLanes.put(jLane);
+                }
 
-                jLaneR.put("id", jStreetID + "_t_0");
-                jLaneR.put("parent", jStreetID);
-                jLaneR.put("index", 0);
-                jLaneR.put("reversed", true);
-
-                jLanes.put(jLane);
-                jLanes.put(jLaneR);
+                for (int laneIndex = 0; laneIndex < backwardLanes; laneIndex++) {
+                    JSONObject jLaneR = new JSONObject();
+                    jLaneR.put("id", jStreetID + "_t_0");
+                    jLaneR.put("parent", jStreetID);
+                    jLaneR.put("index", laneIndex);
+                    jLaneR.put("reversed", true);
+                    jLanes.put(jLaneR);
+                }
             }
         }
     }
@@ -303,8 +316,6 @@ public final class OsmToJsonParser {
                 default:
                     jNode.put("type", "MultiConnection");
             }
-           // if (pointer % (nodes.length() / 100) == 0)
-             //   System.out.println((double) pointer / nodes.length()* 100 + "%");
 
         }
     }

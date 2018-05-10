@@ -48,6 +48,16 @@ public class CityMap extends JPanel {
         overlay.addMouseMotionListener(cmml);
         overlay.addMouseWheelListener(cmml);
 
+        parent.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                if (e.getKeyChar() == 'p')
+                    overlay.printTileManagerImages();
+                if (e.getKeyChar() == 'r')
+                    overlay.readTileManagerImages();
+            }
+        });
+
         jCity.addMouseListener(cmml);
         jCity.addMouseMotionListener(cmml);
         jCity.addMouseWheelListener(cmml);

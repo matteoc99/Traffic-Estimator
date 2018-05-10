@@ -68,8 +68,14 @@ public class Overlay extends JPanel {
         fillLabels();
 
         this.addComponentListener(new OverlayComponentAdapter());
+    }
 
+    public void printTileManagerImages() {
+        ((OSMTileManager) tileManager).printImages();
+    }
 
+    public void readTileManagerImages() {
+        ((OSMTileManager) tileManager).readImages();
     }
 
     private void loadInitialList() {

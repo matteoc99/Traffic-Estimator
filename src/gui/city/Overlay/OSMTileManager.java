@@ -1,5 +1,6 @@
 package gui.city.Overlay;
 
+import javax.imageio.ImageIO;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
@@ -7,6 +8,11 @@ import javax.net.ssl.X509TrustManager;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.GeneralSecurityException;
 import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
@@ -58,6 +64,56 @@ public class OSMTileManager implements TileManager {
             HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
         } catch (GeneralSecurityException e) {
             throw new ExceptionInInitializerError(e);
+        }
+    }
+
+    public void printImages() {
+        for (Map.Entry<Integer, Map<Integer, Map<Integer, BufferedImage>>> integerMapEntry : images.entrySet()) {
+            for (Map.Entry<Integer, Map<Integer, BufferedImage>> mapEntry : integerMapEntry.getValue().entrySet()) {
+                for (Map.Entry<Integer, BufferedImage> integerBufferedImageEntry : mapEntry.getValue().entrySet()) {
+                    BufferedImage image = integerBufferedImageEntry.getValue();
+                    try {
+                        File file = new File("C:\\TrafficEstimator\\imageStorage\\" +
+                                integerMapEntry.getKey() + "\\" +
+                                mapEntry.getKey() + "\\" +
+                                integerBufferedImageEntry.getKey() + "\\" +
+                                "image.png"
+                        );
+                        Path pathToFile = Paths.get("C:\\TrafficEstimator\\imageStorage\\" +
+                                integerMapEntry.getKey() + "\\" +
+                                mapEntry.getKey() + "\\" +
+                                integerBufferedImageEntry.getKey() + "\\" +
+                                "image.png");
+                        Files.createDirectories(pathToFile.getParent());
+                        Files.createFile(pathToFile);
+                        ImageIO.write(image, "png", file);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+    }
+
+    public void readImages() {
+        File root = new File("C:\\TrafficEstimator\\imageStorage\\");
+        recursiveDirSearch(root);
+    }
+
+    private void recursiveDirSearch(File root) {
+        if (!root.isDirectory())
+            return;
+        for (File file : root.listFiles()) {
+            if (file.isFile()) {
+                try {
+                    BufferedImage image = ImageIO.read(file);
+                    String[] dirs = file.getAbsolutePath().split("\\\\");
+                    addImage(image, Integer.parseInt(dirs[3]), new Point(Integer.parseInt(dirs[4]), Integer.parseInt(dirs[5])));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            } else if (file.isDirectory())
+                recursiveDirSearch(file);
         }
     }
 

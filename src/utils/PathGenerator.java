@@ -25,6 +25,10 @@ public class PathGenerator extends Thread {
 
     private static void generatePaths(City city, int count) {
         File pth = new File("C:\\TrafficEstimator\\Paths\\" + city.getName() + ".pth");
+        if (!pth.exists())
+            try {
+                pth.createNewFile();
+            } catch (IOException ignored) {}
         FileOutputStream fos = null;
         try {
             fos = new FileOutputStream(pth);
