@@ -63,7 +63,7 @@ public class Main extends JFrame {
     private ControlPanel setUpControlPanel() {
         ControlPanel ret = new ControlPanel();
         ret.setBackground(new Color(86, 90, 200));
-        ret.setBounds(getWidth() - getWidth() / 6, 0, getWidth() / 6, getHeight());
+        ret.setBounds(getWidth() - getWidth() / 5, 0, getWidth() / 5, getHeight());
 
         CustomSlider speed = new CustomSlider(JSlider.HORIZONTAL, 1, 800, City.SPEED);
         CustomSlider traffic = new CustomSlider(JSlider.HORIZONTAL, 0, cityMap.jCity.getCity().getNodeSize()/2, City.VEHICLE_AMOUNT);
@@ -72,13 +72,13 @@ public class Main extends JFrame {
         CustomSlider safety= new CustomSlider(JSlider.HORIZONTAL, 1, 20000, SAFETY_KONST);
 
 
-        int xOff = ret.getWidth() / 4;
+        int xOff = ret.getWidth() / 3;
 
         JLabel[] labels = new JLabel[5];
         for (int i = 0; i < labels.length; i++) {
             labels[i] = new JLabel();
             labels[i].setBounds(20, (ret.getHeight() / 12) * i, xOff - 10, ret.getHeight() / 10);
-            labels[i].setFont(new Font("Times New Roman", 0, 20));
+            labels[i].setFont(new Font("Times New Roman", 0, 16));
             ret.add(labels[i]);
         }
 
@@ -145,9 +145,9 @@ public class Main extends JFrame {
     public static void main(String[] args) {
         System.out.println("Main:" + new Timestamp(System.currentTimeMillis()) + " Creating City from .json...");
         City city = City.createCityFromJson(
-                new File(System.getProperty("user.dir") + "\\src\\parsing\\res\\bozen.json"));
+                new File(System.getProperty("user.dir") + "\\src\\parsing\\res\\bozenLargeMSTest.json"));
         System.out.println("Main:" + new Timestamp(System.currentTimeMillis()) + " Starting GUI...");
-        Main main = new Main(city);
+        new Main(city);
     }
 
     public static void start(City cityFromJson) {

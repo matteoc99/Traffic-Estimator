@@ -26,7 +26,7 @@ public class Beta extends JFrame {
         setTitle("Traffic-Estimator");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
-        setSize(dimension.width / 4, dimension.height / 2);
+        setSize(480, 640);
         setLocationRelativeTo(null);
         setVisible(true);
         setResizable(false);

@@ -67,8 +67,7 @@ public class TileBuffer implements Runnable {
             // TODO: 06.03.2018 Filling a single label does not work, instead all labels need to be repainted
             //osmTileManager.overlay.fillLabel(input.getKey());
             osmTileManager.overlay.fillLabels();
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception ignored) {
         }
     }
 
@@ -78,8 +77,7 @@ public class TileBuffer implements Runnable {
             Point point = input.getValue();
             BufferedImage bufferedImage = ImageIO.read(new URL(osmTileManager.getTileLink(point, zoom)));
             osmTileManager.addImage(bufferedImage, zoom, point);
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception ignored) {
         }
     }
 

@@ -292,7 +292,7 @@ public class VehicleDriving implements DrivingInterface {
         //todo from time to time evaluate other actions because --> once follow lane u are stuck until lane change
         // TODO: 18.04.2018 BUG  if not can go and need to stop. Next goal is taken and evaluated.##
 
-        if (vehicle.getProgressInLane() +getSafetyDist() >= vehicle.getLane().getLength()) {
+        if (vehicle.getProgressInLane() + getSafetyDist() >= vehicle.getLane().getLength()) {
             //change lane or die if path end is reached
             canGo = vehicle.getPrevGoal().register(vehicle, vehicle.getCurrentGoal(), vehicle.getCity().getNodeById(vehicle.getPath().getGoal()));
             if (canGo) {

@@ -169,7 +169,6 @@ public class City extends Thread {
             Node fromNode = city.getNodeById(from);
             Node toNode = city.getNodeById(to);
 
-
             new Street(id, city, fromNode, toNode, maxSpeed, prominence);
         }
         city.sortStreets();
@@ -385,7 +384,7 @@ public class City extends Thread {
     }
 
     /**
-     * Checks weathrt a node is already in the city
+     * Checks if a node is already in the city
      *
      * @param node the node to check
      * @return true if the node is in the city, otherwise false

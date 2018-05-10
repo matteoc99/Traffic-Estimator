@@ -29,12 +29,12 @@ public final class OsmToJsonParser {
     private static Map<String, Integer> streetsOnNode = new HashMap<>();
 
     public static void main(String[] args) {
-        parse(System.getProperty("user.dir") + "\\src\\parsing\\res\\suedtirol.osm",
-                System.getProperty("user.dir") + "\\src\\parsing\\res\\suedtirol.json");
+        parse(System.getProperty("user.dir") + "\\src\\parsing\\res\\bozenLarge.osm",
+                System.getProperty("user.dir") + "\\src\\parsing\\res\\bozenLargeMSTest.json");
     }
 
     /**
-     * Method parses a OsmFile, exported from OpenStreetMap, to a JsonFile,
+     * Method parses an OsmFile, exported from OpenStreetMap, to a JsonFile,
      * which can then be read in the City-class to create a City-Object
      *
      * @param osmFilePath  File to read from
@@ -124,8 +124,8 @@ public final class OsmToJsonParser {
             JSONObject jNode = new JSONObject();
             jNode.put("id", eElement.getAttribute("id"));
 
-            jNode.put("x", eElement.getAttribute("lon")); //lon
-            jNode.put("y", eElement.getAttribute("lat")); //lat
+            jNode.put("x", eElement.getAttribute("lon"));
+            jNode.put("y", eElement.getAttribute("lat"));
 
             jNode.put("fame", 0.2);
             jNode.put("type", "NotClassified");
@@ -144,7 +144,7 @@ public final class OsmToJsonParser {
                 String value = eNdsElement.getAttribute("v");
                 String key = eNdsElement.getAttribute("k");
 
-                if (value.equals("traffic_signals")&&key.equals("highway")) {
+                if (value.equals("traffic_signals") && key.equals("highway")) {
                     jNode.put("traffic_signal", true);
                     break;
                 }
@@ -174,6 +174,50 @@ public final class OsmToJsonParser {
             if (!validateWay(eWayElement))
                 continue;
 
+            int maxSpeed = 50;
+            boolean oneWay = false;
+            int totalLanes = 1;
+            int forwardLanes = -1;
+            int backwardLanes = -1;
+
+            NodeList attrList = eWayElement.getElementsByTagName("tag");
+            for (int j = 0; j < attrList.getLength(); j++) {
+                Node node = attrList.item(j);
+                if (node.getNodeType() == Node.ELEMENT_NODE) {
+                    Element element = ((Element) node);
+
+                    String key = element.getAttribute("k");
+                    String value = element.getAttribute("v");
+
+                    switch (key) {
+                        case "maxspeed":
+                            try {
+                                maxSpeed = Integer.parseInt(value);
+                            } catch (Exception ignored) { }
+                            break;
+                        case "oneway":
+                            if (value.equals("yes"))
+                                oneWay = true;
+                            break;
+                        case "lanes":
+                            try {
+                                totalLanes = Integer.parseInt(value);
+                            } catch (Exception ignored) { }
+                            break;
+                        case "lanes:forward":
+                            try {
+                                forwardLanes = Integer.parseInt(value);
+                            } catch (Exception ignored) { }
+                            break;
+                        case "lanes:backward":
+                            try {
+                                backwardLanes = Integer.parseInt(value);
+                            } catch (Exception ignored) { }
+                            break;
+                    }
+                }
+            }
+
             NodeList ndsList = eWayElement.getElementsByTagName("nd");
 
             String lastNodeId = null;
@@ -201,7 +245,7 @@ public final class OsmToJsonParser {
                 jStreet.put("id", jStreetID);
                 jStreet.put("from", lastNodeId);
                 jStreet.put("to", nodeRef);
-                jStreet.put("maxSpeed", 1);
+                jStreet.put("maxSpeed", maxSpeed);
                 jStreet.put("prominence", 1);
 
                 jStreets.put(jStreet);
@@ -327,6 +371,7 @@ public final class OsmToJsonParser {
                         case "track":
                         case "bridleway":
                         case "cycleway":
+                        case "living_street":
                             return false;
                         default:
                             isValidHighway = true;

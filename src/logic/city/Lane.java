@@ -255,20 +255,8 @@ public class Lane {
                 getVehicles().remove(vehicle);
         }
         if (getVehicles().size() > 0) {
-            avgSpeed = avgSpeed / getVehicles().size();
-            if (avgSpeed < 50) {
-                traffic += 0.05;
-            } else if (avgSpeed < 40) {
-                traffic += 0.15;
-            } else if (avgSpeed < 30) {
-                traffic += 0.25;
-            } else if (avgSpeed < 20) {
-                traffic += 0.45;
-            } else if (avgSpeed < 10) {
-                traffic += 0.65;
-            }
             try {
-                traffic += getVehicles().size() * (getVehicles() == null || getVehicles().isEmpty() ? 0 : getVehicles().get(0).getVehicleDriving().getSafetyDist()) / getLength();
+                traffic += getVehicles().size() * (getVehicles() == null || getVehicles().isEmpty() ? 0 : getVehicles().get(0).getVehicleDriving().getSafetyDist()) / (getLength()*2);
             } catch (NullPointerException e) {
                 //TODO ignored
             }
@@ -336,7 +324,12 @@ public class Lane {
     }
 
     public double getDegrees() {
-        return Utils.calcDegreesBetweenTwoPoint((int) Math.round(getFromNode().getX()), (int) Math.round(getFromNode().getY()), (int) Math.round(getToNode().getX()), (int) Math.round(getToNode().getY()));
+        return Utils.calcDegreesBetweenTwoPoint(
+                (int) Math.round(getFromNode().getX()),
+                (int) Math.round(getFromNode().getY()),
+                (int) Math.round(getToNode().getX()),
+                (int) Math.round(getToNode().getY())
+        );
     }
 
     public boolean isFull() {

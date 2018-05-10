@@ -87,8 +87,10 @@ public class JCity extends JPanel {
 
     @Override
     protected void paintComponent(Graphics g) {
-        if (pslFlag)
+        if (pslFlag) {
+            ((Graphics2D)g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             paintStreetLines((Graphics2D) g);
+        }
 
     }
 

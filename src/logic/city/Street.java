@@ -59,8 +59,6 @@ public class Street extends StreetComponent {
         this.from = from;
         this.to = to;
         this.maxSpeed = maxSpeed;
-        // TODO: 01.03.2018 why is maxspeed == 2.0
-        this.maxSpeed = 50;
         this.unProminence = unProminence;
 
 
