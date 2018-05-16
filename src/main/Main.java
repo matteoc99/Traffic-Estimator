@@ -24,7 +24,7 @@ public class Main extends JFrame {
     //fps stuff
     public static int FPS = 120;
     public static int SPEED_TRIM= 600;
-    public static int SAFETY_KONST= 4000;
+    public static int SAFETY_KONST= 400;
 
 
     private ControlPanel controlPanel;
@@ -79,7 +79,7 @@ public class Main extends JFrame {
         CustomSlider traffic = new CustomSlider(JSlider.HORIZONTAL, 0, cityMap.jCity.getCity().getNodeSize()/2, City.VEHICLE_AMOUNT);
         CustomSlider fps = new CustomSlider(JSlider.HORIZONTAL, 1, 150, FPS);
         CustomSlider speedTrim= new CustomSlider(JSlider.HORIZONTAL, 1, 1000, SPEED_TRIM);
-        CustomSlider safety= new CustomSlider(JSlider.HORIZONTAL, 1, 5000, SAFETY_KONST);
+        CustomSlider safety= new CustomSlider(JSlider.HORIZONTAL, 1, 2000, SAFETY_KONST);
 
 
         int xOff = ret.getWidth() / 3;
@@ -88,7 +88,7 @@ public class Main extends JFrame {
         for (int i = 0; i < labels.length; i++) {
             labels[i] = new JLabel();
             labels[i].setBounds(20, (ret.getHeight() / 12) * i, xOff - 10, ret.getHeight() / 10);
-            labels[i].setFont(new Font("Times New Roman", 0, 16));
+            labels[i].setFont(new Font("Times New Roman", 0, 20));
             ret.add(labels[i]);
         }
 
