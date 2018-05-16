@@ -94,6 +94,7 @@ public class Vehicle {
         if (vehicleDriving == null)
             throw new RuntimeException("NO DRIVING BEHAVIOUR");
         vehicleDriving.performMove();
+
     }
 
 

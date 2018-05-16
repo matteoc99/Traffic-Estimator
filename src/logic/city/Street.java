@@ -61,7 +61,6 @@ public class Street extends StreetComponent {
         this.maxSpeed = maxSpeed;
         this.unProminence = unProminence;
 
-
         forwardLanes = new ArrayList<>();
         backwardLanes = new ArrayList<>();
         congestions = new ArrayList<>();

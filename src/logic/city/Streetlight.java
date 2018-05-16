@@ -7,15 +7,14 @@ package logic.city;
 public class Streetlight {
 
 
-
     /**
      * 0:Red
      * 1:Green
      */
     private int state;
 
-    public static final int RED =0;
-    public static final int GREEN=1;
+    public static final int RED = 0;
+    public static final int GREEN = 1;
 
 
     /**
@@ -43,15 +42,15 @@ public class Streetlight {
     }
 
     public Streetlight(Lane parentLane, StreetlightLogic parentLogic, Direction direction) {
-        this(RED,parentLane,parentLogic,direction);
+        this(RED, parentLane, parentLogic, direction);
     }
 
     public enum Direction {
         STRAIGHT, RIGHT, LEFT
     }
 
-    public void toggle(){
-        state = (state == GREEN? RED : GREEN);
+    public void toggle() {
+        state = (state == GREEN ? RED : GREEN);
     }
 
     public int getState() {

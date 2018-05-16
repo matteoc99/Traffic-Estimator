@@ -181,12 +181,10 @@ public class VehicleDriving implements DrivingInterface {
     @Override
     public void performMove() {
         if (vehicle.getLane() != null) {
-
             if (currentAction == Action.NO_ACTION) {
                 currentAction = getNextAction();
             }
 
-            // TODO: 28.02.2018 check if I need to step aside
             currentAction = evaluateAction(currentAction);
             switch (currentAction) {
                 case ABORT:
@@ -217,7 +215,7 @@ public class VehicleDriving implements DrivingInterface {
         considerative = Math.random();
         agressivity = Math.random();
         desiredSpeed = Math.random();
-        reactionTime = (int) (Math.random() * 40)+5 ;
+        reactionTime = (int) (Math.random() * 20)+5 ;
     }
 
     @Override
@@ -291,7 +289,6 @@ public class VehicleDriving implements DrivingInterface {
 
         //todo from time to time evaluate other actions because --> once follow lane u are stuck until lane change
         // TODO: 18.04.2018 BUG  if not can go and need to stop. Next goal is taken and evaluated.##
-
         if (vehicle.getProgressInLane() + getSafetyDist() >= vehicle.getLane().getLength()) {
             //change lane or die if path end is reached
             canGo = vehicle.getPrevGoal().register(vehicle, vehicle.getCurrentGoal(), vehicle.getCity().getNodeById(vehicle.getPath().getGoal()));
@@ -314,15 +311,14 @@ public class VehicleDriving implements DrivingInterface {
                     }
                     vehicle.changeLane(lane);
                     vehicle.setProgressInLane(0);
-                    if (!(vehicle.getPrevGoal() instanceof Connection))
-                        vehicle.setCurrentSpeed(vehicle.getVehicleMaxSpeed() / 8);
+                   // if (!(vehicle.getPrevGoal() instanceof Connection))
+                     //   vehicle.setCurrentSpeed(vehicle.getVehicleMaxSpeed() / 8);
 
                 }
             }
         } else {
-            if (vehicle.getProgressInLane() / vehicle.getLane().getLength() > 0.80) {
-                //goto better lane for dir change
-            }
+
+
             adjustSpeedAction(); //todo remove once decision making is good again
             vehicle.incrementProgressInLane(vehicle.getCurrentSpeed());
             if (vehicle.getProgressInLane() > vehicle.getLane().getLength())

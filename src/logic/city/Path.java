@@ -131,11 +131,7 @@ public class Path {
      * @return true if it contains the intersection, otherwise false
      */
     public boolean contains(String nodeId) {
-        for (String intersection : ids) {
-            if (nodeId.equals(intersection))
-                return true;
-        }
-        return false;
+        return ids.contains(nodeId);
     }
 
     /**

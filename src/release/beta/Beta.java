@@ -97,7 +97,7 @@ public class Beta extends JFrame {
         startFromJson.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                JFileChooser chooser = new JFileChooser(System.getProperty("user.dir"));
+                JFileChooser chooser = new JFileChooser(System.getProperty("user.dir")+"\\src\\parsing\\res");
                 chooser.showSaveDialog(null);
                 if (chooser.getSelectedFile() == null)
                     return;

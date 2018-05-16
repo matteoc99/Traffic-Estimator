@@ -1,5 +1,7 @@
 package logic.city;
 
+import javafx.util.Pair;
+
 import java.util.ArrayList;
 
 import static logic.city.City.SPEED;
@@ -13,7 +15,7 @@ public class StreetlightLogic extends Thread {
     private ArrayList<Streetlight> streetlights = new ArrayList<>();
 
     //circular selection
-    private static final int cycle = 10;
+    private static final int cycle = 20;
 
 
     public StreetlightLogic(String name, Node parent) {
@@ -21,14 +23,17 @@ public class StreetlightLogic extends Thread {
         this.parent = parent;
     }
 
+
     @Override
     public void run() {
 
         while (true) {
             if (streetlights.size() > 0) {
                 //set one red -> green and green -> red
-                getNextGreen().toggle();
-
+                for (Streetlight streetlight:streetlights
+                     ) {
+                    streetlight.toggle();
+                }
                 try {
                     Thread.sleep(cycle * 1000 / streetlights.size()-(SPEED-20));
                 } catch (Exception e) {
@@ -95,6 +100,8 @@ public class StreetlightLogic extends Thread {
 
     public void addStreetlight(Streetlight streetlight) {
         if (!contains(streetlight)) {
+            if(streetlights.size()%2==0)
+                streetlight.setState(Streetlight.GREEN);
             streetlights.add(streetlight);
         } else {
             throw new RuntimeException("already contains light");

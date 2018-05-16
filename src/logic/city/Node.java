@@ -230,6 +230,8 @@ public class Node {
      * @return true if the vehicle can drive, otherwise false
      */
     public boolean register(Vehicle vehicle, Node nextNode, Node futureNode) {
+        if(nextNode==null)
+            return true;
         assert !nextNode.equals(futureNode);
         if (futureNode != null)
             if (nextNode.getLaneTo(futureNode) != null && nextNode.getLaneTo(futureNode).isFull()) {
