@@ -1,7 +1,5 @@
 package logic.city;
 
-import javafx.util.Pair;
-
 import java.util.ArrayList;
 
 import static logic.city.City.SPEED;
@@ -15,7 +13,7 @@ public class StreetlightLogic extends Thread {
     private ArrayList<Streetlight> streetlights = new ArrayList<>();
 
     //circular selection
-    private static final int cycle = 20;
+    public static int CYCLE = 20;
 
 
     public StreetlightLogic(String name, Node parent) {
@@ -35,7 +33,7 @@ public class StreetlightLogic extends Thread {
                     streetlight.toggle();
                 }
                 try {
-                    Thread.sleep(cycle * 1000 / streetlights.size()-(SPEED-20));
+                    Thread.sleep((CYCLE * 1000) / streetlights.size());
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

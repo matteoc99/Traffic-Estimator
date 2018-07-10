@@ -16,8 +16,10 @@ import java.nio.file.Paths;
 import java.security.GeneralSecurityException;
 import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
+import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author Maximilian Estfeller
@@ -96,14 +98,18 @@ public class OSMTileManager implements TileManager {
     }
 
     public void readImages() {
-        File root = new File("C:\\TrafficEstimator\\imageStorage\\");
-        recursiveDirSearch(root);
+        new Thread(() -> {
+            System.out.println("Main:" + new Timestamp(System.currentTimeMillis()) + " Reading images...");
+            File root = new File("C:\\TrafficEstimator\\imageStorage\\");
+            recursiveDirSearch(root);
+            System.out.println("Main:" + new Timestamp(System.currentTimeMillis()) + " All images read...");
+        }).start();
     }
 
     private void recursiveDirSearch(File root) {
         if (!root.isDirectory())
             return;
-        for (File file : root.listFiles()) {
+        for (File file : Objects.requireNonNull(root.listFiles())) {
             if (file.isFile()) {
                 try {
                     BufferedImage image = ImageIO.read(file);

@@ -88,6 +88,7 @@ public class City extends Thread {
      * The amount of cars that should drive in this city
      */
     public static int VEHICLE_AMOUNT = 0;
+    private boolean die=false;
 
 
     /**
@@ -596,7 +597,7 @@ public class City extends Thread {
      */
     @Override
     public void run() {
-        while (true) {
+        while (!die) {
             zeitvorsleep = System.currentTimeMillis();
             calcCity();
             int i = 0;
@@ -761,5 +762,9 @@ public class City extends Thread {
 
     public double getMaxLat() {
         return maxLat;
+    }
+
+    public void die() {
+    die=true;
     }
 }

@@ -133,6 +133,7 @@ public class JCity extends JPanel {
     }
 
     private void drawLaneAndCars(Lane lane, Graphics2D g2, int i, boolean isBackward) {
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         int dir = isBackward ? -1 : 1;
         //draw lanes
         g2.setColor(lane.getColorByTraffic());
@@ -156,15 +157,16 @@ public class JCity extends JPanel {
 
             g2.setStroke(new BasicStroke(1));
         }
-        ArrayList<Vehicle> vehicles = lane.getVehicles();
 
+        //draw cars
+        ArrayList<Vehicle> vehicles = lane.getVehicles();
         if (showCars && zoomLevel > 14) {
             ArrayList<Vehicle> cars = new ArrayList<>(vehicles);
             for (Vehicle vehicle : cars) {
                 if (vehicle != null) {
                     g2.setColor(vehicle.getColor());
-                    g2.fillOval((int) ((int) ((getXYByOsmTileXY(vehicle.currentPositionOnLane().getX())) * zoom) - (zoomLevel / 2) / 2 - (1 + i * 2) * dir),
-                            (int) ((int) ((getXYByOsmTileXY(vehicle.currentPositionOnLane().getY())) * zoom) - (zoomLevel / 2) / 2 - (1 + i * 2) * dir),
+                    g2.fillOval((int) ((getXYByOsmTileXY(vehicle.currentPositionOnLane().getX())) * zoom) - (zoomLevel / 2) / 2 - (1 + i * 2) * dir,
+                            (int) ((getXYByOsmTileXY(vehicle.currentPositionOnLane().getY())) * zoom) - (zoomLevel / 2) / 2 - (1 + i * 2) * dir,
                             zoomLevel / 2, zoomLevel / 2);
                 }
             }

@@ -48,15 +48,26 @@ public class CityMap extends JPanel {
         overlay.addMouseMotionListener(cmml);
         overlay.addMouseWheelListener(cmml);
 
+        // TODO: 27.06.2018 Remove me, just here because of bug.
+        overlay.readTileManagerImages();
+
         parent.addKeyListener(new KeyAdapter() {
             @Override
             public void keyTyped(KeyEvent e) {
                 if (e.getKeyChar() == 'p')
                     overlay.printTileManagerImages();
-                if (e.getKeyChar() == 'r')
+                if (e.getKeyChar() == 'r') {
+                    System.out.println("Reading images");
                     overlay.readTileManagerImages();
+                }
             }
         });
+
+
+
+        jCity.setLocation(jCity.getX() - 20000, jCity.getY() - 20000);
+        overlay.movePixels(-20000, -20000);
+
 
         jCity.addMouseListener(cmml);
         jCity.addMouseMotionListener(cmml);
@@ -87,6 +98,8 @@ public class CityMap extends JPanel {
             overlay.setSize(e.getComponent().getWidth(), e.getComponent().getHeight());
         }
     }
+
+
 
     private class CityMapMouseListener extends MouseAdapter {
 
