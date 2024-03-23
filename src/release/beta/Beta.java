@@ -97,34 +97,26 @@ public class Beta extends JFrame {
         startFromJson.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                JFileChooser chooser = new JFileChooser(System.getProperty("user.dir")+"\\src\\parsing\\res");
+                JFileChooser chooser = new JFileChooser(System.getProperty("user.dir") + "\\src\\parsing\\res");
                 chooser.showSaveDialog(null);
                 if (chooser.getSelectedFile() == null)
                     return;
 
-                String path = chooser.getSelectedFile().getAbsolutePath().substring(0, chooser.getSelectedFile().getAbsolutePath().lastIndexOf('\\'));
+                String path = chooser.getSelectedFile().getAbsolutePath();
                 //getFileName
 
-                String name = chooser.getSelectedFile().getName().substring(0, chooser.getSelectedFile().getName().indexOf('.'));
-
-                String ending = chooser.getSelectedFile().getName().substring(chooser.getSelectedFile().getName().indexOf('.'));
-
-                switch (ending) {
-                    case ".json": {
-                        dispose();
-                        Main.start(City.createCityFromJson(new File(path + "/" + name + ending)));
-                        break;
-                    }
-                    case ".osm": {
-                        dispose();
-                        OsmToJsonParser.parse(path + "/" + name + ending, path + "/" + name + ".json");
-                        Main.start(City.createCityFromJson(new File(path + "/" + name + ".json")));
-                        break;
-                    }
-                    default:
-                        new JOptionPane("The selected file is not an OSM or JSON file").createDialog("Warning").setVisible(true);
-                        break;
+                if (path.endsWith(".osm")) {
+                    OsmToJsonParser.parse(path, path.replace(".osm", ".json"));
+                    path = path.replace(".osm", ".json");
                 }
+
+                if (!path.endsWith(".json")) {
+                    new JOptionPane("The selected file is not an OSM or JSON file").createDialog("Warning").setVisible(true);
+                    return;
+                }
+
+                dispose();
+                Main.start(City.createCityFromJson(new File(path)));
 
             }
 
@@ -140,9 +132,6 @@ public class Beta extends JFrame {
                 startFromJson.setForeground(Color.white);
             }
         });
-
-
-
 
 
         getOsmFile.addMouseListener(new MouseAdapter() {

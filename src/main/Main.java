@@ -5,7 +5,6 @@ import gui.CustomSlider;
 import gui.city.CityMap;
 import gui.city.JCity;
 import logic.city.City;
-import logic.city.StreetlightLogic;
 import release.beta.Beta;
 
 import javax.swing.*;

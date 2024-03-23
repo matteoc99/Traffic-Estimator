@@ -26,7 +26,7 @@ public final class OsmToJsonParser {
     /**
      * Map to keep track of the amount of Streets connected to a Node
      */
-    private static Map<String, Integer> streetsOnNode = new HashMap<>();
+    private static final Map<String, Integer> streetsOnNode = new HashMap<>();
 
     public static void main(String[] args) {
         parse(System.getProperty("user.dir") + "\\src\\parsing\\res\\bozenLarge.osm",
@@ -334,13 +334,13 @@ public final class OsmToJsonParser {
         for (int i = 0; i < nodes.length(); i++) {
             JSONObject jNode = nodes.getJSONObject(i);
             double x = Double.parseDouble(jNode.getString("x"));
-            minLon = minLon < x ? minLon : x;
-            maxLon = maxLon > x ? maxLon : x;
+            minLon = Math.min(minLon, x);
+            maxLon = Math.max(maxLon, x);
             x = Utils.getOsmTileX(x, 19);
 
             double y = Double.parseDouble(jNode.getString("y"));
-            minLat = minLat < y ? minLat : y;
-            maxLat = maxLat > y ? maxLat : y;
+            minLat = Math.min(minLat, y);
+            maxLat = Math.max(maxLat, y);
             y = Utils.getOsmTileY(y, 19);
 
             jNode.put("x", x);
