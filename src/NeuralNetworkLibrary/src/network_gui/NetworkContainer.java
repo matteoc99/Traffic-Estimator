@@ -1,7 +1,6 @@
 package NeuralNetworkLibrary.src.network_gui;
 
 import NeuralNetworkLibrary.src.network.Network;
-import com.sun.istack.internal.NotNull;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -38,7 +37,7 @@ public class NetworkContainer extends JPanel implements NetworkGUIComponent{
      *
      * @param network to add
      */
-    public void addNetwork(@NotNull Network network, String networkName) {
+    public void addNetwork(Network network, String networkName) {
         if (network == null) return;
         for (NetworkPanel networkPanel : networkPanels)
             if (networkPanel.getEquivalent().equals(network))
@@ -50,7 +49,7 @@ public class NetworkContainer extends JPanel implements NetworkGUIComponent{
         revalidate();
     }
 
-    void refreshNetwork(@NotNull Network network) {
+    void refreshNetwork(Network network) {
         if (network == null)
             return;
         NetworkPanel networkPanel = ((NetworkPanel) findPanelByEquivalent(network));

@@ -1,7 +1,6 @@
 package NeuralNetworkLibrary.src.network_gui;
 
 import NeuralNetworkLibrary.src.network.Connection;
-import com.sun.istack.internal.NotNull;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
@@ -29,7 +28,7 @@ class NetworkPanelConnection extends JComponent implements NetworkGUIComponent{
 
     private Object equivalent;
 
-    public NetworkPanelConnection(Connection equivalent, @NotNull NetworkPanelNeuron from, @NotNull NetworkPanelNeuron to) {
+    public NetworkPanelConnection(Connection equivalent, NetworkPanelNeuron from, NetworkPanelNeuron to) {
         this.setEquivalent(equivalent);
         this.from = from;
         this.to = to;

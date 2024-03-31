@@ -1,11 +1,10 @@
 package gui.city.Overlay;
 
-import javafx.util.Pair;
-
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Vector;
 
@@ -62,7 +61,12 @@ public class TileBuffer implements Runnable {
         try {
             int zoom = input.getValue().getKey();
             Point point = input.getValue().getValue();
-            BufferedImage bufferedImage = ImageIO.read(new URL(osmTileManager.getTileLink(point, zoom)));
+            URL url = new URL(osmTileManager.getTileLink(point, zoom));
+            final HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestProperty(
+                    "User-Agent",
+                    "MCMETE/1.0");
+            BufferedImage bufferedImage = ImageIO.read(connection.getInputStream());
             osmTileManager.addImage(bufferedImage, zoom, point);
             // TODO: 06.03.2018 Filling a single label does not work, instead all labels need to be repainted
             //osmTileManager.overlay.fillLabel(input.getKey());
@@ -75,7 +79,12 @@ public class TileBuffer implements Runnable {
         try {
             int zoom = input.getKey();
             Point point = input.getValue();
-            BufferedImage bufferedImage = ImageIO.read(new URL(osmTileManager.getTileLink(point, zoom)));
+            URL url = new URL(osmTileManager.getTileLink(point, zoom));
+            final HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestProperty(
+                    "User-Agent",
+                    "MCMETE/1.0");
+            BufferedImage bufferedImage = ImageIO.read(connection.getInputStream());
             osmTileManager.addImage(bufferedImage, zoom, point);
         } catch (Exception ignored) {
         }
@@ -133,5 +142,48 @@ public class TileBuffer implements Runnable {
         Pair<Integer, Point> ret = tilesToBuffer.get(0);
         tilesToBuffer.remove(0);
         return ret;
+    }
+
+    /**
+     * Quick and dirty fix to replace javafx Pair
+     * ChatGPT code
+     */
+    private class Pair<K, V> {
+        private final K key;
+        private final V value;
+
+        public Pair(K key, V value) {
+            this.key = key;
+            this.value = value;
+        }
+
+        public K getKey() {
+            return key;
+        }
+
+        public V getValue() {
+            return value;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Pair<?, ?> pair = (Pair<?, ?>) o;
+            if (!key.equals(pair.key)) return false;
+            return value.equals(pair.value);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = key.hashCode();
+            result = 31 * result + value.hashCode();
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "(" + key + ", " + value + ")";
+        }
     }
 }
